@@ -35,6 +35,13 @@ requiere_admin: true
                 <label for="matricula">Matrícula (opcional)</label>
                 <input type="text" id="matricula">
             </div>
+            <div class="campo">
+                <label for="sexo">Sexo</label>
+                <select id="sexo">
+                    <option value="M">Varón</option>
+                    <option value="F">Hembra</option>
+                </select>
+            </div>
             <button type="submit" class="btn">Guardar</button>
             <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
         </div>
@@ -44,7 +51,7 @@ requiere_admin: true
 <div class="card">
     <div class="tabla-wrap">
         <table>
-            <thead><tr><th>Apellido</th><th>Nombre</th><th>Matrícula</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Apellido</th><th>Nombre</th><th>Matrícula</th><th>Sexo</th><th>Acciones</th></tr></thead>
             <tbody id="tablaEstudiantes"></tbody>
         </table>
     </div>
