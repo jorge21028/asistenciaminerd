@@ -30,37 +30,45 @@
 </div>
 {% endunless %}
 
+<script src="{{ '/assets/js/api.js' | relative_url }}"></script>
+
+{% unless page.sin_layout %}
+<script>
+    // Este bloque corre ANTES del contenido de la página (ver más abajo),
+    // así los scripts propios de cada página (cursos.js, usuarios.js, etc.)
+    // ya encuentran cargado api.js y la sesión ya verificada cuando se ejecutan.
+    // Si no hay sesión válida, protegerPagina() ya redirige a index.html.
+    window.__sesionValida = protegerPagina({ requiereAdmin: {{ page.requiere_admin | default: false }} });
+
+    if (window.__sesionValida) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const u = Auth.getUsuario();
+            document.getElementById('nombreUsuario').textContent = u.nombre;
+            const rolEl = document.getElementById('rolUsuario');
+            rolEl.textContent = u.rol === 'admin' ? 'Administrador' : 'Profesor';
+            rolEl.classList.add(u.rol);
+
+            if (u.rol !== 'admin') {
+                document.querySelectorAll('[data-solo-admin]').forEach(el => el.style.display = 'none');
+            }
+
+            document.querySelectorAll('.topbar nav a').forEach(a => {
+                if (a.getAttribute('href').endsWith(window.location.pathname.split('/').pop())) {
+                    a.classList.add('activo');
+                }
+            });
+
+            const toggle = document.getElementById('menuToggle');
+            const nav = document.querySelector('.topbar nav');
+            if (toggle) toggle.addEventListener('click', () => nav.classList.toggle('abierto'));
+        });
+    }
+</script>
+{% endunless %}
+
 <main class="contenido">
     {{ content }}
 </main>
 
-<script src="{{ '/assets/js/api.js' | relative_url }}"></script>
-{% unless page.sin_layout %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!protegerPagina({ requiereAdmin: {{ page.requiere_admin | default: false }} })) return;
-
-        const u = Auth.getUsuario();
-        document.getElementById('nombreUsuario').textContent = u.nombre;
-        const rolEl = document.getElementById('rolUsuario');
-        rolEl.textContent = u.rol === 'admin' ? 'Administrador' : 'Profesor';
-        rolEl.classList.add(u.rol);
-
-        if (u.rol !== 'admin') {
-            document.querySelectorAll('[data-solo-admin]').forEach(el => el.style.display = 'none');
-        }
-
-        document.querySelectorAll('.topbar nav a').forEach(a => {
-            if (a.getAttribute('href').endsWith(window.location.pathname.split('/').pop())) {
-                a.classList.add('activo');
-            }
-        });
-
-        const toggle = document.getElementById('menuToggle');
-        const nav = document.querySelector('.topbar nav');
-        if (toggle) toggle.addEventListener('click', () => nav.classList.toggle('abierto'));
-    });
-</script>
-{% endunless %}
 </body>
 </html>
