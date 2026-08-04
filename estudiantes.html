@@ -1,0 +1,54 @@
+---
+layout: default
+titulo: Estudiantes
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1>Estudiantes</h1>
+        <p class="subtitulo">Matricula estudiantes en cada curso</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="campo" style="max-width:320px;">
+        <label for="filtroCurso">Curso</label>
+        <select id="filtroCurso"></select>
+    </div>
+</div>
+
+<div class="card">
+    <h3 id="tituloForm">Nuevo estudiante</h3>
+    <div id="alertaEstudiante"></div>
+    <form id="formEstudiante">
+        <input type="hidden" id="estudianteId">
+        <div class="fila-form">
+            <div class="campo">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" required>
+            </div>
+            <div class="campo">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" required>
+            </div>
+            <div class="campo">
+                <label for="matricula">Matrícula (opcional)</label>
+                <input type="text" id="matricula">
+            </div>
+            <button type="submit" class="btn">Guardar</button>
+            <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Apellido</th><th>Nombre</th><th>Matrícula</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaEstudiantes"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacio" class="vacio-estado" style="display:none;">Elige un curso, luego agrega estudiantes.</div>
+</div>
+
+<script src="{{ '/assets/js/estudiantes.js' | relative_url }}"></script>

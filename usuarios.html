@@ -1,0 +1,53 @@
+---
+layout: default
+titulo: Usuarios
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1>Usuarios</h1>
+        <p class="subtitulo">Profesores y administradores con acceso al sistema</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3 id="tituloForm">Nuevo usuario</h3>
+    <div id="alertaUsuario"></div>
+    <form id="formUsuario">
+        <input type="hidden" id="usuarioId">
+        <div class="fila-form">
+            <div class="campo">
+                <label for="nombre">Nombre completo</label>
+                <input type="text" id="nombre" required>
+            </div>
+            <div class="campo">
+                <label for="email">Correo</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="campo">
+                <label for="rol">Rol</label>
+                <select id="rol">
+                    <option value="profesor">Profesor</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="password">Contraseña <span id="labelPassOpcional" style="display:none;">(dejar vacío para no cambiar)</span></label>
+                <input type="password" id="password" placeholder="Mínimo 8 caracteres">
+            </div>
+            <button type="submit" class="btn">Guardar</button>
+            <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaUsuarios"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/usuarios.js' | relative_url }}"></script>

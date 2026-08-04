@@ -1,0 +1,37 @@
+---
+layout: default
+titulo: Inicio
+---
+<div class="page-header">
+    <div>
+        <h1>Bienvenido/a</h1>
+        <p class="subtitulo">Elige qué quieres hacer hoy</p>
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="card">
+        <h3>📋 Tomar asistencia</h3>
+        <p>Registra la asistencia diaria de un curso y asignatura.</p>
+        <a class="btn" href="{{ '/asistencia.html' | relative_url }}">Ir a asistencia</a>
+    </div>
+    <div class="card">
+        <h3>📊 Reportes</h3>
+        <p>Consulta reportes diarios, semanales, mensuales y anuales.</p>
+        <a class="btn secundario" href="{{ '/reportes.html' | relative_url }}">Ver reportes</a>
+    </div>
+    <div class="card" data-solo-admin>
+        <h3>⚙️ Gestión</h3>
+        <p>Administra cursos, asignaturas, estudiantes y profesores.</p>
+        <a class="btn secundario" href="{{ '/cursos.html' | relative_url }}">Ir a gestión</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Guía rápida</h3>
+    <ul style="color: var(--color-ink-soft); line-height: 1.9;">
+        <li><strong>P</strong> = Presente &nbsp; <strong>A</strong> = Ausente &nbsp; <strong>T</strong> = Tardanza &nbsp; <strong>E</strong> = Excusa</li>
+        <li>Dos tardanzas equivalen a una inasistencia, y dos excusas equivalen a una inasistencia, en el cálculo del porcentaje de asistencia.</li>
+        <li>Los "días trabajados" de cada mes se calculan automáticamente según los días en que se registró asistencia.</li>
+    </ul>
+</div>

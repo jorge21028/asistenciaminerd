@@ -1,0 +1,16 @@
+title: Sistema de Asistencia
+description: Módulo de asistencia diaria - MINERD
+baseurl: "" # cámbialo a "/nombre-del-repo" si publicas en https://usuario.github.io/nombre-del-repo
+url: ""
+
+# IMPORTANTE: esta es la URL donde vive tu API PHP en Hostinger.
+# Edítala con tu dominio real antes de publicar.
+api_url: "https://tu-dominio.com/api"
+
+plugins: []
+
+exclude:
+  - README.md
+  - database/
+  - Gemfile
+  - Gemfile.lock

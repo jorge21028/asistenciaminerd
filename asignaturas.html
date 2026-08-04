@@ -1,0 +1,39 @@
+---
+layout: default
+titulo: Asignaturas
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1>Asignaturas</h1>
+        <p class="subtitulo">Materias que se imparten en el centro</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3 id="tituloForm">Nueva asignatura</h3>
+    <div id="alertaAsignatura"></div>
+    <form id="formAsignatura">
+        <input type="hidden" id="asignaturaId">
+        <div class="fila-form">
+            <div class="campo">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" placeholder="Ej: Matemática" required>
+            </div>
+            <button type="submit" class="btn">Guardar</button>
+            <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Asignatura</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaAsignaturas"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacio" class="vacio-estado" style="display:none;">Aún no has creado ninguna asignatura.</div>
+</div>
+
+<script src="{{ '/assets/js/asignaturas.js' | relative_url }}"></script>
