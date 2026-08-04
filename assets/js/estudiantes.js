@@ -37,6 +37,7 @@ function pintarEstudiantes() {
             <td class="nombre-estudiante">${escaparHtml(e.apellido)}</td>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
             <td>${escaparHtml(e.matricula || '—')}</td>
+            <td>${e.sexo === 'F' ? 'Hembra' : 'Varón'}</td>
             <td class="acciones-tabla">
                 <button class="btn secundario chico" onclick="editarEstudiante(${e.id})">Editar</button>
                 <button class="btn peligro chico" onclick="eliminarEstudiante(${e.id})">Eliminar</button>
@@ -52,6 +53,7 @@ function editarEstudiante(id) {
     document.getElementById('nombre').value = e.nombre;
     document.getElementById('apellido').value = e.apellido;
     document.getElementById('matricula').value = e.matricula || '';
+    document.getElementById('sexo').value = e.sexo || 'M';
     document.getElementById('tituloForm').textContent = 'Editar estudiante';
     document.getElementById('btnCancelar').style.display = 'inline-flex';
 }
@@ -80,6 +82,7 @@ document.getElementById('formEstudiante').addEventListener('submit', async (e) =
         nombre: document.getElementById('nombre').value.trim(),
         apellido: document.getElementById('apellido').value.trim(),
         matricula: document.getElementById('matricula').value.trim(),
+        sexo: document.getElementById('sexo').value,
         curso_id: document.getElementById('filtroCurso').value,
     };
     try {

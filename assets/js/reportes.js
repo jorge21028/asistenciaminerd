@@ -92,14 +92,19 @@ function renderDiario(data, cont) {
         return;
     }
     cont.innerHTML = `
-        <div class="grid-3">
-            <div class="card"><h3>${data.conteo.presente}</h3><p>Presentes</p></div>
-            <div class="card"><h3>${data.conteo.ausente}</h3><p>Ausentes</p></div>
-            <div class="card"><h3>${data.conteo.tardanza + data.conteo.excusa}</h3><p>Tardanzas + Excusas</p></div>
+        <div class="grid-3" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="card"><h3>${data.conteo.presente}</h3><p>Asistencia</p></div>
+            <div class="card"><h3>${data.conteo.excusa}</h3><p>Excusas</p></div>
+            <div class="card"><h3>${data.conteo.ausente}</h3><p>Inasistencia</p></div>
+        </div>
+        <div class="grid-3" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="card"><h3>${data.conteo.tardanza}</h3><p>Tardanzas</p></div>
+            <div class="card"><h3>${data.total_varones}</h3><p>Varones (matriculados)</p></div>
+            <div class="card"><h3>${data.total_hembras}</h3><p>Hembras (matriculadas)</p></div>
         </div>
         <div class="card">
             <h3>Reporte diario — ${data.fecha}</h3>
-            <p class="subtitulo">${data.porcentaje_presentes}% de asistencia el día de hoy</p>
+            <p class="subtitulo">${data.porcentaje_presentes}% de asistencia el día de hoy · ${data.total_estudiantes} estudiantes matriculados</p>
             <div class="tabla-wrap">
                 <table>
                     <thead><tr><th>Estudiante</th><th class="num">Estado</th><th>Observación</th></tr></thead>
@@ -175,7 +180,7 @@ function renderMensual(data, cont) {
                 <span><span class="sello-estado ausente" style="width:20px;height:20px;font-size:0.65rem;">A</span> Ausente</span>
                 <span><span class="sello-estado tardanza" style="width:20px;height:20px;font-size:0.65rem;">T</span> Tardanza</span>
                 <span><span class="sello-estado excusa" style="width:20px;height:20px;font-size:0.65rem;">E</span> Excusa</span>
-                <span style="margin-left:auto;">2 excusas = 1 inasistencia · 2 tardanzas = 1 inasistencia</span>
+                <span style="margin-left:auto;">2 excusas, 2 tardanzas, o 1 excusa + 1 tardanza = 1 inasistencia</span>
             </div>
             ${!dias.length ? '<div class="vacio-estado">No se ha registrado asistencia este mes.</div>' : `
             <div class="tabla-wrap">
@@ -184,7 +189,6 @@ function renderMensual(data, cont) {
                         <tr>
                             <th>Estudiante</th>
                             ${dias.map(d => `<th class="num">${d}</th>`).join('')}
-                            <th class="num">Días<br>trabajados</th>
                             <th class="num">Total<br>asistencia</th>
                             <th class="num">%</th>
                         </tr>
@@ -194,7 +198,6 @@ function renderMensual(data, cont) {
                             <tr>
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 ${dias.map(d => `<td class="num">${selloHtml(e.dias[d])}</td>`).join('')}
-                                <td class="num">${e.dias_trabajados}</td>
                                 <td class="num">${e.total_asistencia}</td>
                                 <td class="num"><span class="${claseporcentaje(e.porcentaje)}">${e.porcentaje}%</span></td>
                             </tr>
