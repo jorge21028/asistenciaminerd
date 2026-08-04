@@ -1,0 +1,423 @@
+/* =====================================================================
+   Sistema de Asistencia — Estilos
+   Concepto: "registro de aula" — como un libro de calificaciones físico,
+   con sellos de estado (P/A/T/E) como firma visual del sistema.
+   ===================================================================== */
+
+:root {
+    /* Paleta */
+    --color-bg: #F3F5F1;
+    --color-surface: #FFFFFF;
+    --color-surface-alt: #F8F9F7;
+    --color-ink: #1B2430;
+    --color-ink-soft: #4B5563;
+    --color-line: #E2E5DF;
+    --color-primary: #1E3350;
+    --color-primary-light: #2F4C74;
+    --color-primary-dark: #142438;
+
+    --color-present: #1F7A4D;
+    --color-present-bg: #E4F3EA;
+    --color-absent: #B23A2E;
+    --color-absent-bg: #FBE7E4;
+    --color-tardanza: #B4740E;
+    --color-tardanza-bg: #FBF0DA;
+    --color-excusa: #5B4E9C;
+    --color-excusa-bg: #EBE8F7;
+
+    /* Tipografía */
+    --font-display: "Fraunces", Georgia, serif;
+    --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(20, 36, 56, 0.06), 0 4px 14px rgba(20, 36, 56, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* Textura sutil tipo papel cuadriculado en el fondo */
+body {
+    background-image:
+        linear-gradient(var(--color-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-attachment: fixed;
+    background-color: var(--color-bg);
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin: 0 0 0.4em 0;
+}
+
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.1rem; }
+
+a { color: var(--color-primary); }
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+/* ---------------------------------------------------------------------
+   Layout general
+   --------------------------------------------------------------------- */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 0 20px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+}
+
+.topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+}
+
+.brand .sello {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    transform: rotate(-8deg);
+}
+
+.topbar nav {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.topbar nav a {
+    color: #DCE4F0;
+    text-decoration: none;
+    font-size: 0.88rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.topbar nav a:hover { background: var(--color-primary-light); color: #fff; }
+.topbar nav a.activo { background: #fff; color: var(--color-primary-dark); font-weight: 600; }
+
+.topbar .usuario-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: #DCE4F0;
+}
+
+.btn-salir {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.btn-salir:hover { background: rgba(255,255,255,0.12); }
+
+.menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+main.contenido {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    width: 100%;
+}
+
+.page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.page-header p.subtitulo {
+    color: var(--color-ink-soft);
+    margin: 4px 0 0;
+}
+
+/* ---------------------------------------------------------------------
+   Tarjetas / superficies
+   --------------------------------------------------------------------- */
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.card + .card { margin-top: 20px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+@media (max-width: 720px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------------
+   Formularios
+   --------------------------------------------------------------------- */
+.campo { margin-bottom: 14px; }
+.campo label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.campo input, .campo select, .campo textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--color-line);
+    border-radius: 7px;
+    background: var(--color-surface-alt);
+    color: var(--color-ink);
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+    outline: 2px solid var(--color-primary-light);
+    outline-offset: 1px;
+    background: #fff;
+}
+
+.fila-form {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+.fila-form .campo { flex: 1; min-width: 160px; margin-bottom: 0; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.15s, transform 0.05s;
+}
+.btn:hover { background: var(--color-primary-light); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--color-tardanza); outline-offset: 2px; }
+.btn.secundario { background: transparent; color: var(--color-primary); border: 1px solid var(--color-primary); }
+.btn.secundario:hover { background: var(--color-surface-alt); }
+.btn.peligro { background: var(--color-absent); }
+.btn.peligro:hover { background: #952f25; }
+.btn.chico { padding: 6px 12px; font-size: 0.8rem; }
+.btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+/* ---------------------------------------------------------------------
+   Tablas
+   --------------------------------------------------------------------- */
+.tabla-wrap { overflow-x: auto; border: 1px solid var(--color-line); border-radius: var(--radius); }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.86rem;
+    background: var(--color-surface);
+}
+th, td {
+    padding: 9px 11px;
+    border-bottom: 1px solid var(--color-line);
+    text-align: left;
+    white-space: nowrap;
+}
+thead th {
+    background: var(--color-surface-alt);
+    color: var(--color-primary-dark);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    position: sticky;
+    top: 0;
+}
+tbody tr:hover { background: #FAFBF8; }
+td.nombre-estudiante { white-space: normal; min-width: 190px; font-weight: 500; }
+td.num, th.num { text-align: center; font-family: var(--font-mono); }
+
+/* ---------------------------------------------------------------------
+   "Sellos" de estado — elemento distintivo del sistema
+   --------------------------------------------------------------------- */
+.sello-estado {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.72rem;
+    border: 1.5px solid currentColor;
+    transform: rotate(-4deg);
+}
+.sello-estado.presente { color: var(--color-present); background: var(--color-present-bg); }
+.sello-estado.ausente  { color: var(--color-absent); background: var(--color-absent-bg); }
+.sello-estado.tardanza { color: var(--color-tardanza); background: var(--color-tardanza-bg); }
+.sello-estado.excusa   { color: var(--color-excusa); background: var(--color-excusa-bg); }
+.sello-estado.vacio    { border-style: dashed; color: var(--color-ink-soft); background: transparent; opacity: 0.4; }
+
+/* selector de estado en la pantalla de tomar asistencia */
+.selector-estado { display: inline-flex; gap: 5px; }
+.selector-estado button {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-line);
+    background: #fff;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    color: var(--color-ink-soft);
+    transition: transform 0.1s, box-shadow 0.15s;
+}
+.selector-estado button:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.selector-estado button.activo.p { background: var(--color-present-bg); color: var(--color-present); border-color: var(--color-present); }
+.selector-estado button.activo.a { background: var(--color-absent-bg); color: var(--color-absent); border-color: var(--color-absent); }
+.selector-estado button.activo.t { background: var(--color-tardanza-bg); color: var(--color-tardanza); border-color: var(--color-tardanza); }
+.selector-estado button.activo.e { background: var(--color-excusa-bg); color: var(--color-excusa); border-color: var(--color-excusa); }
+
+.leyenda { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0 4px; font-size: 0.8rem; color: var(--color-ink-soft); }
+.leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---------------------------------------------------------------------
+   Estados / mensajes
+   --------------------------------------------------------------------- */
+.alerta {
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+}
+.alerta.error { background: var(--color-absent-bg); color: var(--color-absent); border: 1px solid var(--color-absent); }
+.alerta.exito { background: var(--color-present-bg); color: var(--color-present); border: 1px solid var(--color-present); }
+.alerta.info { background: var(--color-excusa-bg); color: var(--color-excusa); border: 1px solid var(--color-excusa); }
+
+.vacio-estado {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-ink-soft);
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-line);
+}
+.badge.admin { background: var(--color-tardanza-bg); color: var(--color-tardanza); border-color: var(--color-tardanza); }
+.badge.profesor { background: var(--color-excusa-bg); color: var(--color-excusa); border-color: var(--color-excusa); }
+
+.porcentaje-alto { color: var(--color-present); font-weight: 700; }
+.porcentaje-medio { color: var(--color-tardanza); font-weight: 700; }
+.porcentaje-bajo { color: var(--color-absent); font-weight: 700; }
+
+.acciones-tabla { display: flex; gap: 6px; }
+
+/* login */
+.login-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 34px 30px;
+}
+.login-card .sello-login {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: 2.5px solid var(--color-primary);
+    color: var(--color-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-weight: 700;
+    margin: 0 auto 16px;
+    transform: rotate(-6deg);
+}
+.login-card h1 { text-align: center; font-size: 1.35rem; }
+.login-card p.subtitulo { text-align: center; color: var(--color-ink-soft); margin-bottom: 22px; font-size: 0.88rem; }
+
+@media (max-width: 860px) {
+    .topbar nav {
+        position: fixed;
+        top: 62px; left: 0; right: 0;
+        background: var(--color-primary-dark);
+        flex-direction: column;
+        padding: 10px;
+        display: none;
+    }
+    .topbar nav.abierto { display: flex; }
+    .menu-toggle { display: block; }
+}

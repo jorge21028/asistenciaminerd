@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.titulo | default: "Sistema de Asistencia" }} · Asistencia MINERD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    <script>
+        window.API_URL = "{{ site.api_url }}";
+        window.SITE_BASEURL = "{{ site.baseurl }}";
+    </script>
+</head>
+<body>
+
+{% unless page.sin_layout %}
+<div class="topbar">
+    <a class="brand" href="{{ '/dashboard.html' | relative_url }}">
+        <span class="sello">A</span>
+        Asistencia
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+    {% include nav.html %}
+    <div class="usuario-box">
+        <span id="nombreUsuario"></span>
+        <span class="badge" id="rolUsuario"></span>
+        <button class="btn-salir" onclick="Auth.cerrarSesion()">Salir</button>
+    </div>
+</div>
+{% endunless %}
+
+<main class="contenido">
+    {{ content }}
+</main>
+
+<script src="{{ '/assets/js/api.js' | relative_url }}"></script>
+{% unless page.sin_layout %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!protegerPagina({ requiereAdmin: {{ page.requiere_admin | default: false }} })) return;
+
+        const u = Auth.getUsuario();
+        document.getElementById('nombreUsuario').textContent = u.nombre;
+        const rolEl = document.getElementById('rolUsuario');
+        rolEl.textContent = u.rol === 'admin' ? 'Administrador' : 'Profesor';
+        rolEl.classList.add(u.rol);
+
+        if (u.rol !== 'admin') {
+            document.querySelectorAll('[data-solo-admin]').forEach(el => el.style.display = 'none');
+        }
+
+        document.querySelectorAll('.topbar nav a').forEach(a => {
+            if (a.getAttribute('href').endsWith(window.location.pathname.split('/').pop())) {
+                a.classList.add('activo');
+            }
+        });
+
+        const toggle = document.getElementById('menuToggle');
+        const nav = document.querySelector('.topbar nav');
+        if (toggle) toggle.addEventListener('click', () => nav.classList.toggle('abierto'));
+    });
+</script>
+{% endunless %}
+</body>
+</html>
