@@ -29,7 +29,7 @@ sin_layout: true
 <script>
     // Si ya hay sesión activa, ir directo al dashboard
     if (Auth.estaAutenticado()) {
-        window.location.href = rutaBase('dashboard.html');
+        window.location.href = rutaBase('portal.html');
     }
 
     document.getElementById('formLogin').addEventListener('submit', async (e) => {
@@ -47,7 +47,7 @@ sin_layout: true
                 },
             });
             Auth.guardarSesion(data.token, data.usuario);
-            window.location.href = rutaBase('dashboard.html');
+            window.location.href = rutaBase('portal.html');
         } catch (err) {
             mostrarAlerta('alertaLogin', err.message);
             btn.disabled = false;

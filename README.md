@@ -71,12 +71,13 @@ dentro de `api/config.php` mientras pruebas localmente.
 
 ### Flujo normal de uso
 1. El admin crea **cursos** (grado + sección), **asignaturas**, matricula **estudiantes** por curso, crea **usuarios** (profesores) y los **asigna** a curso+asignatura.
-2. Cada profesor entra, va a **"Tomar asistencia"**, elige su curso/asignatura y la fecha, marca **P / A / T / E** por estudiante y guarda.
-3. Cualquiera con acceso puede ir a **"Reportes"** y ver el reporte diario, semanal, mensual o anual de ese curso/asignatura.
+2. Al iniciar sesión, todos llegan primero a **`portal.html`** — la página principal del sistema, con una tarjeta por cada módulo (por ahora solo "Asistencia" está activo; los demás son marcadores de posición para cuando se construyan).
+3. Al entrar al módulo de Asistencia, cada profesor va a **"Tomar asistencia"**, elige su curso/asignatura y la fecha, marca **P / A / T / E** por estudiante y guarda.
+4. Cualquiera con acceso puede ir a **"Reportes"** y ver el reporte diario, semanal, mensual o anual de ese curso/asignatura.
 
 ### Regla de cálculo de asistencia
 - **Días trabajados** de un periodo = cantidad de fechas distintas en las que se registró asistencia para ese curso+asignatura (se calcula solo, no hay que definir un calendario aparte).
-- **2 excusas = 1 inasistencia** y **2 tardanzas = 1 inasistencia** (ambas reglas se aplican de forma independiente y se suman).
+- **2 excusas = 1 inasistencia**, **2 tardanzas = 1 inasistencia**, y **1 excusa + 1 tardanza = 1 inasistencia** (se suman las excusas y tardanzas del periodo y cada 2 cuentan como 1 inasistencia, sin importar la combinación).
 - **Total de asistencia** = días trabajados − inasistencias (incluyendo las equivalentes por excusas/tardanzas).
 - **Porcentaje** = (total de asistencia ÷ días trabajados) × 100.
 
@@ -96,9 +97,12 @@ Muestra: mes y días trabajados en el encabezado, y por cada estudiante una fila
 
 ## Próximos módulos (roadmap sugerido)
 
-Este módulo quedó pensado para integrarse a un sistema académico más grande: la tabla
-`usuarios` y el sistema de tokens ya pueden reutilizarse para un módulo de **calificaciones**,
-**horarios**, **conducta**, etc. Cuando quieras seguir construyendo, lo ideal es mantener
-la misma API en Hostinger y solo ir agregando nuevos archivos PHP (`calificaciones.php`,
-etc.) y nuevas tablas en la base de datos, reutilizando `cursos`, `asignaturas`,
-`estudiantes` y `usuarios`.
+Este módulo quedó pensado para integrarse a un sistema académico más grande. Ya existe
+**`portal.html`**, la página principal del sistema con una tarjeta por módulo — cuando
+construyas el siguiente módulo (ej. Calificaciones), solo hay que:
+1. Crear sus propias páginas/JS dentro de este mismo repositorio (o en uno nuevo, según prefieras organizarlo).
+2. Agregar sus propios endpoints PHP reutilizando `usuarios`, `cursos`, `asignaturas` y `estudiantes` de esta misma base de datos (así no hay que duplicar profesores, cursos ni estudiantes).
+3. Activar su tarjeta en `portal.html` (quitarle la clase `modulo-proximamente` y apuntar el botón "Entrar" a su página principal).
+
+La tabla `usuarios` y el sistema de tokens (JWT) ya pueden reutilizarse tal cual para
+cualquier módulo nuevo.

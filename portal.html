@@ -1,0 +1,76 @@
+---
+layout: default
+titulo: Inicio
+sin_layout: true
+---
+<div class="topbar" style="position: static;">
+    <a class="brand" href="{{ '/portal.html' | relative_url }}">
+        <span class="sello">🎓</span>
+        Sistema Académico
+    </a>
+    <div class="usuario-box">
+        <span id="nombreUsuario"></span>
+        <span class="badge" id="rolUsuario"></span>
+        <button class="btn-salir" onclick="Auth.cerrarSesion()">Salir</button>
+    </div>
+</div>
+
+<div class="page-header">
+    <div>
+        <h1>Bienvenido/a</h1>
+        <p class="subtitulo">Elige el módulo con el que quieres trabajar</p>
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="card modulo-card">
+        <h3>📋 Asistencia</h3>
+        <p>Registra la asistencia diaria por curso y asignatura, y consulta reportes diarios, semanales, mensuales y anuales.</p>
+        <a class="btn" href="{{ '/dashboard.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>📚 Calificaciones</h3>
+        <p>Registro de notas por período, boletines y promedios.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>🗓️ Horarios</h3>
+        <p>Horario de clases por curso y por profesor.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>🧭 Conducta</h3>
+        <p>Registro de incidencias y seguimiento disciplinario.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>📄 Boletines</h3>
+        <p>Generación de boletines de calificación para entregar a las familias.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>👨‍👩‍👧 Familias</h3>
+        <p>Datos de contacto y comunicación con padres/tutores.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/api.js' | relative_url }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!Auth.estaAutenticado()) {
+            window.location.href = rutaBase('index.html');
+            return;
+        }
+        const u = Auth.getUsuario();
+        document.getElementById('nombreUsuario').textContent = u.nombre;
+        const rolEl = document.getElementById('rolUsuario');
+        rolEl.textContent = u.rol === 'admin' ? 'Administrador' : 'Profesor';
+        rolEl.classList.add(u.rol);
+    });
+</script>
