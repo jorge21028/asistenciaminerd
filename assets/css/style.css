@@ -377,6 +377,12 @@ td.num, th.num { text-align: center; font-family: var(--font-mono); }
 .porcentaje-medio { color: var(--color-tardanza); font-weight: 700; }
 .porcentaje-bajo { color: var(--color-absent); font-weight: 700; }
 
+/* Portal de módulos */
+.modulo-card { display: flex; flex-direction: column; gap: 10px; }
+.modulo-card p { color: var(--color-ink-soft); flex-grow: 1; }
+.modulo-proximamente { opacity: 0.55; }
+.modulo-proximamente .badge { align-self: flex-start; }
+
 .acciones-tabla { display: flex; gap: 6px; }
 
 /* login */

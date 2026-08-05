@@ -98,9 +98,9 @@ function renderDiario(data, cont) {
             <div class="card"><h3>${data.conteo.ausente}</h3><p>Inasistencia</p></div>
         </div>
         <div class="grid-3" style="grid-template-columns: repeat(3, 1fr);">
-            <div class="card"><h3>${data.conteo.tardanza}</h3><p>Tardanzas</p></div>
-            <div class="card"><h3>${data.total_varones}</h3><p>Varones (matriculados)</p></div>
-            <div class="card"><h3>${data.total_hembras}</h3><p>Hembras (matriculadas)</p></div>
+            <div class="card"><h3>${data.varones_presentes}</h3><p>Varones presentes hoy</p></div>
+            <div class="card"><h3>${data.hembras_presentes}</h3><p>Hembras presentes hoy</p></div>
+            <div class="card"><h3>${data.varones_presentes + data.hembras_presentes}</h3><p>Total presentes hoy</p></div>
         </div>
         <div class="card">
             <h3>Reporte diario — ${data.fecha}</h3>

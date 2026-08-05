@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.titulo | default: "Sistema de Asistencia" }} · Asistencia MINERD</title>
+    <title>{{ page.titulo | default: "Inicio" }} · Sistema Académico</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
@@ -16,9 +16,9 @@
 
 {% unless page.sin_layout %}
 <div class="topbar">
-    <a class="brand" href="{{ '/dashboard.html' | relative_url }}">
-        <span class="sello">A</span>
-        Asistencia
+    <a class="brand" href="{{ '/portal.html' | relative_url }}">
+        <span class="sello">🎓</span>
+        Sistema Académico
     </a>
     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
     {% include nav.html %}
