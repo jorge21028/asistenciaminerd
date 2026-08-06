@@ -116,6 +116,20 @@ Basado fielmente en:
 
 **Importante — lo que este módulo NO reemplaza:** las Normas MINERD establecen procesos con personas concretas (Equipo de Mediación, Equipo de Gestión, Comité Distrital/Regional de Revisión de Medidas para apelaciones, obligación de escuchar al estudiante, plazos de 48 horas laborables, etc.) que siguen siendo responsabilidad humana. El sistema organiza, documenta y da trazabilidad a esos procesos — no sustituye el criterio profesional del Equipo de Gestión ni los procedimientos de apelación ante el Distrito/Regional educativo. Para casos que puedan constituir delito, el Art. 27 exige remitirlos al Tribunal de Niños, Niñas y Adolescentes; el sistema no gestiona ese trámite.
 
+### Módulo Dinámica de Clase
+
+Un subsistema pensado para alojar herramientas de uso rápido durante la clase en vivo. Por ahora incluye un submódulo:
+
+**Ruleta de Participación** (`ruleta.html`):
+- Elige un curso y gira la ruleta para seleccionar estudiantes al azar, sin repetir dentro de la misma ronda.
+- Cada giro agrega el estudiante y su turno a una lista ordenada.
+- **Guardar estado**: guarda qué estudiantes ya participaron y el orden de turnos, para continuar exactamente donde quedaste en la siguiente clase (por profesor y por curso).
+- **Reiniciar**: borra el estado guardado y vuelve a poner a todos los estudiantes disponibles.
+- **Ventana de proyección** (`ruleta-proyeccion.html`, botón "Abrir ventana para proyector"): una vista de pantalla completa, con letras grandes, pensada para el segundo monitor conectado al proyector/PDI del aula. Se sincroniza en vivo con la ventana de control (misma animación de giro, mismo resultado) usando `BroadcastChannel`, sin necesidad de recargar ni configurar nada — solo abre esa ventana en la pantalla del proyector y controla todo desde tu laptop.
+- Si ya tenías la base de datos creada, ejecuta `database/migracion_dinamica_clase.sql` en phpMyAdmin.
+
+Cuando construyamos más submódulos (generador de grupos, temporizador, etc.), se agregan como tarjetas nuevas en `dinamica-clase.html`, el mismo patrón que ya usa `portal.html` para los módulos principales.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

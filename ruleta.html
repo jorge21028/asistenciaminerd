@@ -1,0 +1,54 @@
+---
+layout: default
+titulo: Ruleta de Participación
+---
+<div class="page-header">
+    <div>
+        <h1>🎡 Ruleta de Participación</h1>
+        <p class="subtitulo"><a href="{{ '/dinamica-clase.html' | relative_url }}">← Dinámica de Clase</a></p>
+    </div>
+</div>
+
+<div id="alertaRuleta"></div>
+
+<div class="card">
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="curso">Curso</label>
+            <select id="curso"></select>
+        </div>
+        <button class="btn secundario" id="btnProyectar">🖥️ Abrir ventana para proyector</button>
+    </div>
+</div>
+
+<div class="grid-2" id="areaRuleta" style="display:none; align-items:start;">
+    <div class="card" style="text-align:center;">
+        <div class="ruleta-contenedor">
+            <div class="ruleta-puntero">▼</div>
+            <svg id="svgRuleta" viewBox="0 0 300 300" class="ruleta-svg"></svg>
+        </div>
+        <p id="resultadoGiro" class="ruleta-resultado"></p>
+        <div class="fila-form" style="justify-content:center; margin-top:16px;">
+            <button class="btn" id="btnGirar">Girar la ruleta</button>
+            <button class="btn secundario" id="btnGuardarEstado">Guardar estado</button>
+            <button class="btn peligro" id="btnReiniciar">Reiniciar</button>
+        </div>
+        <p class="horario-actualizado" id="estadoGuardadoInfo" style="text-align:center; color:var(--color-ink-soft);"></p>
+    </div>
+
+    <div class="card">
+        <h3>Orden de turnos</h3>
+        <p class="subtitulo" id="restantesInfo"></p>
+        <div class="tabla-wrap">
+            <table>
+                <thead><tr><th class="num">Turno</th><th>Estudiante</th></tr></thead>
+                <tbody id="tablaTurnos"></tbody>
+            </table>
+        </div>
+        <div id="estadoVacioTurnos" class="vacio-estado" style="display:none;">Todavía no se ha girado la ruleta.</div>
+    </div>
+</div>
+
+<div id="estadoVacioCurso" class="vacio-estado" style="display:none;"></div>
+
+<script src="{{ '/assets/js/ruleta.js' | relative_url }}"></script>

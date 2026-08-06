@@ -1,0 +1,31 @@
+---
+layout: default
+titulo: Ruleta — Proyección
+sin_layout: true
+---
+<div class="proyeccion-shell">
+    <div class="proyeccion-header">
+        <span class="proyeccion-marca">🎡 Ruleta de Participación</span>
+        <span class="proyeccion-curso" id="proyeccionCurso">Esperando al profesor…</span>
+    </div>
+
+    <div class="proyeccion-cuerpo">
+        <div class="ruleta-contenedor proyeccion-rueda">
+            <div class="ruleta-puntero">▼</div>
+            <svg id="svgRuleta" viewBox="0 0 300 300" class="ruleta-svg"></svg>
+        </div>
+
+        <div class="proyeccion-panel">
+            <p class="proyeccion-etiqueta">Turno actual</p>
+            <p class="proyeccion-resultado" id="resultadoGiro">—</p>
+            <h3>Turnos</h3>
+            <div id="listaTurnosProyeccion" class="proyeccion-lista-turnos"></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/api.js' | relative_url }}"></script>
+<script>
+    if (!Auth.estaAutenticado()) { window.location.href = rutaBase('index.html'); }
+</script>
+<script src="{{ '/assets/js/ruleta.js' | relative_url }}"></script>
