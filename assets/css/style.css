@@ -631,6 +631,19 @@ table.horario-grid td.celda-dia {
     border: 1px solid transparent;
 }
 
+/* Módulo de Conducta */
+.nivel-opcion {
+    cursor: pointer;
+    border: 2px solid var(--color-line);
+    transition: transform 0.12s, box-shadow 0.12s;
+}
+.nivel-opcion:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.nivel-opcion[data-nivel="leve"] { border-top: none; }
+.nivel-opcion.nivel-activo[data-nivel="leve"] { border-color: var(--color-present); background: var(--color-present-bg); }
+.nivel-opcion.nivel-activo[data-nivel="grave"] { border-color: var(--color-tardanza); background: var(--color-tardanza-bg); }
+.nivel-opcion.nivel-activo[data-nivel="muy_grave"] { border-color: var(--color-absent); background: var(--color-absent-bg); }
+.nivel-opcion p { font-size: 0.85rem; margin: 4px 0; color: var(--color-ink-soft); }
+
 .acciones-tabla { display: flex; gap: 6px; }
 
 /* login */

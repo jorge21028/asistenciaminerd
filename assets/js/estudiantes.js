@@ -40,6 +40,7 @@ function pintarEstudiantes() {
             <td>${e.sexo === 'F' ? 'Hembra' : 'Varón'}</td>
             <td>${escaparHtml(e.fecha_nacimiento || '—')}</td>
             <td class="acciones-tabla">
+                <a class="btn secundario chico" href="${rutaBase('conducta-expediente.html')}?estudiante_id=${e.id}">Conducta</a>
                 <button class="btn secundario chico" onclick="editarEstudiante(${e.id})">Editar</button>
                 <button class="btn peligro chico" onclick="eliminarEstudiante(${e.id})">Eliminar</button>
             </td>
