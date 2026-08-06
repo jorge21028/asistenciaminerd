@@ -644,6 +644,144 @@ table.horario-grid td.celda-dia {
 .nivel-opcion.nivel-activo[data-nivel="muy_grave"] { border-color: var(--color-absent); background: var(--color-absent-bg); }
 .nivel-opcion p { font-size: 0.85rem; margin: 4px 0; color: var(--color-ink-soft); }
 
+/* ---------------------------------------------------------------------
+   Dinámica de Clase — Ruleta de Participación
+   --------------------------------------------------------------------- */
+.ruleta-contenedor {
+    position: relative;
+    width: min(100%, 380px);
+    margin: 0 auto;
+}
+.ruleta-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 8px 20px rgba(20,36,56,0.18));
+    transform-origin: 50% 50%;
+}
+.ruleta-puntero {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: var(--color-primary-dark);
+    z-index: 5;
+    text-shadow: 0 2px 3px rgba(0,0,0,0.25);
+}
+.ruleta-label {
+    fill: #fff;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 11px;
+    paint-order: stroke;
+    stroke: rgba(20,36,56,0.65);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+.ruleta-resultado {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    min-height: 1.6em;
+    margin: 18px 0 0;
+}
+
+/* Ventana de proyección: pensada para verse desde lejos en un proyector/PDI */
+.proyeccion-shell {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, var(--color-primary-light), var(--color-primary-dark) 70%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 36px 40px;
+}
+.proyeccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.proyeccion-marca {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.proyeccion-curso {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: #DCE4F0;
+    background: rgba(255,255,255,0.1);
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+.proyeccion-cuerpo {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+@media (max-width: 900px) { .proyeccion-cuerpo { grid-template-columns: 1fr; } }
+.proyeccion-rueda { width: min(100%, 560px); margin: 0 auto; }
+.proyeccion-rueda .ruleta-puntero { font-size: 3rem; top: -14px; }
+.proyeccion-rueda .ruleta-label { font-size: 13px; }
+
+.proyeccion-panel {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 28px 30px;
+}
+.proyeccion-etiqueta {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #B9C6DC;
+    margin: 0;
+}
+.proyeccion-resultado {
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    font-weight: 700;
+    margin: 6px 0 0;
+    min-height: 1.4em;
+}
+.proyeccion-panel h3 { color: #fff; margin-top: 26px; }
+.proyeccion-lista-turnos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+.proyeccion-turno-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+}
+.proyeccion-turno-item span {
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+}
+
 .acciones-tabla { display: flex; gap: 6px; }
 
 /* login */
