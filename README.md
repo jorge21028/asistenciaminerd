@@ -97,6 +97,25 @@ Además de la asistencia, el sistema ahora incluye un módulo de **Horario**:
 
 Este módulo reutiliza las mismas tablas de `usuarios`, `cursos` y `asignaturas` del módulo de asistencia — no hay que duplicar datos.
 
+### Módulo de Conducta (Gestión de la Convivencia)
+
+Basado fielmente en:
+- **Normas del Sistema Educativo Dominicano para la Convivencia Armoniosa en los Centros Educativos Públicos y Privados** (MINERD, Ordenanza 05-2023, en cumplimiento de los Arts. 48-50 de la Ley 136-03).
+- **Ley 136-03**, Código para el Sistema de Protección y los Derechos Fundamentales de Niños, Niñas y Adolescentes.
+- **Reglamento del Estatuto del Docente** (Arts. 33-35, deberes del personal docente).
+- La **Guía Táctica de Convivencia** del centro (Matriz de Triaje Disciplinario, Protocolo de Derivación, Protocolo de Emergencia Docente, estructura del reporte disciplinario).
+
+**Cómo funciona:**
+- **Falta leve:** el/la docente la determina y resuelve de inmediato, sin proceso posterior (Art. 31). El formulario de registro pide directamente la medida aplicada, tomada del catálogo del Art. 18.
+- **Falta grave / muy grave:** el/la docente NO sanciona por su cuenta — solo documenta el hecho de forma objetiva (qué, cuándo, dónde, testigos, acción inmediata) y el sistema deriva automáticamente el caso a Gestión de Convivencia (graves) o Dirección/Consejo de Disciplina (muy graves), quienes resuelven desde la pantalla de detalle del incidente.
+- **Alerta de reincidencia:** si un estudiante acumula 3 o más faltas leves, el sistema avisa que, según el Art. 19-m y la guía del centro, esto puede considerarse una falta grave.
+- **Protocolo de Emergencia:** al registrar una falta muy grave, se muestran los 3 pasos (Proteger y Salvaguardar → Aislar y Derivar → Documentación Legal) como recordatorio antes de completar el reporte.
+- **Catálogo de medidas restringido a lo permitido por ley:** el catálogo de medidas educativas y disciplinarias (Arts. 18, 20 y 22) **deliberadamente no incluye** ninguna medida prohibida por el Art. 23 (agresión verbal, castigos corporales o colectivos, sanciones económicas, negar recreo/alimentación/baño/examen/acceso) **ni la expulsión**, prohibida en cualquier caso por el Art. 24. Esto es una salvaguarda incorporada al sistema, no solo una recomendación de uso.
+- **Expediente de conducta:** el historial completo de faltas de cada estudiante, accesible desde el listado de incidentes o desde "Estudiantes" → "Conducta".
+- Si ya tenías la base de datos creada, ejecuta `database/migracion_conducta.sql` en phpMyAdmin.
+
+**Importante — lo que este módulo NO reemplaza:** las Normas MINERD establecen procesos con personas concretas (Equipo de Mediación, Equipo de Gestión, Comité Distrital/Regional de Revisión de Medidas para apelaciones, obligación de escuchar al estudiante, plazos de 48 horas laborables, etc.) que siguen siendo responsabilidad humana. El sistema organiza, documenta y da trazabilidad a esos procesos — no sustituye el criterio profesional del Equipo de Gestión ni los procedimientos de apelación ante el Distrito/Regional educativo. Para casos que puedan constituir delito, el Art. 27 exige remitirlos al Tribunal de Niños, Niñas y Adolescentes; el sistema no gestiona ese trámite.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

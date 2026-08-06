@@ -1,0 +1,127 @@
+---
+layout: default
+titulo: Registrar falta
+---
+<div class="page-header">
+    <div>
+        <h1>Registrar falta</h1>
+        <p class="subtitulo">Sigue la Matriz de Triaje Disciplinario: tú decides el nivel, el sistema te guía según corresponda</p>
+    </div>
+</div>
+
+<div id="alertaNueva"></div>
+
+<div class="card">
+    <h3>1. Estudiante y contexto</h3>
+    <div class="fila-form">
+        <div class="campo">
+            <label for="curso">Curso</label>
+            <select id="curso"></select>
+        </div>
+        <div class="campo" style="flex:2;">
+            <label for="estudiante">Estudiante</label>
+            <select id="estudiante"></select>
+        </div>
+    </div>
+    <div class="fila-form" style="margin-top:14px;">
+        <div class="campo">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha">
+        </div>
+        <div class="campo">
+            <label for="hora">Hora</label>
+            <input type="time" id="hora">
+        </div>
+        <div class="campo" style="flex:2;">
+            <label for="lugar">Lugar</label>
+            <input type="text" id="lugar" placeholder="Ej: Aula 5to A, patio, pasillo B">
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>2. Nivel de la falta</h3>
+    <p class="subtitulo">Naturaleza e impacto, según la Matriz de Triaje Disciplinario</p>
+    <div class="grid-3" id="selectorNivel">
+        <div class="card nivel-opcion" data-nivel="leve" onclick="elegirNivel('leve')">
+            <h3>✅ Falta Leve</h3>
+            <p><strong>Naturaleza:</strong> Fruto de la inmadurez e irreflexión.</p>
+            <p><strong>Gestión:</strong> El docente (zona de aula). Se resuelve de inmediato.</p>
+        </div>
+        <div class="card nivel-opcion" data-nivel="grave" onclick="elegirNivel('grave')">
+            <h3>⚠️ Falta Grave</h3>
+            <p><strong>Naturaleza:</strong> Ruptura de valores y sistematicidad.</p>
+            <p><strong>Gestión:</strong> Gestión de Convivencia / Orientación. Tú reportas, no sancionas.</p>
+        </div>
+        <div class="card nivel-opcion" data-nivel="muy_grave" onclick="elegirNivel('muy_grave')">
+            <h3>🛑 Falta Muy Grave</h3>
+            <p><strong>Naturaleza:</strong> Alerta máxima, riesgo, intención de dañar.</p>
+            <p><strong>Gestión:</strong> Dirección / Consejo de Disciplina. Protocolo de emergencia.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card" id="cardEmergencia" style="display:none; border: 2px solid var(--color-absent);">
+    <h3>🚨 Protocolo de Emergencia Docente</h3>
+    <p class="subtitulo">Antes de continuar, confirma que ya seguiste estos pasos:</p>
+    <div class="grid-3">
+        <div><strong>Paso 1 — Proteger y Salvaguardar</strong><p class="estado-detalle">Garantiza la integridad física. Separa a los agresores, retén objetos peligrosos si es seguro hacerlo, asegura al resto del grupo.</p></div>
+        <div><strong>Paso 2 — Aislar y Derivar</strong><p class="estado-detalle">Lleva a los implicados inmediatamente a Dirección o Gestión de Convivencia. No actúes como juez ni mediador en este nivel.</p></div>
+        <div><strong>Paso 3 — Documentación Legal</strong><p class="estado-detalle">Este formulario es ese informe. Sé exacto y objetivo: es vital para el Consejo de Disciplina y procesos legales.</p></div>
+    </div>
+</div>
+
+<div class="card" id="cardFalta" style="display:none;">
+    <h3>3. ¿Qué ocurrió?</h3>
+    <div class="campo">
+        <label for="faltaCatalogo">Selecciona de la lista (o descríbelo abajo si no aparece)</label>
+        <select id="faltaCatalogo"><option value="">— Elegir del catálogo —</option></select>
+    </div>
+    <div class="campo">
+        <label for="faltaDescripcion">Descripción de la falta</label>
+        <input type="text" id="faltaDescripcion" placeholder="Se completa al elegir del catálogo, o escríbelo tú">
+    </div>
+
+    <div class="campo">
+        <label for="descripcionHechos">Descripción objetiva de los hechos</label>
+        <p class="horario-info-sub" style="color:var(--color-ink-soft); margin: -4px 0 8px;">Regla: describe el hecho observable, NO juzgues intenciones. Ej. correcto: "El estudiante lanzó el cuaderno a la pizarra" (no: "el estudiante quería molestar").</p>
+        <textarea id="descripcionHechos" rows="3" required></textarea>
+    </div>
+
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="testigos">Testigos presentes</label>
+            <input type="text" id="testigos" placeholder="Nombres de estudiantes/docentes presentes">
+        </div>
+    </div>
+
+    <div class="campo">
+        <label for="accionInmediata">Acción tomada por el docente en el momento</label>
+        <textarea id="accionInmediata" rows="2" placeholder='Ej: "Se detuvo la acción y se le pidió recoger el cuaderno."'></textarea>
+    </div>
+</div>
+
+<div class="card" id="cardMedidaLeve" style="display:none;">
+    <h3>4. Medida aplicada</h3>
+    <p class="subtitulo">Las faltas leves las resuelves tú mismo/a de inmediato (Art. 31, Normas MINERD)</p>
+    <div class="campo">
+        <label for="medidaCatalogo">Medida educativa/disciplinaria</label>
+        <select id="medidaCatalogo"><option value="">— Elegir del catálogo —</option></select>
+    </div>
+    <div class="campo">
+        <label for="medidaAplicada">Detalle (opcional)</label>
+        <input type="text" id="medidaAplicada" placeholder="Se completa al elegir, o agrega detalle">
+    </div>
+</div>
+
+<div class="card" id="cardDerivacion" style="display:none;">
+    <h3>4. Esta falta se deriva</h3>
+    <p id="textoDerivacion" class="subtitulo"></p>
+    <p style="color:var(--color-ink-soft); font-size:0.9rem;">Recuerda: no debes imponer castigos severos por tu cuenta (expulsar, suspender notas), ni ocultar información o manejarla "en secreto" (guía del centro, "Qué NO Hacer"). Tu reporte objetivo es lo que protege el proceso.</p>
+</div>
+
+<div class="card" id="cardGuardar" style="display:none;">
+    <button class="btn" id="btnGuardar">Registrar falta</button>
+</div>
+
+<script src="{{ '/assets/js/conducta-nueva.js' | relative_url }}"></script>

@@ -1,0 +1,64 @@
+---
+layout: default
+titulo: Conducta
+---
+<div class="page-header">
+    <div>
+        <h1>Gestión de la Convivencia</h1>
+        <p class="subtitulo">Registro y seguimiento de faltas, según las Normas MINERD de Convivencia Armoniosa (Ley 136-03) y la guía del centro</p>
+    </div>
+    <a class="btn" href="{{ '/conducta-nueva.html' | relative_url }}">+ Registrar falta</a>
+</div>
+
+<div id="alertaConducta"></div>
+
+<div class="grid-3" id="statsResumen"></div>
+
+<div class="card" id="cardPendientes" style="display:none;">
+    <h3>⚠️ Casos pendientes por resolver</h3>
+    <p class="subtitulo" id="textoPendientes"></p>
+</div>
+
+<div class="card">
+    <h3>Filtros</h3>
+    <div class="fila-form">
+        <div class="campo">
+            <label for="filtroCurso">Curso</label>
+            <select id="filtroCurso"><option value="">Todos</option></select>
+        </div>
+        <div class="campo">
+            <label for="filtroNivel">Nivel</label>
+            <select id="filtroNivel">
+                <option value="">Todos</option>
+                <option value="leve">Leve</option>
+                <option value="grave">Grave</option>
+                <option value="muy_grave">Muy grave</option>
+            </select>
+        </div>
+        <div class="campo">
+            <label for="filtroEstado">Estado</label>
+            <select id="filtroEstado">
+                <option value="">Todos</option>
+                <option value="registrado">Registrado</option>
+                <option value="en_gestion">En gestión</option>
+                <option value="resuelto">Resuelto</option>
+                <option value="apelado">Apelado</option>
+            </select>
+        </div>
+        <button class="btn secundario" id="btnFiltrar">Filtrar</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="tabla-wrap">
+        <table>
+            <thead>
+                <tr><th>Fecha</th><th>Estudiante</th><th>Curso</th><th>Falta</th><th class="num">Nivel</th><th class="num">Estado</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="tablaIncidentes"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacio" class="vacio-estado" style="display:none;">No hay incidentes registrados con estos filtros.</div>
+</div>
+
+<script src="{{ '/assets/js/conducta.js' | relative_url }}"></script>
