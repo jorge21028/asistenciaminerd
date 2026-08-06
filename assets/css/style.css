@@ -383,6 +383,254 @@ td.num, th.num { text-align: center; font-family: var(--font-mono); }
 .modulo-proximamente { opacity: 0.55; }
 .modulo-proximamente .badge { align-self: flex-start; }
 
+/* =====================================================================
+   Módulo de Horario
+   ===================================================================== */
+
+.horario-header {
+    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+    color: #fff;
+    border: none;
+}
+.horario-header h1 { color: #fff; margin-bottom: 2px; }
+.horario-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.horario-profesor-nombre {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: #DCE4F0;
+    margin: 0;
+}
+.horario-header .campo label { color: #B9C6DC; }
+.horario-header .campo select {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.25);
+    color: #fff;
+}
+
+.horario-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+@media (max-width: 900px) { .horario-info-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.horario-info-chip {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.horario-info-chip.destacado {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.35);
+}
+.horario-info-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #B9C6DC;
+    font-family: var(--font-mono);
+}
+.horario-info-valor {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+}
+.horario-info-sub {
+    font-size: 0.78rem;
+    color: #C9D3E4;
+    font-family: var(--font-mono);
+}
+
+.horario-actualizado {
+    margin: 16px 0 0;
+    font-size: 0.72rem;
+    color: #9FAEC6;
+    text-align: right;
+}
+
+/* Tarjetas de estado: clase actual / próxima clase */
+.tarjeta-estado {
+    position: relative;
+    overflow: hidden;
+}
+.etiqueta-estado {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-soft);
+    margin-bottom: 10px;
+}
+.contenido-estado { min-height: 64px; }
+.estado-asignatura {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin: 0 0 4px;
+}
+.estado-detalle { color: var(--color-ink-soft); font-size: 0.9rem; margin: 2px 0; }
+.estado-vacio { color: var(--color-ink-soft); font-style: italic; padding: 10px 0; }
+
+.tarjeta-estado.en-curso {
+    border: 2px solid var(--color-present);
+    background: linear-gradient(180deg, var(--color-present-bg), var(--color-surface) 60%);
+    animation: pulso-suave 2.4s ease-in-out infinite;
+}
+.tarjeta-estado.en-curso .etiqueta-estado { color: var(--color-present); }
+.badge-ahora {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--color-present);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+}
+.tarjeta-estado.es-receso { border: 2px solid var(--color-tardanza); background: linear-gradient(180deg, var(--color-tardanza-bg), var(--color-surface) 60%); }
+.tarjeta-estado.es-almuerzo { border: 2px solid var(--color-excusa); background: linear-gradient(180deg, var(--color-excusa-bg), var(--color-surface) 60%); }
+
+@keyframes pulso-suave {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(31,122,77,0.25); }
+    50% { box-shadow: 0 0 0 6px rgba(31,122,77,0); }
+}
+
+/* Grilla semanal */
+table.horario-grid { border-collapse: separate; border-spacing: 6px; width: 100%; background: transparent; }
+table.horario-grid thead th {
+    position: static;
+    background: transparent;
+    color: var(--color-ink-soft);
+    text-align: center;
+    padding: 4px 6px 8px;
+}
+table.horario-grid td { border: none; padding: 0; vertical-align: top; }
+table.horario-grid td.celda-dia {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    white-space: nowrap;
+    padding-right: 10px;
+    vertical-align: middle;
+    text-align: right;
+}
+
+.clase-card {
+    border-radius: 9px;
+    padding: 8px 9px;
+    min-height: 66px;
+    min-width: 108px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    border: 1px solid transparent;
+    position: relative;
+    transition: transform 0.12s;
+}
+.clase-card:hover { transform: translateY(-1px); }
+.clase-card .materia { font-weight: 700; font-size: 0.82rem; line-height: 1.2; }
+.clase-card .curso { font-size: 0.72rem; opacity: 0.85; }
+
+.clase-card.pedagogica {
+    background: var(--color-excusa-bg);
+    border-color: var(--color-excusa);
+    color: var(--color-excusa);
+}
+.clase-card.vacia {
+    background: transparent;
+    border: 1.5px dashed var(--color-line);
+    color: var(--color-ink-soft);
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+.clase-card.separador {
+    background: var(--color-surface-alt);
+    border: 1px dashed var(--color-line);
+    color: var(--color-ink-soft);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    min-width: 34px;
+}
+.clase-card.celda-ahora {
+    box-shadow: 0 0 0 2.5px var(--color-primary-dark), var(--shadow);
+    transform: translateY(-2px) scale(1.03);
+}
+.clase-card .badge-ahora-mini {
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    background: var(--color-primary-dark);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+/* Estadísticas semanales */
+.horario-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+@media (max-width: 720px) { .horario-stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.horario-stat-tile {
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+}
+.horario-stat-tile .numero {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    display: block;
+}
+.horario-stat-tile .etiqueta {
+    font-size: 0.78rem;
+    color: var(--color-ink-soft);
+}
+
+.horario-resumen-asignaturas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.chip-asignatura {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
 .acciones-tabla { display: flex; gap: 6px; }
 
 /* login */
