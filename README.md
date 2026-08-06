@@ -86,6 +86,17 @@ Muestra: mes y días trabajados en el encabezado, y por cada estudiante una fila
 
 ---
 
+### Módulo de Horario
+
+Además de la asistencia, el sistema ahora incluye un módulo de **Horario**:
+
+- **Bloques de horario** (`bloques-horario.html`, solo admin): el "campanario" del centro — los bloques de clase y los separadores de receso/almuerzo, con sus horas de inicio y fin. Es el mismo para todo el centro. Viene con 8 bloques de clase + receso + almuerzo precargados; edítalos a las horas reales de tu centro.
+- **Asignar horario** (`asignar-horario.html`, solo admin): eliges un profesor y llenas una grilla día × bloque con lo que imparte en cada uno (una combinación curso+asignatura de las que ya tiene en "Asignaciones") o si es una hora pedagógica.
+- **Horario** (`horario.html`): el dashboard visual del horario semanal — muestra la clase actual con cuenta regresiva en vivo, la próxima clase, la carga horaria semanal/diaria, la grilla completa de la semana y un resumen de horas por asignatura. Los profesores ven su propio horario; el admin puede elegir de cuál profesor ver el horario.
+- Si ya tenías la base de datos creada, ejecuta `database/migracion_horario.sql` en phpMyAdmin para agregar las tablas de este módulo.
+
+Este módulo reutiliza las mismas tablas de `usuarios`, `cursos` y `asignaturas` del módulo de asistencia — no hay que duplicar datos.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

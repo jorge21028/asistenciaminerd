@@ -1,0 +1,68 @@
+---
+layout: default
+titulo: Horario
+---
+<div id="alertaHorarioVista"></div>
+
+<div class="card horario-header">
+    <div class="horario-header-top">
+        <div>
+            <h1>Horario Semanal de Clases</h1>
+            <p class="horario-profesor-nombre" id="nombreProfesorHorario">—</p>
+        </div>
+        <div class="campo" id="selectorProfesorWrap" style="display:none; max-width:280px;">
+            <label for="selectorProfesor">Ver horario de</label>
+            <select id="selectorProfesor"></select>
+        </div>
+    </div>
+
+    <div class="horario-info-grid">
+        <div class="horario-info-chip destacado" id="chipTemporizador">
+            <span class="horario-info-label">Ahora mismo</span>
+            <span class="horario-info-valor" id="temporizadorTexto">—</span>
+            <span class="horario-info-sub" id="temporizadorCuenta"></span>
+        </div>
+        <div class="horario-info-chip">
+            <span class="horario-info-label">Carga horaria semanal</span>
+            <span class="horario-info-valor" id="cargaSemanal">—</span>
+        </div>
+        <div class="horario-info-chip">
+            <span class="horario-info-label">Carga horaria diaria (hoy)</span>
+            <span class="horario-info-valor" id="cargaDiaria">—</span>
+        </div>
+        <div class="horario-info-chip">
+            <span class="horario-info-label">Fecha</span>
+            <span class="horario-info-valor" id="fechaActual" style="font-size:1rem;">—</span>
+            <span class="horario-info-sub" id="horaActual"></span>
+        </div>
+    </div>
+
+    <p class="horario-actualizado" id="fechaActualizacion"></p>
+</div>
+
+<div class="grid-2">
+    <div class="card tarjeta-estado" id="cardClaseActual">
+        <span class="etiqueta-estado">CLASE ACTUAL</span>
+        <div class="contenido-estado" id="contenidoClaseActual">Cargando…</div>
+    </div>
+    <div class="card tarjeta-estado" id="cardProximaClase">
+        <span class="etiqueta-estado">PRÓXIMA CLASE</span>
+        <div class="contenido-estado" id="contenidoProximaClase">Cargando…</div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Vista semanal</h3>
+    <div class="tabla-wrap">
+        <table class="horario-grid" id="tablaHorarioGrid"></table>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Resumen semanal</h3>
+    <div class="horario-stats-grid" id="statsGrid"></div>
+    <h4 style="margin-top:22px;">Clases por asignatura</h4>
+    <div class="horario-resumen-asignaturas" id="resumenAsignaturas"></div>
+</div>
+
+<script src="{{ '/assets/js/horario.js' | relative_url }}"></script>

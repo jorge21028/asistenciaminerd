@@ -1,0 +1,34 @@
+---
+layout: default
+titulo: Asignar horario
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1>Asignar horario</h1>
+        <p class="subtitulo">Elige un profesor y define qué imparte (o si es hora pedagógica) en cada bloque de la semana</p>
+    </div>
+</div>
+
+<div class="card">
+    <div id="alertaHorario"></div>
+    <div class="campo" style="max-width:360px;">
+        <label for="profesor">Profesor</label>
+        <select id="profesor"></select>
+    </div>
+</div>
+
+<div class="card" id="cardGrid" style="display:none;">
+    <div class="leyenda" style="margin-bottom:14px;">
+        <span><span class="badge" style="background:var(--color-present-bg); color:var(--color-present); border-color:var(--color-present);">■</span> Hora de clase</span>
+        <span><span class="badge" style="background:var(--color-excusa-bg); color:var(--color-excusa); border-color:var(--color-excusa);">■</span> Hora pedagógica</span>
+        <span>Para dejar una celda vacía, elige "— Sin asignar —"</span>
+    </div>
+    <div class="tabla-wrap">
+        <table id="tablaGrid"></table>
+    </div>
+</div>
+
+<div id="estadoVacio" class="vacio-estado" style="display:none;"></div>
+
+<script src="{{ '/assets/js/horario-gestion.js' | relative_url }}"></script>
