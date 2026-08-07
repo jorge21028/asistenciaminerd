@@ -86,17 +86,22 @@ titulo: Actividades
     <div id="listaRecientes"></div>
 </div>
 
-<!-- Hoja usada solo para generar el PDF (se renderiza fuera de pantalla) -->
-<div id="hojaActividadPDF" class="hoja-actividad-pdf" style="left:-9999px;">
-    <div class="hoja-actividad-marca">GUÍA DE ACTIVIDAD</div>
-    <p class="hoja-actividad-contexto" id="pdfContexto"></p>
-    <h1 id="pdfTitulo"></h1>
-    <p class="hoja-actividad-valor" id="pdfValor"></p>
-    <h3>Intención Pedagógica / Objetivo</h3>
-    <p id="pdfObjetivo"></p>
-    <h3>Descripción de la actividad</h3>
-    <p id="pdfDescripcion" style="white-space:pre-wrap;"></p>
-    <p class="hoja-actividad-pie" id="pdfPie"></p>
+<!-- Hoja usada solo para generar el PDF. Se mantiene en el flujo normal del
+     documento pero recortada a 0x0 con overflow:hidden, en vez de moverla a
+     coordenadas extremas fuera de pantalla (esto último puede hacer que
+     html2canvas la capture mal o en blanco en algunos navegadores). -->
+<div id="envolturaHojaPDF" style="position:absolute; width:0; height:0; overflow:hidden;">
+    <div id="hojaActividadPDF" class="hoja-actividad-pdf">
+        <div class="hoja-actividad-marca">GUÍA DE ACTIVIDAD</div>
+        <p class="hoja-actividad-contexto" id="pdfContexto"></p>
+        <h1 id="pdfTitulo"></h1>
+        <p class="hoja-actividad-valor" id="pdfValor"></p>
+        <h3>Intención Pedagógica / Objetivo</h3>
+        <p id="pdfObjetivo"></p>
+        <h3>Descripción de la actividad</h3>
+        <p id="pdfDescripcion" style="white-space:pre-wrap;"></p>
+        <p class="hoja-actividad-pie" id="pdfPie"></p>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

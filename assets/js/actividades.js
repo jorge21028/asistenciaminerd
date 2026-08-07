@@ -236,6 +236,11 @@ if (!esProyeccionActividad) {
     // -------------------------------------------------------------
     // PDF (imagen, sin texto seleccionable)
     // -------------------------------------------------------------
+    function formatoFechaArchivo(fecha) {
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${pad(fecha.getDate())}_${pad(fecha.getMonth() + 1)}_${fecha.getFullYear()}`;
+    }
+
     async function generarPdf() {
         const datos = leerFormulario();
         if (!datos) { mostrarAlerta('alertaActividad', 'Selecciona el curso y la asignatura.'); return; }
@@ -253,12 +258,24 @@ if (!esProyeccionActividad) {
         btn.textContent = 'Generando…';
 
         try {
-            const contenedor = document.getElementById('hojaActividadPDF');
-            contenedor.style.left = '0';
-            contenedor.style.position = 'fixed';
-            contenedor.style.top = '-99999px'; // renderizable pero fuera de la vista
+            // Esperar a que las fuentes web terminen de cargar, para que el
+            // texto se capture nítido (si no, a veces se captura con la
+            // tipografía de reemplazo del sistema mientras carga la real).
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
 
-            const canvas = await html2canvas(contenedor, { scale: 2, backgroundColor: '#ffffff' });
+            const contenedor = document.getElementById('hojaActividadPDF');
+            const canvas = await html2canvas(contenedor, {
+                scale: 3,
+                backgroundColor: '#ffffff',
+                useCORS: true,
+            });
+
+            if (canvas.width === 0 || canvas.height === 0) {
+                throw new Error('No se pudo capturar el contenido de la actividad.');
+            }
+
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
             const pageWidth = pdf.internal.pageSize.getWidth();
@@ -271,13 +288,15 @@ if (!esProyeccionActividad) {
                 anchoImg = canvas.width * (altoImg / canvas.height);
             }
             const x = (pageWidth - anchoImg) / 2;
-            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, margen, anchoImg, altoImg);
 
-            const nombreArchivo = 'Actividad_' + datos.titulo.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 60) + '.pdf';
+            // PNG (sin pérdida) en vez de JPEG: el texto queda más nítido y,
+            // al ser toda la página una sola imagen incrustada, el PDF no
+            // contiene ninguna capa de texto que se pueda seleccionar o copiar.
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', x, margen, anchoImg, altoImg);
+            pdf.setProperties({ title: datos.titulo, subject: 'Guía de actividad', creator: 'Sistema Académico' });
+
+            const nombreArchivo = `${formatoFechaArchivo(new Date())}_actividad_${datos.titulo.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60)}.pdf`;
             pdf.save(nombreArchivo);
-
-            contenedor.style.top = '';
-            contenedor.style.left = '-9999px';
         } catch (err) {
             mostrarAlerta('alertaActividad', 'No se pudo generar el PDF: ' + err.message);
         }

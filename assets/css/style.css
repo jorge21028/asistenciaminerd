@@ -790,13 +790,13 @@ table.horario-grid td.celda-dia {
    convertida a imagen, para que el PDF resultante no tenga texto
    seleccionable) */
 .hoja-actividad-pdf {
-    position: fixed;
     width: 700px;
     background: #fff;
     color: var(--color-ink);
     padding: 46px 50px;
     font-family: var(--font-body);
     box-sizing: border-box;
+    user-select: none;
 }
 .hoja-actividad-marca {
     font-family: var(--font-mono);
