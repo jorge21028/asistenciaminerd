@@ -782,6 +782,83 @@ table.horario-grid td.celda-dia {
     flex-shrink: 0;
 }
 
+/* ---------------------------------------------------------------------
+   Dinámica de Clase — Actividades
+   --------------------------------------------------------------------- */
+
+/* Hoja usada para generar el PDF (renderizada fuera de pantalla y luego
+   convertida a imagen, para que el PDF resultante no tenga texto
+   seleccionable) */
+.hoja-actividad-pdf {
+    position: fixed;
+    width: 700px;
+    background: #fff;
+    color: var(--color-ink);
+    padding: 46px 50px;
+    font-family: var(--font-body);
+    box-sizing: border-box;
+}
+.hoja-actividad-marca {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--color-primary);
+    border: 1.5px solid var(--color-primary);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+.hoja-actividad-contexto { color: var(--color-ink-soft); font-size: 0.92rem; margin: 0 0 4px; }
+.hoja-actividad-pdf h1 { font-size: 1.7rem; margin: 4px 0 6px; color: var(--color-primary-dark); }
+.hoja-actividad-valor { font-weight: 700; color: var(--color-tardanza); margin: 0 0 18px; }
+.hoja-actividad-pdf h3 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--color-primary); margin: 22px 0 6px; }
+.hoja-actividad-pdf p { line-height: 1.6; font-size: 0.98rem; }
+.hoja-actividad-pie { margin-top: 40px; font-size: 0.72rem; color: var(--color-ink-soft); border-top: 1px solid var(--color-line); padding-top: 10px; }
+
+/* Temporizador grande (panel de control y proyección) */
+.temporizador-grande {
+    font-family: var(--font-mono);
+    font-size: 6rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 10px 0;
+    line-height: 1;
+    color: #fff;
+}
+#displayTemporizador { font-family: var(--font-mono); font-weight: 700; font-size: 2.6rem; }
+.temporizador-alerta { color: var(--color-absent) !important; animation: pulso-suave 1s ease-in-out infinite; }
+.temporizador-terminado { color: var(--color-absent) !important; }
+
+.proyeccion-actividad-cuerpo {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+@media (max-width: 900px) { .proyeccion-actividad-cuerpo { grid-template-columns: 1fr; } }
+.proyeccion-actividad-info {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 30px 34px;
+}
+.proyeccion-actividad-info h1 { color: #fff; font-size: 1.9rem; margin: 6px 0 4px; }
+.proyeccion-actividad-info h3 { color: #B9C6DC; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 4px; }
+.proyeccion-actividad-info p { color: #EDF1F7; font-size: 1.05rem; line-height: 1.6; }
+.proyeccion-actividad-unidad { font-family: var(--font-mono); color: #DCE4F0; }
+.proyeccion-actividad-valor { color: #FBD98A; font-weight: 700; font-size: 1.1rem; }
+.proyeccion-actividad-timer {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    position: sticky;
+    top: 20px;
+}
+
 .acciones-tabla { display: flex; gap: 6px; }
 
 /* login */
