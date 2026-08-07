@@ -130,6 +130,15 @@ Un subsistema pensado para alojar herramientas de uso rápido durante la clase e
 
 Cuando construyamos más submódulos (generador de grupos, temporizador, etc.), se agregan como tarjetas nuevas en `dinamica-clase.html`, el mismo patrón que ya usa `portal.html` para los módulos principales.
 
+**Actividades** (`actividades.html`):
+- Selecciona curso, asignatura y el RA (si es una asignatura técnico-profesional) o Unidad de Aprendizaje (si es académica) — la etiqueta cambia sola según el **tipo** que le hayas asignado a esa asignatura en "Asignaturas". Gestiona el catálogo de RA/Unidades de cada asignatura desde el nuevo menú "RA / Unidades" (solo admin).
+- El docente llena: título, valor, Intención Pedagógica/Objetivo, descripción de la actividad, y el tiempo asignado (minutos/segundos).
+- **Descargar PDF**: genera un PDF donde todo el contenido es una imagen (no hay texto seleccionable), así que no se puede copiar y pegar directamente el texto. Esto evita el copiado casual hacia una IA u otro documento — no es una protección absoluta (una captura de pantalla + reconocimiento de texto siempre sería posible), y así se lo advierte la propia pantalla al profesor.
+- **Proyectar con temporizador**: guarda la actividad y abre una ventana aparte pensada para el segundo monitor/proyector/PDI, con toda la información de la actividad y una cuenta regresiva grande. Los controles de **Iniciar / Pausar / Reiniciar** se manejan siempre desde la pantalla del profesor (ventana de control) y se reflejan al instante en la proyección.
+- **Precisión del temporizador**: en vez de restar segundo a segundo (lo cual pierde precisión si el navegador limita la pestaña en segundo plano), el conteo se calcula comparando la hora del sistema contra la hora exacta en que debe terminar. Esto significa que el tiempo mostrado siempre es exacto, sin importar cuántos milisegundos tardó en dispararse cada actualización.
+- **Actividades recientes**: la lista de actividades ya usadas para ese curso/asignatura, para volver a cargarlas con un clic sin escribir todo de nuevo.
+- Si ya tenías la base de datos creada, ejecuta `database/migracion_actividades.sql` en phpMyAdmin.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

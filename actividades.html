@@ -1,0 +1,104 @@
+---
+layout: default
+titulo: Actividades
+---
+<div class="page-header">
+    <div>
+        <h1>🗂️ Actividades</h1>
+        <p class="subtitulo"><a href="{{ '/dinamica-clase.html' | relative_url }}">← Dinámica de Clase</a></p>
+    </div>
+</div>
+
+<div id="alertaActividad"></div>
+
+<div class="card">
+    <h3>1. Curso, asignatura y RA/Unidad</h3>
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="cursoAsignatura">Curso y asignatura</label>
+            <select id="cursoAsignatura"></select>
+        </div>
+        <div class="campo" style="flex:2;">
+            <label for="unidad" id="labelUnidad">RA / Unidad de aprendizaje</label>
+            <select id="unidad"><option value="">— Sin especificar —</option></select>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>2. Datos de la actividad</h3>
+    <div class="fila-form">
+        <div class="campo" style="flex:3;">
+            <label for="titulo">Título de la actividad</label>
+            <input type="text" id="titulo" required>
+        </div>
+        <div class="campo">
+            <label for="valor">Valor</label>
+            <input type="text" id="valor" placeholder="Ej: 20%, 15 puntos">
+        </div>
+    </div>
+    <div class="campo">
+        <label for="objetivo">Intención Pedagógica / Objetivo</label>
+        <textarea id="objetivo" rows="2"></textarea>
+    </div>
+    <div class="campo">
+        <label for="descripcion">Descripción de la actividad</label>
+        <textarea id="descripcion" rows="4" required></textarea>
+    </div>
+    <div class="fila-form">
+        <div class="campo" style="max-width:140px;">
+            <label for="minutos">Minutos</label>
+            <input type="number" id="minutos" min="0" value="10">
+        </div>
+        <div class="campo" style="max-width:140px;">
+            <label for="segundos">Segundos</label>
+            <input type="number" id="segundos" min="0" max="59" value="0">
+        </div>
+        <p class="horario-info-sub" style="color:var(--color-ink-soft); align-self:center;">Tiempo asignado para que los estudiantes realicen la actividad</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>3. Generar</h3>
+    <div class="fila-form">
+        <button class="btn secundario" id="btnPdf">📄 Descargar PDF (sin copiar/pegar)</button>
+        <button class="btn" id="btnProyectar">🖥️ Proyectar con temporizador</button>
+    </div>
+    <p style="color:var(--color-ink-soft); font-size:0.85rem; margin-top:10px;">
+        El PDF se genera como imagen (sin texto seleccionable) para que el contenido no se pueda copiar y pegar directamente. Aun así, ten en cuenta que una captura de pantalla siempre es posible — esto evita el copiado casual, no es una protección absoluta.
+    </p>
+</div>
+
+<div class="card" id="cardTemporizador" style="display:none;">
+    <h3>Control del temporizador</h3>
+    <p class="ruleta-resultado" id="estadoTemporizadorTexto" style="text-align:left;">Detenido</p>
+    <p class="proyeccion-resultado" id="displayTemporizador" style="color:var(--color-primary-dark);">10:00</p>
+    <div class="fila-form">
+        <button class="btn" id="btnIniciar">▶️ Iniciar</button>
+        <button class="btn secundario" id="btnPausar">⏸️ Pausar</button>
+        <button class="btn peligro" id="btnReiniciarTimer">⏹️ Reiniciar</button>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Actividades recientes</h3>
+    <p class="subtitulo">Haz clic en una para volver a cargarla en el formulario</p>
+    <div id="listaRecientes"></div>
+</div>
+
+<!-- Hoja usada solo para generar el PDF (se renderiza fuera de pantalla) -->
+<div id="hojaActividadPDF" class="hoja-actividad-pdf" style="left:-9999px;">
+    <div class="hoja-actividad-marca">GUÍA DE ACTIVIDAD</div>
+    <p class="hoja-actividad-contexto" id="pdfContexto"></p>
+    <h1 id="pdfTitulo"></h1>
+    <p class="hoja-actividad-valor" id="pdfValor"></p>
+    <h3>Intención Pedagógica / Objetivo</h3>
+    <p id="pdfObjetivo"></p>
+    <h3>Descripción de la actividad</h3>
+    <p id="pdfDescripcion" style="white-space:pre-wrap;"></p>
+    <p class="hoja-actividad-pie" id="pdfPie"></p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="{{ '/assets/js/actividades.js' | relative_url }}"></script>

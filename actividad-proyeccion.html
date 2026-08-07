@@ -1,0 +1,45 @@
+---
+layout: default
+titulo: Actividad — Proyección
+sin_layout: true
+---
+<div class="proyeccion-shell proyeccion-actividad">
+    <div class="proyeccion-header">
+        <span class="proyeccion-marca">🗂️ Actividad de Clase</span>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span class="proyeccion-curso" id="proyeccionContexto">Esperando al profesor…</span>
+            <button class="btn-salir" id="btnPantallaCompleta">⛶ Pantalla completa</button>
+        </div>
+    </div>
+
+    <div class="proyeccion-actividad-cuerpo">
+        <div class="proyeccion-actividad-info">
+            <p class="proyeccion-etiqueta" id="proyeccionUnidadEtiqueta">RA / Unidad</p>
+            <p class="proyeccion-actividad-unidad" id="proyeccionUnidad">—</p>
+
+            <h1 id="proyeccionTitulo">Título de la actividad</h1>
+            <p class="proyeccion-actividad-valor" id="proyeccionValor"></p>
+
+            <h3>Intención Pedagógica / Objetivo</h3>
+            <p id="proyeccionObjetivo">—</p>
+
+            <h3>Descripción</h3>
+            <p id="proyeccionDescripcion">—</p>
+        </div>
+
+        <div class="proyeccion-actividad-timer">
+            <p class="proyeccion-etiqueta" id="estadoTimerProyeccion">Detenido</p>
+            <p class="temporizador-grande" id="displayTemporizadorProyeccion">00:00</p>
+        </div>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/api.js' | relative_url }}"></script>
+<script>
+    if (!Auth.estaAutenticado()) { window.location.href = rutaBase('index.html'); }
+    document.getElementById('btnPantallaCompleta').addEventListener('click', () => {
+        if (document.fullscreenElement) { document.exitFullscreen(); }
+        else { document.documentElement.requestFullscreen().catch(() => {}); }
+    });
+</script>
+<script src="{{ '/assets/js/actividades.js' | relative_url }}"></script>

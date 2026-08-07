@@ -20,6 +20,13 @@ requiere_admin: true
                 <label for="nombre">Nombre</label>
                 <input type="text" id="nombre" placeholder="Ej: Matemática" required>
             </div>
+            <div class="campo">
+                <label for="tipo">Tipo</label>
+                <select id="tipo">
+                    <option value="academica">Académica (por Unidad de Aprendizaje)</option>
+                    <option value="tecnico">Técnico-profesional (por RA)</option>
+                </select>
+            </div>
             <button type="submit" class="btn">Guardar</button>
             <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
         </div>
@@ -29,7 +36,7 @@ requiere_admin: true
 <div class="card">
     <div class="tabla-wrap">
         <table>
-            <thead><tr><th>Asignatura</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Asignatura</th><th>Tipo</th><th>Acciones</th></tr></thead>
             <tbody id="tablaAsignaturas"></tbody>
         </table>
     </div>
