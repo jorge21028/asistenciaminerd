@@ -859,6 +859,119 @@ table.horario-grid td.celda-dia {
     top: 20px;
 }
 
+/* ---------------------------------------------------------------------
+   Dinámica de Clase — Pantalla de Inicio
+   --------------------------------------------------------------------- */
+.bienvenida-shell {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, var(--color-primary-light), var(--color-primary-dark) 75%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 30px;
+    position: relative;
+    text-align: center;
+}
+.bienvenida-fullscreen-btn { position: absolute; top: 20px; right: 24px; }
+
+.bienvenida-encabezado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+.bienvenida-logo {
+    height: 84px;
+    max-width: 220px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px 14px;
+}
+.bienvenida-encabezado h1 {
+    color: #fff;
+    font-size: 1.9rem;
+    margin: 0;
+}
+
+.bienvenida-cuerpo { max-width: 900px; }
+.bienvenida-etiqueta {
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #DCE4F0;
+    font-size: 1rem;
+    margin: 0;
+}
+.bienvenida-cuenta {
+    font-size: 7rem;
+    margin: 4px 0 24px;
+}
+.bienvenida-cuenta.bienvenida-lista {
+    font-size: 3.4rem;
+    color: #7EE0A8 !important;
+    animation: pulso-suave 1.4s ease-in-out infinite;
+}
+
+.bienvenida-datos {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+.bienvenida-datos > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.bienvenida-datos span {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #B9C6DC;
+}
+.bienvenida-datos strong {
+    font-size: 1.3rem;
+    font-family: var(--font-display);
+}
+
+.bienvenida-qr {
+    position: absolute;
+    bottom: 26px;
+    left: 26px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    color: var(--color-ink);
+}
+.bienvenida-qr img { width: 120px; height: 120px; display: block; }
+.bienvenida-qr p { margin: 6px 0 0; font-size: 0.75rem; font-weight: 600; color: var(--color-primary-dark); }
+
+.bienvenida-musica {
+    position: absolute;
+    bottom: 26px;
+    right: 26px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.bienvenida-musica #ytPlayer { border-radius: 8px; overflow: hidden; }
+
+@media (max-width: 720px) {
+    .bienvenida-cuenta { font-size: 4rem; }
+    .bienvenida-qr, .bienvenida-musica { position: static; margin-top: 20px; }
+}
+
 .acciones-tabla { display: flex; gap: 6px; }
 
 /* login */

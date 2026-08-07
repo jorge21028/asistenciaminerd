@@ -1,0 +1,44 @@
+---
+layout: default
+titulo: Inicio de Clase
+sin_layout: true
+---
+<div class="bienvenida-shell" id="bienvenidaShell">
+    <button class="btn-salir bienvenida-fullscreen-btn" id="btnPantallaCompleta">⛶ Pantalla completa</button>
+
+    <div class="bienvenida-encabezado">
+        <img id="bienvenidaLogo" class="bienvenida-logo" style="display:none;" alt="Logo del centro">
+        <h1 id="bienvenidaCentro">Centro Educativo</h1>
+    </div>
+
+    <div class="bienvenida-cuerpo">
+        <p class="bienvenida-etiqueta" id="bienvenidaEtiquetaCuenta">La clase inicia en</p>
+        <p class="temporizador-grande bienvenida-cuenta" id="bienvenidaCuenta">--:--</p>
+
+        <div class="bienvenida-datos">
+            <div><span>Profesor(a)</span><strong id="bienvenidaProfesor">—</strong></div>
+            <div><span>Asignatura</span><strong id="bienvenidaAsignatura">—</strong></div>
+            <div><span>Hora de inicio</span><strong id="bienvenidaHora">—</strong></div>
+        </div>
+    </div>
+
+    <div class="bienvenida-qr" id="bienvenidaQrCont" style="display:none;">
+        <img id="bienvenidaQrImg" alt="Código QR del perfil docente">
+        <p>Conoce al profesor</p>
+    </div>
+
+    <div class="bienvenida-musica">
+        <div id="ytPlayer"></div>
+        <button class="btn-salir" id="btnMute">🔇 Activar sonido</button>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/api.js' | relative_url }}"></script>
+<script>
+    if (!Auth.estaAutenticado()) { window.location.href = rutaBase('index.html'); }
+    document.getElementById('btnPantallaCompleta').addEventListener('click', () => {
+        if (document.fullscreenElement) { document.exitFullscreen(); }
+        else { document.documentElement.requestFullscreen().catch(() => {}); }
+    });
+</script>
+<script src="{{ '/assets/js/pantalla-inicio.js' | relative_url }}"></script>

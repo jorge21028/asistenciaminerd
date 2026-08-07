@@ -139,6 +139,14 @@ Cuando construyamos más submódulos (generador de grupos, temporizador, etc.), 
 - **Actividades recientes**: la lista de actividades ya usadas para ese curso/asignatura, para volver a cargarlas con un clic sin escribir todo de nuevo.
 - Si ya tenías la base de datos creada, ejecuta `database/migracion_actividades.sql` en phpMyAdmin.
 
+**Pantalla de Inicio** (`pantalla-inicio.html`):
+- Página de control donde configuras: nombre del centro educativo y su logo (compartidos por todo el centro), y nombre del profesor, asignatura, hora de inicio y el enlace del código QR (datos que se guardan por profesor, con el nombre precargado desde tu sesión).
+- El logo se sube como imagen (máx. 2MB) a `api/uploads/` en Hostinger — **asegúrate de que esa carpeta tenga permisos de escritura** (755 o 775) la primera vez que la uses.
+- El botón **"Abrir ventana emergente"** abre una segunda ventana para proyectar en la PDI, con botón de pantalla completa incluido ahí mismo. Si cambias algo en la pantalla de control mientras la proyección está abierta, se actualiza sola.
+- La proyección muestra: logo y nombre del centro, cuenta regresiva grande hasta la hora de inicio configurada (calculada contra el reloj del sistema, igual que el temporizador de Actividades — no pierde precisión), profesor, asignatura, hora de inicio, un código QR (generado con el servicio público qrserver.com) que enlaza al perfil del docente, y música de fondo de YouTube en bucle.
+- La música empieza silenciada automáticamente (necesario para que el navegador permita la reproducción automática) — el botón "Activar sonido" en la esquina la activa con un clic.
+- Si ya tenías la base de datos creada, ejecuta `database/migracion_pantalla_inicio.sql` en phpMyAdmin.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.
