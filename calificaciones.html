@@ -1,0 +1,39 @@
+---
+layout: default
+titulo: Calificaciones
+---
+<div class="page-header">
+    <div>
+        <h1>📊 Calificaciones</h1>
+        <p class="subtitulo">Registra y consulta las calificaciones de tus actividades por curso y asignatura</p>
+    </div>
+</div>
+
+<div id="alertaCalificaciones"></div>
+
+<div class="card">
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="cursoAsignatura">Curso y asignatura</label>
+            <select id="cursoAsignatura"></select>
+        </div>
+        <a class="btn" id="btnNuevaActividad" href="#">+ Nueva actividad</a>
+        <a class="btn secundario" id="btnVerReportes" href="#">📈 Ver reportes</a>
+    </div>
+    <div class="card" id="infoTipo" style="display:none; margin-top:14px; background:var(--color-surface-alt);">
+        <p id="textoInfoTipo" style="margin:0; color:var(--color-ink-soft); font-size:0.9rem;"></p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Actividades</h3>
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Actividad</th><th>Referencia</th><th class="num">Valor</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaActividades"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacio" class="vacio-estado" style="display:none;">Todavía no hay actividades para esta asignatura. Crea la primera con "+ Nueva actividad".</div>
+</div>
+
+<script src="{{ '/assets/js/calificaciones.js' | relative_url }}"></script>

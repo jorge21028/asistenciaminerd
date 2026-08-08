@@ -23,9 +23,14 @@ requiere_admin: true
             <div class="campo">
                 <label for="tipo">Tipo</label>
                 <select id="tipo">
-                    <option value="academica">Académica (por Unidad de Aprendizaje)</option>
-                    <option value="tecnico">Técnico-profesional (por RA)</option>
+                    <option value="academica">Académica (competencias)</option>
+                    <option value="tecnico">Técnico-profesional (RA)</option>
+                    <option value="taller">Taller (por período)</option>
                 </select>
+            </div>
+            <div class="campo" style="max-width:140px;">
+                <label for="notaMinima">Nota mínima</label>
+                <input type="number" id="notaMinima" min="0" max="100" step="0.01" value="70">
             </div>
             <button type="submit" class="btn">Guardar</button>
             <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
@@ -36,7 +41,7 @@ requiere_admin: true
 <div class="card">
     <div class="tabla-wrap">
         <table>
-            <thead><tr><th>Asignatura</th><th>Tipo</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Asignatura</th><th>Tipo</th><th class="num">Nota mínima</th><th>Acciones</th></tr></thead>
             <tbody id="tablaAsignaturas"></tbody>
         </table>
     </div>

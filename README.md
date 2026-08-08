@@ -147,6 +147,34 @@ Cuando construyamos más submódulos (generador de grupos, temporizador, etc.), 
 - La música empieza silenciada automáticamente (necesario para que el navegador permita la reproducción automática) — el botón "Activar sonido" en la esquina la activa con un clic.
 - Si ya tenías la base de datos creada, ejecuta `database/migracion_pantalla_inicio.sql` en phpMyAdmin.
 
+### Módulo de Calificaciones
+
+Módulo interno para que el profesor califique sus actividades y saque sus propios reportes — **no reemplaza el sistema oficial de boletines del MINERD**.
+
+**Tres metodologías, una por tipo de asignatura** (se define en "Asignaturas" → campo Tipo):
+
+- **Taller**: cada actividad pertenece directamente a un **período**. La nota del período es el **promedio de los porcentajes** de sus actividades (no se suman puntos, porque cada actividad puede valer distinto). La nota del año es el promedio de los períodos.
+- **Técnico-profesional**: cada actividad pertenece a un **RA** (gestiona los RA desde "Asignaturas" → "RA", donde defines su **valor total** y a qué **período** pertenece). El RA suma los puntos obtenidos en sus actividades; el período suma los RA que le pertenecen (puntos, no promedio); el año promedia los períodos.
+- **Académica (por competencias)**: cada actividad tiene una **rúbrica** de criterios de evaluación definida por el profesor (no se reparte la nota en partes iguales entre competencias). Cada criterio tiene su propio peso en puntos y puede evidenciar una o varias **competencias específicas** (gestiónalas en "Asignaturas" → "Competencias"). Al elegir un **tipo de actividad** (Exposición, Mapa mental, Lectura, Actividad práctica, Actividad grupal, Debate, Prueba corta, Proyecto, Estudio de caso, Portafolio, Trabajo escrito/Ensayo) se autocompleta una rúbrica sugerida de 5 indicadores, totalmente editable. La nota del período y del año se calculan sobre el total de puntos de las actividades (no sobre las competencias, para no contar la misma evidencia dos veces si un criterio evidencia varias competencias) — las competencias son un reporte diagnóstico aparte (reporte "Por RA / competencia").
+
+**Escala de niveles de dominio** (para calificar cada criterio de la rúbrica): Estratégico (100% del peso) · Autónomo (75%) · Resolutivo (50%) · Receptivo (25%) · No realizada (0%) — corresponde a los Niveles de Dominio de Competencias del Diseño Curricular Dominicano. Todos los criterios empiezan marcados como "Estratégico"; el profesor solo cambia los que correspondan, en una sola pantalla con toda la lista de estudiantes.
+
+**Reportes** (en pantalla y descargables en Excel, con la calificación mínima y máxima del grupo resaltada, y las filas de reprobados marcadas en rojo):
+1. Por actividad
+2. Por RA o competencia (actividad por actividad, con el valor total)
+3. Por período (por RA o competencia, con el valor final del período)
+4. Anual (por período, con el promedio del año)
+
+Cada reporte incluye centro educativo, profesor, año escolar, curso, asignatura y período/RA/competencia según corresponda.
+
+**Supuestos que tomé y que puedes pedirme cambiar si no calzan con tu forma de trabajar:**
+- La nota mínima aprobatoria es **70%** por defecto, configurable por asignatura.
+- Una actividad sin calificar cuenta como **0** en los totales de período/año (no se excluye), como en un libro de calificaciones tradicional.
+- En técnico-profesional, el valor máximo del período/RA es el **valor asignado al RA**, no la suma de sus actividades (por si no cuadran exactamente).
+- El "profesor" que aparece en los reportes de período/RA/anual es quien genera el reporte (no necesariamente quien creó cada actividad, ya que puede haber varias).
+
+Si ya tenías la base de datos creada, ejecuta `database/migracion_calificaciones.sql` en phpMyAdmin.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

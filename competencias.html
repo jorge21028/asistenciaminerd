@@ -1,0 +1,50 @@
+---
+layout: default
+titulo: Competencias específicas
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1>Competencias específicas</h1>
+        <p class="subtitulo">Solo para asignaturas académicas — las actividades de esas asignaturas evidenciarán una o varias de estas competencias a través de sus criterios de evaluación</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="campo" style="max-width:360px;">
+        <label for="asignatura">Asignatura</label>
+        <select id="asignatura"></select>
+    </div>
+</div>
+
+<div class="card" id="cardForm" style="display:none;">
+    <h3 id="tituloForm">Nueva competencia</h3>
+    <div id="alertaCompetencia"></div>
+    <form id="formCompetencia">
+        <input type="hidden" id="competenciaId">
+        <div class="fila-form">
+            <div class="campo" style="max-width:140px;">
+                <label for="codigo">Código</label>
+                <input type="text" id="codigo" placeholder="CE1">
+            </div>
+            <div class="campo" style="flex:3;">
+                <label for="descripcion">Descripción</label>
+                <input type="text" id="descripcion" placeholder="Ej: Resuelve problemas aplicando modelos probabilísticos" required>
+            </div>
+            <button type="submit" class="btn">Guardar</button>
+            <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<div class="card" id="cardTabla" style="display:none;">
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Código</th><th>Descripción</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaCompetencias"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacio" class="vacio-estado" style="display:none;">Esta asignatura todavía no tiene competencias registradas.</div>
+</div>
+
+<script src="{{ '/assets/js/competencias.js' | relative_url }}"></script>

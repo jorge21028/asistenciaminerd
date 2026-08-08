@@ -1,0 +1,79 @@
+---
+layout: default
+titulo: Nueva actividad
+---
+<div class="page-header">
+    <div>
+        <h1>Nueva actividad</h1>
+        <p class="subtitulo" id="subtituloContexto"><a href="{{ '/calificaciones.html' | relative_url }}">← Calificaciones</a></p>
+    </div>
+</div>
+
+<div id="alertaNuevaActividad"></div>
+
+<div class="card">
+    <h3>Datos generales</h3>
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="nombre">Nombre de la actividad</label>
+            <input type="text" id="nombre" required>
+        </div>
+    </div>
+    <div class="campo">
+        <label for="descripcion">Descripción (opcional)</label>
+        <textarea id="descripcion" rows="2"></textarea>
+    </div>
+
+    <!-- Taller -->
+    <div class="fila-form" id="campoPeriodoTaller" style="display:none;">
+        <div class="campo">
+            <label for="periodoTaller">Período</label>
+            <select id="periodoTaller"></select>
+        </div>
+        <div class="campo">
+            <label for="valorTaller">Valor máximo</label>
+            <input type="number" id="valorTaller" min="0.01" step="0.01">
+        </div>
+    </div>
+
+    <!-- Técnico -->
+    <div id="campoTecnico" style="display:none;">
+        <div class="fila-form">
+            <div class="campo" style="flex:2;">
+                <label for="ra">RA (Resultado de Aprendizaje)</label>
+                <select id="ra"></select>
+            </div>
+            <div class="campo">
+                <label for="valorTecnico">Valor de esta actividad</label>
+                <input type="number" id="valorTecnico" min="0.01" step="0.01">
+            </div>
+        </div>
+        <p class="horario-info-sub" id="infoRA" style="color:var(--color-ink-soft);"></p>
+    </div>
+
+    <!-- Académica -->
+    <div class="fila-form" id="campoPeriodoAcademica" style="display:none;">
+        <div class="campo">
+            <label for="periodoAcademica">Período</label>
+            <select id="periodoAcademica"></select>
+        </div>
+        <div class="campo">
+            <label for="tipoActividad">Tipo de actividad</label>
+            <select id="tipoActividad"><option value="">— Elegir para autocompletar la rúbrica —</option></select>
+        </div>
+    </div>
+</div>
+
+<div class="card" id="cardRubrica" style="display:none;">
+    <h3>Rúbrica (criterios de evaluación)</h3>
+    <p class="subtitulo">Cada criterio puede evidenciar una o varias competencias específicas. El valor de la actividad es la suma de los pesos.</p>
+    <div id="listaCriterios"></div>
+    <button type="button" class="btn secundario chico" id="btnAgregarCriterio" style="margin-top:10px;">+ Agregar criterio</button>
+    <p style="margin-top:16px; font-weight:700;">Valor total de la actividad: <span id="valorTotalCriterios">0</span> puntos</p>
+</div>
+
+<div class="card">
+    <button class="btn" id="btnGuardarActividad">Guardar actividad</button>
+</div>
+
+<script src="{{ '/assets/js/calificaciones-nueva.js' | relative_url }}"></script>

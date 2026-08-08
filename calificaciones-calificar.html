@@ -1,0 +1,43 @@
+---
+layout: default
+titulo: Calificar actividad
+---
+<div class="page-header">
+    <div>
+        <h1 id="tituloActividad">Calificar actividad</h1>
+        <p class="subtitulo" id="subtituloActividad"><a href="{{ '/calificaciones.html' | relative_url }}">← Calificaciones</a></p>
+    </div>
+</div>
+
+<div id="alertaCalificar"></div>
+
+<!-- Modo simple: taller y técnico-profesional -->
+<div class="card" id="cardSimple" style="display:none;">
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Estudiante</th><th class="num">Puntuación</th><th class="num">%</th><th class="num">Estado</th><th>Observaciones</th></tr></thead>
+            <tbody id="tablaSimple"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modo rúbrica: académica -->
+<div class="card" id="cardRubrica" style="display:none;">
+    <div class="leyenda" style="margin-bottom:14px;">
+        <span>🟢 Estratégico</span>
+        <span>🔵 Autónomo</span>
+        <span>🟡 Resolutivo</span>
+        <span>🟠 Receptivo</span>
+        <span>🔴 No realizada</span>
+        <span style="margin-left:auto; color:var(--color-ink-soft);">Todo empieza en "Estratégico" — solo cambia lo que corresponda</span>
+    </div>
+    <div class="tabla-wrap">
+        <table id="tablaRubrica"></table>
+    </div>
+</div>
+
+<div class="card" id="cardGuardar" style="display:none;">
+    <button class="btn" id="btnGuardarCalificaciones">Guardar calificaciones</button>
+</div>
+
+<script src="{{ '/assets/js/calificaciones-calificar.js' | relative_url }}"></script>

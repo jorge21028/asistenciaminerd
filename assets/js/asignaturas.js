@@ -1,4 +1,4 @@
-const NOMBRE_TIPO_ASIGNATURA = { academica: 'Académica (Unidad)', tecnico: 'Técnico-profesional (RA)' };
+const NOMBRE_TIPO_ASIGNATURA = { academica: 'Académica', tecnico: 'Técnico-profesional (RA)', taller: 'Taller (por período)' };
 
 let asignaturas = [];
 
@@ -18,8 +18,10 @@ function pintarAsignaturas() {
         <tr>
             <td><strong>${escaparHtml(a.nombre)}</strong></td>
             <td><span class="badge">${NOMBRE_TIPO_ASIGNATURA[a.tipo] || a.tipo}</span></td>
+            <td class="num">${a.nota_minima}%</td>
             <td class="acciones-tabla">
-                <a class="btn secundario chico" href="${rutaBase('asignatura-unidades.html')}?asignatura_id=${a.id}">RA/Unidades</a>
+                ${a.tipo === 'tecnico' ? `<a class="btn secundario chico" href="${rutaBase('asignatura-unidades.html')}?asignatura_id=${a.id}">RA</a>` : ''}
+                ${a.tipo === 'academica' ? `<a class="btn secundario chico" href="${rutaBase('competencias.html')}?asignatura_id=${a.id}">Competencias</a>` : ''}
                 <button class="btn secundario chico" onclick="editarAsignatura(${a.id})">Editar</button>
                 <button class="btn peligro chico" onclick="eliminarAsignatura(${a.id})">Eliminar</button>
             </td>
@@ -33,6 +35,7 @@ function editarAsignatura(id) {
     document.getElementById('asignaturaId').value = a.id;
     document.getElementById('nombre').value = a.nombre;
     document.getElementById('tipo').value = a.tipo;
+    document.getElementById('notaMinima').value = a.nota_minima;
     document.getElementById('tituloForm').textContent = 'Editar asignatura';
     document.getElementById('btnCancelar').style.display = 'inline-flex';
 }
@@ -59,11 +62,12 @@ document.getElementById('formAsignatura').addEventListener('submit', async (e) =
     const id = document.getElementById('asignaturaId').value;
     const nombre = document.getElementById('nombre').value.trim();
     const tipo = document.getElementById('tipo').value;
+    const notaMinima = document.getElementById('notaMinima').value;
     try {
         if (id) {
-            await apiFetch('asignaturas.php', { method: 'PUT', body: { id, nombre, tipo } });
+            await apiFetch('asignaturas.php', { method: 'PUT', body: { id, nombre, tipo, nota_minima: notaMinima } });
         } else {
-            await apiFetch('asignaturas.php', { method: 'POST', body: { nombre, tipo } });
+            await apiFetch('asignaturas.php', { method: 'POST', body: { nombre, tipo, nota_minima: notaMinima } });
         }
         cancelarEdicion();
         cargarAsignaturas();

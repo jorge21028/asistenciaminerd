@@ -1,6 +1,7 @@
 let asignaturasDisponibles = [];
 let unidadesActuales = [];
 let asignaturaSeleccionada = null;
+let periodosDisponibles = [];
 
 async function inicializar() {
     try {
@@ -34,12 +35,28 @@ async function cargarUnidades() {
     document.getElementById('tituloForm').textContent = `Nuevo (${etiquetaTipo()})`;
     document.getElementById('codigo').placeholder = asignaturaSeleccionada.tipo === 'tecnico' ? 'RA1' : 'UA1';
 
+    const esTecnico = asignaturaSeleccionada.tipo === 'tecnico';
+    document.getElementById('filaCalificaciones').style.display = esTecnico ? 'flex' : 'none';
+
+    if (esTecnico && !periodosDisponibles.length) {
+        try {
+            periodosDisponibles = await apiFetch('periodos.php');
+            document.getElementById('periodo').innerHTML = '<option value="">— Sin asignar —</option>' +
+                periodosDisponibles.map(p => `<option value="${p.id}">${escaparHtml(p.nombre)} (${escaparHtml(p.anio_escolar)})</option>`).join('');
+        } catch (err) { /* no bloquea el resto */ }
+    }
+
     try {
         unidadesActuales = await apiFetch(`asignatura_unidades.php?asignatura_id=${asignaturaId}`);
         pintarUnidades();
     } catch (err) {
         mostrarAlerta('alertaUnidad', err.message);
     }
+}
+
+function nombrePeriodo(periodoId) {
+    const p = periodosDisponibles.find(x => String(x.id) === String(periodoId));
+    return p ? p.nombre : '—';
 }
 
 function pintarUnidades() {
@@ -50,6 +67,8 @@ function pintarUnidades() {
             <td class="num">${u.orden}</td>
             <td>${escaparHtml(u.codigo || '—')}</td>
             <td>${escaparHtml(u.titulo)}</td>
+            <td class="num">${u.valor ?? '—'}</td>
+            <td>${u.periodo_id ? escaparHtml(nombrePeriodo(u.periodo_id)) : '—'}</td>
             <td class="acciones-tabla">
                 <button class="btn secundario chico" onclick="editarUnidad(${u.id})">Editar</button>
                 <button class="btn peligro chico" onclick="eliminarUnidad(${u.id})">Eliminar</button>
@@ -65,6 +84,8 @@ function editarUnidad(id) {
     document.getElementById('orden').value = u.orden;
     document.getElementById('codigo').value = u.codigo || '';
     document.getElementById('titulo').value = u.titulo;
+    if (document.getElementById('valor')) document.getElementById('valor').value = u.valor ?? '';
+    if (document.getElementById('periodo')) document.getElementById('periodo').value = u.periodo_id ?? '';
     document.getElementById('tituloForm').textContent = `Editar (${etiquetaTipo()})`;
     document.getElementById('btnCancelar').style.display = 'inline-flex';
 }
@@ -99,6 +120,10 @@ document.getElementById('formUnidad').addEventListener('submit', async (e) => {
         codigo: document.getElementById('codigo').value.trim(),
         titulo: document.getElementById('titulo').value.trim(),
     };
+    if (asignaturaSeleccionada && asignaturaSeleccionada.tipo === 'tecnico') {
+        body.valor = document.getElementById('valor').value;
+        body.periodo_id = document.getElementById('periodo').value;
+    }
     try {
         if (id) {
             await apiFetch('asignatura_unidades.php', { method: 'PUT', body: { id, ...body } });

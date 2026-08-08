@@ -1,0 +1,49 @@
+---
+layout: default
+titulo: Reportes de calificaciones
+---
+<div class="page-header">
+    <div>
+        <h1>📈 Reportes de calificaciones</h1>
+        <p class="subtitulo"><a href="{{ '/calificaciones.html' | relative_url }}">← Calificaciones</a></p>
+    </div>
+    <button class="btn secundario" id="btnExcel">⬇️ Descargar Excel</button>
+</div>
+
+<div id="alertaReportesCalif"></div>
+
+<div class="card">
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="cursoAsignatura">Curso y asignatura</label>
+            <select id="cursoAsignatura"></select>
+        </div>
+        <div class="campo">
+            <label for="tipoReporte">Reporte</label>
+            <select id="tipoReporte">
+                <option value="actividad">Por actividad</option>
+                <option value="unidad">Por RA / competencia</option>
+                <option value="periodo">Por período</option>
+                <option value="anual">Anual</option>
+            </select>
+        </div>
+        <div class="campo" id="campoActividad" style="display:none; flex:2;">
+            <label for="selectActividad">Actividad</label>
+            <select id="selectActividad"></select>
+        </div>
+        <div class="campo" id="campoUnidad" style="display:none; flex:2;">
+            <label for="selectUnidad" id="labelSelectUnidad">RA / Competencia</label>
+            <select id="selectUnidad"></select>
+        </div>
+        <div class="campo" id="campoPeriodo" style="display:none;">
+            <label for="selectPeriodo">Período</label>
+            <select id="selectPeriodo"></select>
+        </div>
+        <button class="btn" id="btnGenerar">Generar</button>
+    </div>
+</div>
+
+<div id="contenedorReporte"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="{{ '/assets/js/calificaciones-reportes.js' | relative_url }}"></script>
