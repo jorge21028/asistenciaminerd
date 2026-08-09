@@ -22,7 +22,7 @@ requiere_admin: true
             </div>
             <div class="campo">
                 <label for="anioEscolar">Año escolar</label>
-                <input type="text" id="anioEscolar" placeholder="Ej: 2025-2026" required>
+                <select id="anioEscolar" required></select>
             </div>
             <div class="campo" style="max-width:90px;">
                 <label for="orden">Orden</label>
@@ -40,6 +40,15 @@ requiere_admin: true
             <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
         </div>
     </form>
+</div>
+
+<div class="card">
+    <div class="fila-form" style="margin-bottom:0;">
+        <div class="campo" style="max-width:280px;">
+            <label for="filtroAnio">Ver períodos del año</label>
+            <select id="filtroAnio"><option value="">Todos los años</option></select>
+        </div>
+    </div>
 </div>
 
 <div class="card">

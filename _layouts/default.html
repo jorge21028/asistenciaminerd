@@ -23,6 +23,7 @@
     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
     {% include nav.html %}
     <div class="usuario-box">
+        <span class="badge" id="anioEscolarBadge" style="display:none;" title="Año escolar activo"></span>
         <span id="nombreUsuario"></span>
         <span class="badge" id="rolUsuario"></span>
         <button class="btn-salir" onclick="Auth.cerrarSesion()">Salir</button>
@@ -61,6 +62,14 @@
             const toggle = document.getElementById('menuToggle');
             const nav = document.querySelector('.topbar nav');
             if (toggle) toggle.addEventListener('click', () => nav.classList.toggle('abierto'));
+
+            // Año escolar activo, visible en todas las páginas
+            apiFetch('anios_escolares.php?activo=1').then(anio => {
+                if (!anio) return;
+                const badge = document.getElementById('anioEscolarBadge');
+                badge.textContent = '📅 ' + anio.nombre;
+                badge.style.display = 'inline-block';
+            }).catch(() => { /* no bloquea el resto de la página */ });
         });
     }
 </script>

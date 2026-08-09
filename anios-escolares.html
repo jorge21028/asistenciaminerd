@@ -1,0 +1,45 @@
+---
+layout: default
+titulo: Años escolares
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1>Años escolares</h1>
+        <p class="subtitulo">El año escolar <strong>activo</strong> es con el que trabaja todo el sistema por defecto. Los años inhabilitados se pueden consultar pero no modificar.</p>
+    </div>
+</div>
+
+<div id="alertaAnio"></div>
+
+<div class="card">
+    <h3>Nuevo año escolar</h3>
+    <form id="formAnio">
+        <div class="fila-form">
+            <div class="campo">
+                <label for="nombre">Nombre (AAAA-AAAA)</label>
+                <input type="text" id="nombre" placeholder="2026-2027" pattern="\d{4}-\d{4}" required>
+            </div>
+            <div class="campo">
+                <label for="fechaInicio">Fecha inicio (opcional)</label>
+                <input type="date" id="fechaInicio">
+            </div>
+            <div class="campo">
+                <label for="fechaFin">Fecha fin (opcional)</label>
+                <input type="date" id="fechaFin">
+            </div>
+            <button type="submit" class="btn">Crear</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Año escolar</th><th>Fechas</th><th class="num">Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaAnios"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/anios-escolares.js' | relative_url }}"></script>

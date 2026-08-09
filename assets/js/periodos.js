@@ -1,8 +1,24 @@
 let periodos = [];
+let aniosDisponiblesPeriodo = [];
+
+async function cargarSelectAnios() {
+    try {
+        aniosDisponiblesPeriodo = await apiFetch('anios_escolares.php');
+        const activo = aniosDisponiblesPeriodo.find(a => a.es_activo == 1);
+        document.getElementById('anioEscolar').innerHTML = aniosDisponiblesPeriodo.map(a =>
+            `<option value="${a.id}" ${activo && a.id === activo.id ? 'selected' : ''}>${escaparHtml(a.nombre)}${a.es_activo == 1 ? ' (activo)' : ''}</option>`
+        ).join('');
+        document.getElementById('filtroAnio').innerHTML = '<option value="">Todos los años</option>' +
+            aniosDisponiblesPeriodo.map(a => `<option value="${a.id}">${escaparHtml(a.nombre)}${a.es_activo == 1 ? ' (activo)' : ''}</option>`).join('');
+    } catch (err) {
+        mostrarAlerta('alertaPeriodo', err.message);
+    }
+}
 
 async function cargarPeriodos() {
+    const anioFiltro = document.getElementById('filtroAnio').value;
     try {
-        periodos = await apiFetch('periodos.php');
+        periodos = await apiFetch(anioFiltro ? `periodos.php?anio_escolar_id=${anioFiltro}` : 'periodos.php?todos=1');
         pintarPeriodos();
     } catch (err) {
         mostrarAlerta('alertaPeriodo', err.message);
@@ -32,7 +48,7 @@ function editarPeriodo(id) {
     if (!p) return;
     document.getElementById('periodoId').value = p.id;
     document.getElementById('nombre').value = p.nombre;
-    document.getElementById('anioEscolar').value = p.anio_escolar;
+    document.getElementById('anioEscolar').value = p.anio_escolar_id;
     document.getElementById('orden').value = p.orden;
     document.getElementById('fechaInicio').value = p.fecha_inicio;
     document.getElementById('fechaFin').value = p.fecha_fin;
@@ -64,7 +80,7 @@ document.getElementById('formPeriodo').addEventListener('submit', async (e) => {
     const id = document.getElementById('periodoId').value;
     const body = {
         nombre: document.getElementById('nombre').value.trim(),
-        anio_escolar: document.getElementById('anioEscolar').value.trim(),
+        anio_escolar_id: document.getElementById('anioEscolar').value,
         orden: document.getElementById('orden').value,
         fecha_inicio: document.getElementById('fechaInicio').value,
         fecha_fin: document.getElementById('fechaFin').value,
@@ -83,5 +99,6 @@ document.getElementById('formPeriodo').addEventListener('submit', async (e) => {
 });
 
 document.getElementById('btnCancelar').addEventListener('click', cancelarEdicion);
+document.getElementById('filtroAnio').addEventListener('change', cargarPeriodos);
 
-cargarPeriodos();
+cargarSelectAnios().then(cargarPeriodos);

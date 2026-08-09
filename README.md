@@ -175,6 +175,28 @@ Cada reporte incluye centro educativo, profesor, año escolar, curso, asignatura
 
 Si ya tenías la base de datos creada, ejecuta `database/migracion_calificaciones.sql` en phpMyAdmin.
 
+## Sistema de Gestión Docente — Fase 1: Año Escolar
+
+Primera fase de la ampliación hacia un Sistema de Gestión Docente completo (ver el análisis y plan de fases que acordamos). Esta fase implementa la gestión del año escolar como base para todo lo demás.
+
+**Qué cambia:**
+- Nueva tabla `anios_escolares`: catálogo real de años escolares, con **un año activo** a la vez y la posibilidad de **inhabilitar** años anteriores.
+- `cursos` y `periodos_academicos` ahora usan una **referencia (FK)** al año escolar en vez de texto libre — esto ya evitaba en la práctica el problema de cursos con el mismo nombre en años distintos (todo cuelga del `id` del curso, nunca de su nombre), y ahora además queda mejor controlado (sin años escritos de formas distintas por error).
+- **Nueva página "Años Escolares"** (menú, solo admin): crear años, marcar cuál es el activo, habilitar/inhabilitar.
+- **Cursos** ahora se seleccionan de una lista (no se escriben a mano) y tienen un **profesor guía** opcional (cualquier profesor existente, sin necesidad de un rol nuevo).
+- **Filtrado automático por año activo**: al no indicar un año explícito, `cursos.php` y `periodos.php` devuelven solo lo del año escolar activo. Esto significa que **Asistencia, Horario, Conducta, Calificaciones y Dinámica de Clase ya trabajan automáticamente con el año activo sin que tuvieras que tocar ese código** — todas esas pantallas simplemente piden "los cursos" sin especificar año, y ahora reciben los del año activo por defecto.
+- Las páginas de gestión (Cursos, Períodos) sí pueden ver todos los años o filtrar por uno específico, para consultar/preparar información histórica o futura.
+- **Bloqueo real en el backend** (no solo visual) de modificaciones en años inhabilitados: registrar asistencia, crear incidentes de conducta, crear actividades calificables, matricular/editar estudiantes, y crear/eliminar asignaciones — todo eso se rechaza con error 403 si el curso pertenece a un año inhabilitado.
+- El año escolar activo se muestra como una insignia (📅) en la barra superior de todas las páginas.
+
+**Importante — no se perdió ningún dato:** la migración no borra ninguna columna. Los valores de texto que tenías en `cursos.anio_escolar` y `periodos_academicos.anio_escolar` se copiaron a las nuevas tablas/columnas y las columnas originales se renombraron a `anio_escolar_legacy` (siguen ahí, intactas, solo que el sistema ya no las usa).
+
+Si ya tenías la base de datos creada, ejecuta `database/migracion_anio_escolar.sql` en phpMyAdmin.
+
+**Alcance de esta fase:** dejé fuera, a propósito, el bloqueo de años inhabilitados en Horario y en las herramientas de Dinámica de Clase (ruleta, actividades, pantalla de inicio) porque son herramientas de uso en vivo, no registros académicos permanentes — si prefieres que también se restrinjan, lo agrego.
+
+**Próximas fases** (según el plan que aprobaste): rebranding a "Sistema de Gestión Docente" + navegación modular, estudiantes ampliado (tutores, salud, MINERD), asistencia/horario con los nuevos reportes, calificaciones con rúbrica en técnico/taller, generador de grupos, reportes unificados, configuración unificada, y exportar/copiar universal.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

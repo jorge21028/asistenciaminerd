@@ -6,7 +6,7 @@ requiere_admin: true
 <div class="page-header">
     <div>
         <h1>Cursos</h1>
-        <p class="subtitulo">Grados y secciones del centro educativo</p>
+        <p class="subtitulo">Grados y secciones del centro educativo · <a href="{{ '/anios-escolares.html' | relative_url }}">Gestionar años escolares</a></p>
     </div>
 </div>
 
@@ -26,7 +26,11 @@ requiere_admin: true
             </div>
             <div class="campo">
                 <label for="anioEscolar">Año escolar</label>
-                <input type="text" id="anioEscolar" placeholder="Ej: 2025-2026" required>
+                <select id="anioEscolar" required></select>
+            </div>
+            <div class="campo">
+                <label for="profesorGuia">Profesor guía (opcional)</label>
+                <select id="profesorGuia"><option value="">— Sin asignar —</option></select>
             </div>
             <button type="submit" class="btn">Guardar</button>
             <button type="button" class="btn secundario" id="btnCancelar" style="display:none;">Cancelar</button>
@@ -35,10 +39,19 @@ requiere_admin: true
 </div>
 
 <div class="card">
+    <div class="fila-form" style="margin-bottom:0;">
+        <div class="campo" style="max-width:280px;">
+            <label for="filtroAnio">Ver cursos del año</label>
+            <select id="filtroAnio"><option value="">Todos los años</option></select>
+        </div>
+    </div>
+</div>
+
+<div class="card">
     <div class="tabla-wrap">
         <table>
             <thead>
-                <tr><th>Curso</th><th>Grado</th><th>Sección</th><th>Año escolar</th><th>Acciones</th></tr>
+                <tr><th>Curso</th><th>Año escolar</th><th>Profesor guía</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaCursos"></tbody>
         </table>
