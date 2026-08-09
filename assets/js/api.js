@@ -37,7 +37,8 @@ function rutaBase(pagina) {
  * @param {object} opciones  { method, body }
  */
 async function apiFetch(endpoint, opciones = {}) {
-    const url = `${window.API_URL}/${endpoint}`;
+    const base = (window.API_URL || '').replace(/\/+$/, ''); // quita cualquier barra final sobrante
+    const url = `${base}/${endpoint}`;
     const headers = { 'Content-Type': 'application/json' };
     const token = Auth.getToken();
     if (token) headers['Authorization'] = `Bearer ${token}`;
