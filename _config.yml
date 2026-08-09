@@ -5,7 +5,7 @@ url: "https://jorge21028.github.io"
 
 # IMPORTANTE: esta es la URL donde vive tu API PHP en Hostinger.
 # Edítala con tu dominio real antes de publicar.
-api_url: "https://institutoifgla.edu.do/asistencia-api/"
+api_url: "https://institutoifgla.edu.do/asistencia-api"
 
 plugins: []
 
