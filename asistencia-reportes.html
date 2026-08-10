@@ -1,0 +1,55 @@
+---
+layout: default
+modulo: asistencia
+modulo_nombre: Asistencia
+titulo: Reportes
+---
+<div class="page-header">
+    <div>
+        <h1>Reportes de asistencia</h1>
+        <p class="subtitulo">Diario, semanal, mensual y anual por curso y asignatura</p>
+    </div>
+    <button class="btn secundario" onclick="window.print()">🖨️ Imprimir / exportar PDF</button>
+</div>
+
+<div class="card">
+    <div id="alertaReportes"></div>
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="cursoAsignatura">Curso y asignatura</label>
+            <select id="cursoAsignatura"></select>
+        </div>
+        <div class="campo">
+            <label for="tipoReporte">Tipo de reporte</label>
+            <select id="tipoReporte">
+                <option value="diario">Diario</option>
+                <option value="semanal">Semanal</option>
+                <option value="mensual" selected>Mensual</option>
+                <option value="anual">Anual</option>
+            </select>
+        </div>
+
+        <div class="campo" id="campoFecha">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha">
+        </div>
+        <div class="campo" id="campoSemana" style="display:none;">
+            <label for="semanaInicio">Semana (lunes)</label>
+            <input type="date" id="semanaInicio">
+        </div>
+        <div class="campo" id="campoMes" style="display:none;">
+            <label for="mes">Mes</label>
+            <select id="mes"></select>
+        </div>
+        <div class="campo" id="campoAnio">
+            <label for="anio">Año</label>
+            <input type="number" id="anio" min="2000" max="2100">
+        </div>
+
+        <button class="btn" id="btnGenerar">Generar reporte</button>
+    </div>
+</div>
+
+<div id="contenedorReporte"></div>
+
+<script src="{{ '/assets/js/asistencia-reportes.js' | relative_url }}"></script>

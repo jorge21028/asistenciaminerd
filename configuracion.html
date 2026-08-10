@@ -1,0 +1,51 @@
+---
+layout: default
+modulo: configuracion
+modulo_nombre: Configuración
+titulo: Configuración
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1>⚙️ Configuración</h1>
+        <p class="subtitulo">Tablas maestras y ajustes administrativos del sistema</p>
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="card modulo-card">
+        <h3>📅 Años Escolares</h3>
+        <p>Crea años escolares, marca cuál está activo, e inhabilita años anteriores.</p>
+        <a class="btn" href="{{ '/anios-escolares.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>🏫 Cursos</h3>
+        <p>Grados, secciones, año escolar y profesor guía de cada curso.</p>
+        <a class="btn" href="{{ '/cursos.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>📚 Asignaturas</h3>
+        <p>Tipo (académica/técnico/taller), nota mínima, RA y competencias.</p>
+        <a class="btn" href="{{ '/asignaturas.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>🗓️ Períodos académicos</h3>
+        <p>Los períodos de cada año escolar, compartidos por todas las asignaturas.</p>
+        <a class="btn" href="{{ '/periodos.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>🎯 Competencias específicas</h3>
+        <p>El catálogo de competencias de cada asignatura académica.</p>
+        <a class="btn" href="{{ '/competencias.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>👤 Usuarios</h3>
+        <p>Profesores y administradores con acceso al sistema.</p>
+        <a class="btn" href="{{ '/usuarios.html' | relative_url }}">Entrar</a>
+    </div>
+</div>

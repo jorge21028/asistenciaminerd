@@ -1,6 +1,8 @@
-# Sistema de Asistencia — MINERD (Módulo de Asistencia)
+# Sistema de Gestión Docente
 
-Módulo de asistencia diaria por curso y asignatura, con reportes diario, semanal, mensual y anual.
+Plataforma modular de gestión académica y administrativa para centros educativos dominicanos (MINERD), organizada por módulos: Asistencia, Calificaciones, Horario, Conducta, Dinámica de Clase, Estudiantes, Asignaciones, Reportes y Configuración.
+
+El primer módulo construido fue Asistencia — lo demás se fue agregando sobre la misma base.
 Pensado como el primer módulo de un sistema académico más grande.
 
 **Arquitectura:**
@@ -196,6 +198,23 @@ Si ya tenías la base de datos creada, ejecuta `database/migracion_anio_escolar.
 **Alcance de esta fase:** dejé fuera, a propósito, el bloqueo de años inhabilitados en Horario y en las herramientas de Dinámica de Clase (ruleta, actividades, pantalla de inicio) porque son herramientas de uso en vivo, no registros académicos permanentes — si prefieres que también se restrinjan, lo agrego.
 
 **Próximas fases** (según el plan que aprobaste): rebranding a "Sistema de Gestión Docente" + navegación modular, estudiantes ampliado (tutores, salud, MINERD), asistencia/horario con los nuevos reportes, calificaciones con rúbrica en técnico/taller, generador de grupos, reportes unificados, configuración unificada, y exportar/copiar universal.
+
+## Sistema de Gestión Docente — Fase 2: Rebranding + Navegación Modular
+
+Segunda fase del plan acordado. El sistema ahora se llama **Sistema de Gestión Docente** en todas partes (login, portal, título de pestaña, menús), y la navegación dejó de mostrar siempre la misma lista de ~25 enlaces.
+
+**Qué cambia:**
+
+- **Menú por módulo:** al entrar a cualquier página, el menú superior ahora muestra **solo** los enlaces de ese módulo (ej. dentro de "Conducta" solo ves "Incidentes" y "Registrar falta"), en vez de los enlaces de los otros 9 módulos también. El enlace **"🏠 Portal"** siempre está primero, para volver al inicio en un clic.
+- **Indicador de módulo actual:** junto al logo, una etiqueta muestra en qué módulo estás (ej. "Calificaciones"), visible en todo momento.
+- **Portal principal reorganizado:** ahora agrupa Asistencia, Calificaciones, Horario, Conducta, Dinámica de Clase, Estudiantes, Asignaciones (admin), Generador de Grupos (próximamente, Fase 6), Reportes y Configuración (admin) — se quitaron las tarjetas de "Boletines" y "Familias" que ya no correspondían (esa información ahora vive dentro del módulo de Reportes, como pediste).
+- **Nuevo módulo "Reportes"** (`reportes.html`): reúne los reportes que ya existían (Asistencia, Calificaciones, Conducta) en un solo lugar. Los reportes nuevos (estudiantes, profesores, horarios) se agregan en la Fase 7.
+- **Nuevo módulo "Configuración"** (`configuracion.html`, solo admin): reúne Años Escolares, Cursos, Asignaturas, Períodos, Competencias y Usuarios — las tablas maestras que antes estaban sueltas en el menú.
+- El reporte de asistencia se renombró de `reportes.html` a **`asistencia-reportes.html`** (para liberar ese nombre para el nuevo hub general de Reportes). Si tenías esa URL guardada en algún enlace externo, actualízala.
+
+**Nada de esto tocó la base de datos ni la API** — es una reorganización de navegación y branding sobre lo que ya funcionaba. Todos los formularios, cálculos y datos siguen exactamente igual.
+
+**Un archivo que debes editar tú mismo:** en `_config.yml`, solo actualicé `title` y `description` — **no toques `api_url`**, esa línea debe seguir teniendo la URL real de tu API en Hostinger, no la copies de este paquete.
 
 ## Seguridad — antes de usarlo en producción
 

@@ -6,9 +6,10 @@ sin_layout: true
 <div class="topbar" style="position: static;">
     <a class="brand" href="{{ '/portal.html' | relative_url }}">
         <span class="sello">🎓</span>
-        Sistema Académico
+        Sistema de Gestión Docente
     </a>
     <div class="usuario-box">
+        <span class="badge" id="anioEscolarBadge" style="display:none;" title="Año escolar activo"></span>
         <span id="nombreUsuario"></span>
         <span class="badge" id="rolUsuario"></span>
         <button class="btn-salir" onclick="Auth.cerrarSesion()">Salir</button>
@@ -30,21 +31,15 @@ sin_layout: true
     </div>
 
     <div class="card modulo-card">
-        <h3>🗓️ Horario</h3>
-        <p>Consulta el horario semanal de cada profesor, con clase actual, próxima clase y resumen de carga horaria.</p>
-        <a class="btn" href="{{ '/horario.html' | relative_url }}">Entrar</a>
-    </div>
-
-    <div class="card modulo-card">
-        <h3>🎲 Dinámica de Clase</h3>
-        <p>Herramientas para usar en vivo en el aula: ruleta de participación, y más por venir.</p>
-        <a class="btn" href="{{ '/dinamica-clase.html' | relative_url }}">Entrar</a>
-    </div>
-
-    <div class="card modulo-card">
         <h3>📊 Calificaciones</h3>
         <p>Califica tus actividades por taller, RA técnico-profesional o rúbrica de competencias, y consulta los 4 reportes con exportación a Excel.</p>
         <a class="btn" href="{{ '/calificaciones.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>🗓️ Horario</h3>
+        <p>Consulta el horario semanal de cada profesor, con clase actual, próxima clase y resumen de carga horaria.</p>
+        <a class="btn" href="{{ '/horario.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card">
@@ -53,16 +48,40 @@ sin_layout: true
         <a class="btn" href="{{ '/conducta.html' | relative_url }}">Entrar</a>
     </div>
 
-    <div class="card modulo-card modulo-proximamente">
-        <h3>📄 Boletines</h3>
-        <p>Generación de boletines de calificación para entregar a las familias.</p>
-        <span class="badge">Próximamente</span>
+    <div class="card modulo-card">
+        <h3>🎲 Dinámica de Clase</h3>
+        <p>Herramientas para usar en vivo en el aula: ruleta de participación, actividades con temporizador, y pantalla de inicio.</p>
+        <a class="btn" href="{{ '/dinamica-clase.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>🎓 Estudiantes</h3>
+        <p>Matrícula, datos generales y gestión de estudiantes por curso.</p>
+        <a class="btn" href="{{ '/estudiantes.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card" data-solo-admin>
+        <h3>🔗 Asignaciones</h3>
+        <p>Qué profesor imparte qué asignatura en qué curso.</p>
+        <a class="btn" href="{{ '/asignaciones.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card modulo-proximamente">
-        <h3>👨‍👩‍👧 Familias</h3>
-        <p>Datos de contacto y comunicación con padres/tutores.</p>
+        <h3>👥 Generador de Grupos</h3>
+        <p>Arma equipos de trabajo al azar a partir de la lista del curso.</p>
         <span class="badge">Próximamente</span>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>📈 Reportes</h3>
+        <p>Todos los reportes del sistema, en un solo lugar.</p>
+        <a class="btn" href="{{ '/reportes.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card" data-solo-admin>
+        <h3>⚙️ Configuración</h3>
+        <p>Años escolares, cursos, asignaturas, períodos, competencias y usuarios.</p>
+        <a class="btn" href="{{ '/configuracion.html' | relative_url }}">Entrar</a>
     </div>
 </div>
 
@@ -77,5 +96,16 @@ sin_layout: true
         const rolEl = document.getElementById('rolUsuario');
         rolEl.textContent = u.rol === 'admin' ? 'Administrador' : 'Profesor';
         rolEl.classList.add(u.rol);
+
+        if (u.rol !== 'admin') {
+            document.querySelectorAll('[data-solo-admin]').forEach(el => el.style.display = 'none');
+        }
+
+        apiFetch('anios_escolares.php?activo=1').then(anio => {
+            if (!anio) return;
+            const badge = document.getElementById('anioEscolarBadge');
+            badge.textContent = '📅 ' + anio.nombre;
+            badge.style.display = 'inline-block';
+        }).catch(() => { /* no bloquea el resto de la página */ });
     });
 </script>

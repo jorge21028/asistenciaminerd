@@ -109,6 +109,25 @@ button, input, select, textarea {
     text-decoration: none;
 }
 
+.topbar-izquierda {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.modulo-actual-pill {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+@media (max-width: 720px) { .modulo-actual-pill { display: none; } }
+
 .brand .sello {
     width: 30px;
     height: 30px;
