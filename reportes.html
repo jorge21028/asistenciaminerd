@@ -1,0 +1,50 @@
+---
+layout: default
+modulo: reportes
+modulo_nombre: Reportes
+titulo: Reportes
+---
+<div class="page-header">
+    <div>
+        <h1>📈 Reportes</h1>
+        <p class="subtitulo">Todos los reportes del sistema, en un solo lugar</p>
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="card modulo-card">
+        <h3>📋 Asistencia</h3>
+        <p>Diario, semanal, mensual y anual por curso y asignatura.</p>
+        <a class="btn" href="{{ '/asistencia-reportes.html' | relative_url }}">Ver reportes</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>📊 Calificaciones</h3>
+        <p>Por actividad, por RA/competencia, por período y anual, con exportación a Excel.</p>
+        <a class="btn" href="{{ '/calificaciones-reportes.html' | relative_url }}">Ver reportes</a>
+    </div>
+
+    <div class="card modulo-card">
+        <h3>🧭 Conducta</h3>
+        <p>Listado de incidentes y expediente de conducta por estudiante.</p>
+        <a class="btn" href="{{ '/conducta.html' | relative_url }}">Ver incidentes</a>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>🎓 Estudiantes</h3>
+        <p>Listado por curso, datos generales y de contacto.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>👩‍🏫 Profesores</h3>
+        <p>Asignaciones, cursos, asignaturas y cursos como profesor guía.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+
+    <div class="card modulo-card modulo-proximamente">
+        <h3>🗓️ Horarios</h3>
+        <p>Horario por curso y por profesor, listo para imprimir.</p>
+        <span class="badge">Próximamente</span>
+    </div>
+</div>
