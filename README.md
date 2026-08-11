@@ -216,6 +216,22 @@ Segunda fase del plan acordado. El sistema ahora se llama **Sistema de Gestión 
 
 **Un archivo que debes editar tú mismo:** en `_config.yml`, solo actualicé `title` y `description` — **no toques `api_url`**, esa línea debe seguir teniendo la URL real de tu API en Hostinger, no la copies de este paquete.
 
+## Sistema de Gestión Docente — Fase 3: Estudiantes ampliado
+
+Tercera fase del plan acordado.
+
+**Qué se agregó:**
+
+- **Padres, madres y tutores** (`estudiante-ficha.html`, nueva pestaña "Ficha"): un estudiante puede tener varios responsables registrados (padre, madre, tutor legal, otro), con nombre, cédula, teléfonos, correo, dirección, ocupación y lugar de trabajo. Se puede marcar cuál es el "contacto principal".
+- **Información de salud** (enfermedades, alergias, medicamentos, condiciones, observaciones): **acceso restringido** — solo el administrador y el **profesor guía** del curso del estudiante pueden verla o editarla. Un profesor que solo imparte una asignatura en ese curso no la ve (la tarjeta ni siquiera aparece en su pantalla).
+- **Datos del registro MINERD**: RNE, NUI (cédula del estudiante), código de centro, distrito/regional educativo, nivel, modalidad, subsistema, tanda, año de ingreso y centro de procedencia. Mismo nivel de acceso restringido que salud para *ver*; solo el administrador puede *editarlos* (son datos del registro oficial).
+- **El profesor guía ahora tiene permisos reales**, no solo un dato guardado: puede consultar la lista de estudiantes, los reportes de asistencia y de calificaciones de su curso **aunque no imparta ninguna asignatura ahí** — sigue sin poder *registrar* asistencia/calificaciones de asignaturas que no le pertenecen, solo consultar. Esto se reutilizó el rol "profesor" existente (como acordamos), sin crear un rol nuevo.
+- De paso, cerré un hueco de permisos que encontré en los reportes de calificaciones (`calif_reportes.php`): antes cualquier profesor autenticado podía ver el reporte de cualquier curso con solo conocer sus IDs; ahora se valida el acceso igual que en el resto del sistema.
+
+**Nota sobre los datos del MINERD:** como no tenía una ficha/captura oficial del SIGERD como referencia (me confirmaste usar el conjunto público conocido), los campos que incluí son los identificadores y categorías de uso más extendido (RNE, NUI, código de centro, distrito/regional, nivel, modalidad, subsistema, tanda). Si tu centro maneja algún campo adicional específico de su ficha real, dímelo y lo agrego.
+
+Si ya tenías la base de datos creada, ejecuta `database/migracion_estudiantes_ampliado.sql` en phpMyAdmin.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

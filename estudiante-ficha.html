@@ -1,0 +1,209 @@
+---
+layout: default
+modulo: estudiantes
+modulo_nombre: Estudiantes
+titulo: Ficha del estudiante
+---
+<div class="page-header">
+    <div>
+        <h1 id="tituloEstudiante">Ficha del estudiante</h1>
+        <p class="subtitulo"><a href="{{ '/estudiantes.html' | relative_url }}">← Estudiantes</a></p>
+    </div>
+</div>
+
+<div id="alertaFicha"></div>
+
+<div class="card" id="cardDatosGenerales">
+    <h3>Datos generales</h3>
+    <div class="grid-3" id="datosGenerales"></div>
+</div>
+
+<!-- Padres / Tutores -->
+<div class="card">
+    <h3>Padres, madres o tutores</h3>
+    <p class="subtitulo">Un estudiante puede tener más de un responsable registrado</p>
+    <div id="alertaTutor"></div>
+
+    <form id="formTutor">
+        <input type="hidden" id="tutorId">
+        <div class="fila-form">
+            <div class="campo">
+                <label for="parentesco">Parentesco</label>
+                <select id="parentesco">
+                    <option value="padre">Padre</option>
+                    <option value="madre">Madre</option>
+                    <option value="tutor_legal">Tutor legal</option>
+                    <option value="otro">Otro responsable</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="nombreTutor">Nombre</label>
+                <input type="text" id="nombreTutor" required>
+            </div>
+            <div class="campo">
+                <label for="apellidoTutor">Apellido</label>
+                <input type="text" id="apellidoTutor" required>
+            </div>
+            <div class="campo">
+                <label for="cedulaTutor">Cédula</label>
+                <input type="text" id="cedulaTutor">
+            </div>
+        </div>
+        <div class="fila-form">
+            <div class="campo">
+                <label for="telefonoTutor">Teléfono</label>
+                <input type="text" id="telefonoTutor">
+            </div>
+            <div class="campo">
+                <label for="telefonoAltTutor">Teléfono alternativo</label>
+                <input type="text" id="telefonoAltTutor">
+            </div>
+            <div class="campo">
+                <label for="correoTutor">Correo electrónico</label>
+                <input type="email" id="correoTutor">
+            </div>
+        </div>
+        <div class="campo">
+            <label for="direccionTutor">Dirección</label>
+            <input type="text" id="direccionTutor">
+        </div>
+        <div class="fila-form">
+            <div class="campo">
+                <label for="ocupacionTutor">Ocupación</label>
+                <input type="text" id="ocupacionTutor">
+            </div>
+            <div class="campo">
+                <label for="lugarTrabajoTutor">Lugar de trabajo</label>
+                <input type="text" id="lugarTrabajoTutor">
+            </div>
+            <div class="campo">
+                <label for="telefonoLaboralTutor">Teléfono laboral</label>
+                <input type="text" id="telefonoLaboralTutor">
+            </div>
+        </div>
+        <div class="campo">
+            <label for="observacionesTutor">Información adicional</label>
+            <textarea id="observacionesTutor" rows="2"></textarea>
+        </div>
+        <div class="fila-form">
+            <label style="display:flex; align-items:center; gap:8px; font-weight:600; font-size:0.85rem;">
+                <input type="checkbox" id="contactoPrincipal" style="width:auto;"> Contacto principal
+            </label>
+            <button type="submit" class="btn">Guardar</button>
+            <button type="button" class="btn secundario" id="btnCancelarTutor" style="display:none;">Cancelar</button>
+        </div>
+    </form>
+
+    <div class="tabla-wrap" style="margin-top:18px;">
+        <table>
+            <thead><tr><th>Parentesco</th><th>Nombre</th><th>Teléfono</th><th>Correo</th><th class="num">Principal</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaTutores"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacioTutores" class="vacio-estado" style="display:none;">Todavía no hay responsables registrados.</div>
+</div>
+
+<!-- Salud (acceso restringido) -->
+<div class="card" id="cardSalud" style="display:none;">
+    <h3>🩺 Información de salud</h3>
+    <p class="subtitulo">Visible solo para administradores y el profesor guía del curso</p>
+    <div id="alertaSalud"></div>
+    <div class="campo">
+        <label for="enfermedades">Enfermedades conocidas</label>
+        <textarea id="enfermedades" rows="2"></textarea>
+    </div>
+    <div class="campo">
+        <label for="alergias">Alergias</label>
+        <textarea id="alergias" rows="2"></textarea>
+    </div>
+    <div class="campo">
+        <label for="medicamentos">Medicamentos importantes</label>
+        <textarea id="medicamentos" rows="2"></textarea>
+    </div>
+    <div class="campo">
+        <label for="condiciones">Condiciones que el centro deba conocer</label>
+        <textarea id="condiciones" rows="2"></textarea>
+    </div>
+    <div class="campo">
+        <label for="observacionesSalud">Observaciones</label>
+        <textarea id="observacionesSalud" rows="2"></textarea>
+    </div>
+    <button class="btn" id="btnGuardarSalud">Guardar información de salud</button>
+</div>
+
+<!-- Datos MINERD (acceso restringido) -->
+<div class="card" id="cardMinerd" style="display:none;">
+    <h3>🏛️ Datos del registro MINERD</h3>
+    <p class="subtitulo">Visible para administradores y el profesor guía · edición solo para administradores</p>
+    <div id="alertaMinerd"></div>
+    <div class="fila-form">
+        <div class="campo">
+            <label for="rne">RNE (Registro Nacional del Estudiante)</label>
+            <input type="text" id="rne">
+        </div>
+        <div class="campo">
+            <label for="nui">NUI / Cédula del estudiante</label>
+            <input type="text" id="nui">
+        </div>
+    </div>
+    <div class="fila-form">
+        <div class="campo">
+            <label for="codigoCentro">Código de centro</label>
+            <input type="text" id="codigoCentro">
+        </div>
+        <div class="campo">
+            <label for="distritoEducativo">Distrito educativo</label>
+            <input type="text" id="distritoEducativo">
+        </div>
+        <div class="campo">
+            <label for="regionalEducativo">Regional educativo</label>
+            <input type="text" id="regionalEducativo">
+        </div>
+    </div>
+    <div class="fila-form">
+        <div class="campo">
+            <label for="nivel">Nivel</label>
+            <input type="text" id="nivel" value="Secundario">
+        </div>
+        <div class="campo">
+            <label for="modalidad">Modalidad</label>
+            <select id="modalidad">
+                <option value="">— Sin especificar —</option>
+                <option value="Académica">Académica</option>
+                <option value="Técnico-Profesional">Técnico-Profesional</option>
+                <option value="Artes">Artes</option>
+            </select>
+        </div>
+        <div class="campo">
+            <label for="subsistema">Subsistema</label>
+            <input type="text" id="subsistema" placeholder="Ej: General">
+        </div>
+        <div class="campo">
+            <label for="tanda">Tanda</label>
+            <select id="tanda">
+                <option value="">— Sin especificar —</option>
+                <option value="matutina">Matutina</option>
+                <option value="vespertina">Vespertina</option>
+                <option value="nocturna">Nocturna</option>
+                <option value="extendida">Extendida</option>
+            </select>
+        </div>
+    </div>
+    <div class="fila-form">
+        <div class="campo">
+            <label for="anioIngreso">Año de ingreso al sistema</label>
+            <input type="number" id="anioIngreso" min="1990" max="2100">
+        </div>
+        <div class="campo" style="flex:2;">
+            <label for="centroProcedencia">Centro educativo de procedencia (si aplica)</label>
+            <input type="text" id="centroProcedencia">
+        </div>
+    </div>
+    <div class="campo">
+        <label for="observacionesMinerd">Observaciones</label>
+        <textarea id="observacionesMinerd" rows="2"></textarea>
+    </div>
+    <button class="btn" id="btnGuardarMinerd" data-solo-admin>Guardar datos MINERD</button>
+</div>
+
+<script src="{{ '/assets/js/estudiante-ficha.js' | relative_url }}"></script>
