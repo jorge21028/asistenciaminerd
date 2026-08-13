@@ -232,6 +232,25 @@ Tercera fase del plan acordado.
 
 Si ya tenías la base de datos creada, ejecuta `database/migracion_estudiantes_ampliado.sql` en phpMyAdmin.
 
+## Sistema de Gestión Docente — Fase 4: Asistencia y Horario
+
+Cuarta fase del plan acordado.
+
+**Nuevo: Reporte diario de asistencia por curso** (`asistencia-reporte-diario-curso.html`, enlazado desde el módulo Asistencia y desde Reportes):
+- A diferencia de los reportes existentes (que son por curso **y asignatura**), este es por **curso completo**, sin elegir asignatura.
+- Usa como referencia la **última toma de asistencia registrada ese día** para el curso, sin importar desde qué asignatura se tomó — exactamente como pediste (si hubo toma a las 8:00 AM en Matemática, 10:00 AM en Lengua Española y 1:00 PM en Informática, el reporte usa la de la 1:00 PM). Lo probé con un caso simulado y selecciona correctamente la más reciente.
+- Muestra: total de estudiantes, presentes, ausentes, excusas, % de asistencia, % de ausencia, fecha, curso y año escolar. Filtra por curso y fecha (el año escolar ya viene filtrado por el curso elegido). Tiene botón de imprimir/exportar a PDF (usando el diálogo de impresión del navegador).
+
+**Nuevo: Horario por curso** (`horario-curso.html`, enlazado desde el módulo Horario y desde Reportes):
+- A diferencia de la vista de Horario existente (que es por **profesor**), este reúne las clases de **todos los profesores** que dan clase en un curso, para mostrar el horario semanal completo de ese curso.
+- Formato de tabla semanal (Hora × Lunes-Viernes), con nombre del centro, año escolar, curso, grado, sección, asignatura y profesor en cada bloque. Respeta los separadores de receso/almuerzo del campanario.
+- **Nota:** no incluí la columna de "Aula" porque ese dato no existe todavía en ninguna tabla del sistema (me pediste incluirlo solo "si existe ese dato" — no quise inventar un campo nuevo sin que me lo confirmaras). Si quieres que lo agregue, dime y creo el campo correspondiente en `bloques_horario` o en `horario_profesor`.
+- Tiene botón de imprimir/exportar a PDF.
+
+**Estilos de impresión:** agregué reglas `@media print` reutilizables (ocultan menú/botones y ajustan las tablas para papel) — las usan estas dos páginas nuevas y quedan disponibles para cualquier reporte futuro.
+
+**Nada de esto afecta el horario individual por profesor ni los reportes de asistencia por asignatura que ya existían** — son vistas nuevas, adicionales.
+
 ## Seguridad — antes de usarlo en producción
 
 - Cambia `JWT_SECRET` y `SETUP_KEY` por valores únicos y largos.

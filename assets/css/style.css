@@ -1058,3 +1058,24 @@ table.horario-grid td.celda-dia {
     .topbar nav.abierto { display: flex; }
     .menu-toggle { display: block; }
 }
+
+/* ---------------------------------------------------------------------
+   Impresión — usado por los reportes descargables (horario por curso,
+   reporte diario de asistencia, etc.). Los filtros que no deben imprimirse
+   llevan la clase "no-imprimir".
+   --------------------------------------------------------------------- */
+@media print {
+    .topbar, .btn, .no-imprimir, .vacio-estado {
+        display: none !important;
+    }
+    .page-header a { display: none; }
+    body { background: #fff; }
+    .card {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+    }
+    main.contenido { padding: 0; max-width: 100%; }
+    table { font-size: 0.85rem; }
+    thead th { position: static; }
+}

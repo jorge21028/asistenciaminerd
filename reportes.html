@@ -14,8 +14,9 @@ titulo: Reportes
 <div class="grid-3">
     <div class="card modulo-card">
         <h3>📋 Asistencia</h3>
-        <p>Diario, semanal, mensual y anual por curso y asignatura.</p>
-        <a class="btn" href="{{ '/asistencia-reportes.html' | relative_url }}">Ver reportes</a>
+        <p>Diario por curso (última toma del día), diario/semanal/mensual/anual por asignatura.</p>
+        <a class="btn" href="{{ '/asistencia-reporte-diario-curso.html' | relative_url }}">Diario por curso</a>
+        <a class="btn secundario" style="margin-top:8px;" href="{{ '/asistencia-reportes.html' | relative_url }}">Otros reportes</a>
     </div>
 
     <div class="card modulo-card">
@@ -42,9 +43,9 @@ titulo: Reportes
         <span class="badge">Próximamente</span>
     </div>
 
-    <div class="card modulo-card modulo-proximamente">
+    <div class="card modulo-card">
         <h3>🗓️ Horarios</h3>
-        <p>Horario por curso y por profesor, listo para imprimir.</p>
-        <span class="badge">Próximamente</span>
+        <p>Horario semanal por curso (todos los profesores), listo para imprimir. El horario individual por profesor ya está en el módulo Horario.</p>
+        <a class="btn" href="{{ '/horario-curso.html' | relative_url }}">Ver horario por curso</a>
     </div>
 </div>

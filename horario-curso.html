@@ -1,0 +1,25 @@
+---
+layout: default
+modulo: horario
+modulo_nombre: Horario
+titulo: Horario por curso
+---
+<div class="page-header">
+    <div>
+        <h1>🗓️ Horario por curso</h1>
+        <p class="subtitulo"><a href="{{ '/horario.html' | relative_url }}">← Horario</a></p>
+    </div>
+    <button class="btn secundario" onclick="window.print()">🖨️ Imprimir / exportar PDF</button>
+</div>
+
+<div class="card no-imprimir">
+    <div id="alertaHorarioCurso"></div>
+    <div class="campo" style="max-width:360px;">
+        <label for="curso">Curso</label>
+        <select id="curso"></select>
+    </div>
+</div>
+
+<div id="contenedorHorario"></div>
+
+<script src="{{ '/assets/js/horario-curso.js' | relative_url }}"></script>

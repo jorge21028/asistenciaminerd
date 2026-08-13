@@ -1,0 +1,35 @@
+---
+layout: default
+modulo: asistencia
+modulo_nombre: Asistencia
+titulo: Reporte diario por curso
+---
+<div class="page-header">
+    <div>
+        <h1>Reporte diario de asistencia por curso</h1>
+        <p class="subtitulo"><a href="{{ '/asistencia-reportes.html' | relative_url }}">← Reportes de asistencia</a></p>
+    </div>
+    <button class="btn secundario" onclick="window.print()">🖨️ Imprimir / exportar PDF</button>
+</div>
+
+<div class="card no-imprimir">
+    <p style="color:var(--color-ink-soft); font-size:0.9rem; margin:0 0 14px;">
+        Este reporte toma como referencia la <strong>última toma de asistencia registrada ese día</strong> para el curso, sin importar desde qué asignatura se tomó.
+    </p>
+    <div id="alertaDiarioCurso"></div>
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="curso">Curso</label>
+            <select id="curso"></select>
+        </div>
+        <div class="campo">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha">
+        </div>
+        <button class="btn" id="btnGenerar">Generar</button>
+    </div>
+</div>
+
+<div id="contenedorReporte"></div>
+
+<script src="{{ '/assets/js/asistencia-reporte-diario-curso.js' | relative_url }}"></script>

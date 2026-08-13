@@ -6,7 +6,8 @@
     {% when 'asistencia' %}
         <a href="{{ '/dashboard.html' | relative_url }}">Inicio</a>
         <a href="{{ '/asistencia.html' | relative_url }}">Tomar asistencia</a>
-        <a href="{{ '/asistencia-reportes.html' | relative_url }}">Reportes</a>
+        <a href="{{ '/asistencia-reporte-diario-curso.html' | relative_url }}">Reporte diario</a>
+        <a href="{{ '/asistencia-reportes.html' | relative_url }}">Otros reportes</a>
 
     {% when 'calificaciones' %}
         <a href="{{ '/calificaciones.html' | relative_url }}">Actividades</a>
@@ -14,6 +15,7 @@
 
     {% when 'horario' %}
         <a href="{{ '/horario.html' | relative_url }}">Mi horario</a>
+        <a href="{{ '/horario-curso.html' | relative_url }}">Horario por curso</a>
         <a href="{{ '/asignar-horario.html' | relative_url }}" data-solo-admin>Asignar horario</a>
         <a href="{{ '/bloques-horario.html' | relative_url }}" data-solo-admin>Bloques horario</a>
 
@@ -35,9 +37,11 @@
 
     {% when 'reportes' %}
         <a href="{{ '/reportes.html' | relative_url }}">Inicio</a>
+        <a href="{{ '/asistencia-reporte-diario-curso.html' | relative_url }}">Asistencia diaria</a>
         <a href="{{ '/asistencia-reportes.html' | relative_url }}">Asistencia</a>
         <a href="{{ '/calificaciones-reportes.html' | relative_url }}">Calificaciones</a>
         <a href="{{ '/conducta.html' | relative_url }}">Conducta</a>
+        <a href="{{ '/horario-curso.html' | relative_url }}">Horario por curso</a>
 
     {% when 'configuracion' %}
         <a href="{{ '/configuracion.html' | relative_url }}">Inicio</a>
