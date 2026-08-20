@@ -33,8 +33,8 @@ titulo: Nueva actividad
             <select id="periodoTaller"></select>
         </div>
         <div class="campo">
-            <label for="valorTaller">Valor máximo</label>
-            <input type="number" id="valorTaller" min="0.01" step="0.01">
+            <label for="tipoActividadTaller">Tipo de actividad</label>
+            <select id="tipoActividadTaller"><option value="">— Elegir para autocompletar la rúbrica —</option></select>
         </div>
     </div>
 
@@ -46,8 +46,8 @@ titulo: Nueva actividad
                 <select id="ra"></select>
             </div>
             <div class="campo">
-                <label for="valorTecnico">Valor de esta actividad</label>
-                <input type="number" id="valorTecnico" min="0.01" step="0.01">
+                <label for="tipoActividadTecnico">Tipo de actividad</label>
+                <select id="tipoActividadTecnico"><option value="">— Elegir para autocompletar la rúbrica —</option></select>
             </div>
         </div>
         <p class="horario-info-sub" id="infoRA" style="color:var(--color-ink-soft);"></p>
@@ -68,7 +68,7 @@ titulo: Nueva actividad
 
 <div class="card" id="cardRubrica" style="display:none;">
     <h3>Rúbrica (criterios de evaluación)</h3>
-    <p class="subtitulo">Cada criterio puede evidenciar una o varias competencias específicas. El valor de la actividad es la suma de los pesos.</p>
+    <p class="subtitulo" id="textoRubrica">Los criterios definen cómo se compone la calificación de la actividad. El valor total es la suma de sus pesos.</p>
     <div id="listaCriterios"></div>
     <button type="button" class="btn secundario chico" id="btnAgregarCriterio" style="margin-top:10px;">+ Agregar criterio</button>
     <p style="margin-top:16px; font-weight:700;">Valor total de la actividad: <span id="valorTotalCriterios">0</span> puntos</p>
