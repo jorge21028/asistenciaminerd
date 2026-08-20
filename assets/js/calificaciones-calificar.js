@@ -1,15 +1,36 @@
-const NIVELES = [
-    { valor: 'estrategico', etiqueta: 'Estratégico' },
-    { valor: 'autonomo', etiqueta: 'Autónomo' },
-    { valor: 'resolutivo', etiqueta: 'Resolutivo' },
-    { valor: 'receptivo', etiqueta: 'Receptivo' },
-    { valor: 'no_realizada', etiqueta: 'No realizada' },
-];
+// Cada componente (académica/técnico/taller) tiene su propia escala de
+// niveles de desempeño, con etiquetas propias — pero el mismo esquema de
+// puntuación por debajo (100% / 75% / 50% / 25% / 0%), para que el cálculo
+// sea consistente en todo el sistema. Si tu centro usa otra terminología
+// oficial para técnico/taller, se puede ajustar aquí.
+const NIVELES_POR_TIPO = {
+    academica: [
+        { valor: 'estrategico', etiqueta: 'Estratégico' },
+        { valor: 'autonomo', etiqueta: 'Autónomo' },
+        { valor: 'resolutivo', etiqueta: 'Resolutivo' },
+        { valor: 'receptivo', etiqueta: 'Receptivo' },
+        { valor: 'no_realizada', etiqueta: 'No realizada' },
+    ],
+    tecnico: [
+        { valor: 'estrategico', etiqueta: 'Domina' },
+        { valor: 'autonomo', etiqueta: 'Competente' },
+        { valor: 'resolutivo', etiqueta: 'En desarrollo' },
+        { valor: 'receptivo', etiqueta: 'Inicial' },
+        { valor: 'no_realizada', etiqueta: 'No ejecutada' },
+    ],
+    taller: [
+        { valor: 'estrategico', etiqueta: 'Sobresaliente' },
+        { valor: 'autonomo', etiqueta: 'Satisfactorio' },
+        { valor: 'resolutivo', etiqueta: 'Aceptable' },
+        { valor: 'receptivo', etiqueta: 'Insuficiente' },
+        { valor: 'no_realizada', etiqueta: 'No realizada' },
+    ],
+};
 const MULTIPLICADOR_NIVEL = { estrategico: 1, autonomo: 0.75, resolutivo: 0.5, receptivo: 0.25, no_realizada: 0 };
 
 let actividadId;
 let notaMinima = 70;
-let esRubrica = false;
+let tipoAsignaturaActual = 'academica';
 
 function badgeEstado(pct) {
     if (pct === null || pct === undefined) return '<span class="badge">Sin calificar</span>';
@@ -25,6 +46,7 @@ async function inicializar() {
     try {
         const actividad = await apiFetch(`calif_actividades.php?id=${actividadId}`);
         notaMinima = parseFloat(actividad.nota_minima);
+        tipoAsignaturaActual = actividad.asignatura_tipo;
         document.getElementById('tituloActividad').textContent = actividad.nombre;
         const referencia = actividad.unidad_titulo
             ? `${actividad.unidad_codigo ? actividad.unidad_codigo + ': ' : ''}${actividad.unidad_titulo}`
@@ -32,8 +54,11 @@ async function inicializar() {
         document.getElementById('subtituloActividad').innerHTML =
             `<a href="${rutaBase('calificaciones.html')}">← Calificaciones</a> · ${escaparHtml(actividad.curso_nombre)} — ${escaparHtml(actividad.asignatura_nombre)} · ${escaparHtml(referencia)} · Valor: ${actividad.valor_maximo} pts · Nota mínima: ${notaMinima}%`;
 
-        if (actividad.asignatura_tipo === 'academica') {
-            esRubrica = true;
+        // El modo de calificación depende de si la actividad TIENE rúbrica
+        // (criterios), no del tipo de asignatura — así las actividades
+        // técnico/taller creadas ANTES de esta funcionalidad (sin rúbrica,
+        // calificadas directo por puntos) se siguen viendo exactamente igual.
+        if (actividad.criterios && actividad.criterios.length > 0) {
             await cargarModoRubrica();
         } else {
             await cargarModoSimple();
@@ -45,7 +70,7 @@ async function inicializar() {
 }
 
 // ---------------------------------------------------------------------
-// MODO SIMPLE (taller / técnico)
+// MODO SIMPLE (actividades técnico/taller creadas antes de la rúbrica)
 // ---------------------------------------------------------------------
 async function cargarModoSimple() {
     const data = await apiFetch(`calif_calificaciones.php?actividad_id=${actividadId}`);
@@ -103,13 +128,24 @@ async function guardarSimple(registros) {
 }
 
 // ---------------------------------------------------------------------
-// MODO RÚBRICA (académica)
+// MODO RÚBRICA (académica, técnico y taller)
 // ---------------------------------------------------------------------
+function pintarLeyendaNiveles(niveles) {
+    const leyenda = document.querySelector('#cardRubrica .leyenda');
+    if (!leyenda) return;
+    const colores = { estrategico: '🟢', autonomo: '🔵', resolutivo: '🟡', receptivo: '🟠', no_realizada: '🔴' };
+    leyenda.innerHTML = niveles.map(n => `<span>${colores[n.valor]} ${n.etiqueta}</span>`).join('') +
+        '<span style="margin-left:auto; color:var(--color-ink-soft);">Todo empieza en el nivel más alto — solo cambia lo que corresponda</span>';
+}
+
 async function cargarModoRubrica() {
     const data = await apiFetch(`calif_calificaciones_criterio.php?actividad_id=${actividadId}`);
     const { criterios, estudiantes, calificaciones } = data;
+    const niveles = NIVELES_POR_TIPO[tipoAsignaturaActual] || NIVELES_POR_TIPO.academica;
+    const nivelPorDefecto = niveles[0].valor; // el nivel más alto de la escala de este componente
 
     document.getElementById('cardRubrica').style.display = 'block';
+    pintarLeyendaNiveles(niveles);
     const tabla = document.getElementById('tablaRubrica');
 
     const thead = '<thead><tr><th>Estudiante</th>' +
@@ -120,10 +156,10 @@ async function cargarModoRubrica() {
         const celdas = criterios.map(c => {
             const clave = `${c.id}:${e.id}`;
             const existente = calificaciones[clave];
-            const nivel = existente ? existente.nivel : 'estrategico';
+            const nivel = existente ? existente.nivel : nivelPorDefecto;
             return `<td>
                 <select class="nivel-select nivel-${nivel}" data-est="${e.id}" data-crit="${c.id}" data-peso="${c.peso}">
-                    ${NIVELES.map(n => `<option value="${n.valor}" ${n.valor === nivel ? 'selected' : ''}>${n.etiqueta}</option>`).join('')}
+                    ${niveles.map(n => `<option value="${n.valor}" ${n.valor === nivel ? 'selected' : ''}>${n.etiqueta}</option>`).join('')}
                 </select>
             </td>`;
         }).join('');
