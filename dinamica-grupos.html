@@ -1,0 +1,75 @@
+---
+layout: default
+modulo: dinamica
+modulo_nombre: Dinámica de Clase
+titulo: Generador de Grupos
+---
+<div class="page-header">
+    <div>
+        <h1><svg class="icon icon-lg icon-primary"><use href="#icon-grupos"></use></svg> Generador de Grupos</h1>
+        <p class="subtitulo"><a href="{{ '/dinamica-clase.html' | relative_url }}">← Dinámica de Clase</a></p>
+    </div>
+</div>
+
+<div id="alertaGrupos"></div>
+
+<div class="card">
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="curso">Curso</label>
+            <select id="curso"></select>
+        </div>
+    </div>
+</div>
+
+<div id="areaGrupos" style="display:none;">
+    <div class="card">
+        <h3>Configuración</h3>
+        <div class="fila-form">
+            <div class="campo" style="max-width:220px;">
+                <label for="modoAgrupar">Repartir por</label>
+                <select id="modoAgrupar">
+                    <option value="cantidad">Cantidad de grupos</option>
+                    <option value="tamano">Estudiantes por grupo</option>
+                </select>
+            </div>
+            <div class="campo" style="max-width:140px;">
+                <label for="valorAgrupar">Valor</label>
+                <input type="number" id="valorAgrupar" min="1" step="1" value="4">
+            </div>
+            <div class="campo" style="max-width:220px;">
+                <label for="balancearSexo">Balance</label>
+                <select id="balancearSexo">
+                    <option value="0">Sin balancear</option>
+                    <option value="1">Repartir M/F equilibrado</option>
+                </select>
+            </div>
+        </div>
+
+        <p class="subtitulo" style="margin-top:6px;">Desmarca a quienes no participan hoy (ej. ausentes) — no entrarán en el sorteo.</p>
+        <div id="listaEstudiantesCheck" class="grupos-check-grid"></div>
+        <div class="fila-form" style="margin-top:4px;">
+            <button type="button" class="btn secundario chico" id="btnMarcarTodos">Marcar todos</button>
+            <button type="button" class="btn secundario chico" id="btnDesmarcarTodos">Desmarcar todos</button>
+            <span class="subtitulo" id="contadorSeleccion" style="align-self:center;"></span>
+        </div>
+
+        <div class="fila-form" style="margin-top:18px;">
+            <button class="btn" id="btnGenerar">🎲 Generar grupos</button>
+            <button class="btn secundario" id="btnProyectar" style="display:none;"><svg class="icon icon-sm"><use href="#icon-pantalla"></use></svg> Abrir ventana para proyector</button>
+            <button class="btn secundario no-imprimir" id="btnImprimir" style="display:none;"><svg class="icon icon-sm"><use href="#icon-imprimir"></use></svg> Imprimir</button>
+        </div>
+    </div>
+
+    <div class="card" id="cardResultado" style="display:none;">
+        <h3>Grupos generados</h3>
+        <p class="horario-actualizado" id="estadoGuardadoInfo"></p>
+        <div id="resultadoGrupos" class="grupos-resultado-grid"></div>
+    </div>
+
+    <div id="estadoVacioGrupos" class="vacio-estado" style="display:none;">Todavía no se han generado grupos para este curso.</div>
+</div>
+
+<div id="estadoVacioCurso" class="vacio-estado" style="display:none;"></div>
+
+<script src="{{ '/assets/js/dinamica-grupos.js' | relative_url }}"></script>

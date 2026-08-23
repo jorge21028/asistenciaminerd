@@ -5,9 +5,9 @@ let contadorCriterio = 0;
 // Textos de ayuda de la rúbrica, según el tipo de asignatura (cada
 // componente tiene su propia lógica de evaluación, como pidió el docente).
 const TEXTO_RUBRICA = {
-    academica: 'Cada criterio puede evidenciar una o varias competencias específicas. El valor de la actividad es la suma de los pesos. Al calificar, la escala usada es Estratégico / Autónomo / Resolutivo / Receptivo / No realizada.',
-    tecnico: 'Define los criterios/indicadores de desempeño de esta actividad técnica y su peso en puntos. Al calificar, la escala usada es Domina / Competente / En desarrollo / Inicial / No ejecutada.',
-    taller: 'Define los criterios de evaluación del taller y su peso en puntos. Al calificar, la escala usada es Sobresaliente / Satisfactorio / Aceptable / Insuficiente / No realizada.',
+    academica: 'Cada criterio puede evidenciar una o varias competencias específicas. Cambia el "Valor de la actividad" arriba y los pesos se reparten solos. Al calificar, la escala usada es Estratégico / Autónomo / Resolutivo / Receptivo / No realizada.',
+    tecnico: 'Define los criterios/indicadores de desempeño de esta actividad técnica. Cambia el "Valor de la actividad" arriba y su peso en puntos se reparte solo. Al calificar, la escala usada es Domina / Competente / En desarrollo / Inicial / No ejecutada.',
+    taller: 'Define los criterios de evaluación del taller. Cambia el "Valor de la actividad" arriba y su peso en puntos se reparte solo. Al calificar, la escala usada es Sobresaliente / Satisfactorio / Aceptable / Insuficiente / No realizada.',
 };
 
 function parametros() {
@@ -57,20 +57,35 @@ async function cargarSelectorTipoActividad(selectId, competencias) {
     select.innerHTML += tiposData.tipos.map(t => `<option value="${t.id}">${escaparHtml(t.nombre)}</option>`).join('');
     select.addEventListener('change', () => cargarPlantillaIndicadores(selectId));
     agregarFilaCriterio(); // arranca con una fila vacía por si el docente no elige un tipo
+    distribuirIgualEntreAuto();
 }
 
 async function cargarPlantillaIndicadores(selectId) {
     const tipoId = document.getElementById(selectId).value;
     document.getElementById('listaCriterios').innerHTML = '';
-    if (!tipoId) { agregarFilaCriterio(); return; }
+    if (!tipoId) { agregarFilaCriterio(); distribuirIgualEntreAuto(); return; }
 
     try {
         const data = await apiFetch(`calif_tipos_actividad.php?tipo_actividad_id=${tipoId}`);
-        if (!data.indicadores.length) { agregarFilaCriterio(); return; }
-        data.indicadores.forEach(ind => agregarFilaCriterio(ind.nombre, ind.peso_sugerido));
+        if (!data.indicadores.length) { agregarFilaCriterio(); distribuirIgualEntreAuto(); return; }
+
+        // Si el docente todavía no tocó el "Valor de la actividad", lo
+        // autocompletamos con la suma de los pesos sugeridos de la
+        // plantilla. Si ya lo había definido, respetamos ese valor y
+        // solo tomamos los NOMBRES de los indicadores de la plantilla;
+        // el peso de cada uno se reparte según ese valor.
+        const valorInput = document.getElementById('valorActividad');
+        if (valorInput.dataset.tocado !== '1') {
+            const sumaSugerida = data.indicadores.reduce((s, ind) => s + (parseFloat(ind.peso_sugerido) || 0), 0);
+            valorInput.value = sumaSugerida.toFixed(2);
+        }
+
+        data.indicadores.forEach(ind => agregarFilaCriterio(ind.nombre, 0));
+        distribuirIgualEntreAuto();
     } catch (err) {
         mostrarAlerta('alertaNuevaActividad', err.message);
         agregarFilaCriterio();
+        distribuirIgualEntreAuto();
     }
 }
 
@@ -140,13 +155,14 @@ async function inicializarAcademica() {
 // ---------------------------------------------------------------------
 // Criterios de la rúbrica (compartido por los 3 tipos)
 // ---------------------------------------------------------------------
-function agregarFilaCriterio(nombre = '', peso = 4, competenciaIds = []) {
+function agregarFilaCriterio(nombre = '', peso = 0, competenciaIds = []) {
     const idx = contadorCriterio++;
     const div = document.createElement('div');
     div.className = 'card';
     div.style.background = 'var(--color-surface-alt)';
     div.style.marginBottom = '10px';
     div.dataset.criterioIdx = idx;
+    div.dataset.pesoManual = '0';
 
     const checkboxes = competenciasDisponibles.map(c => `
         <label style="display:inline-flex; align-items:center; gap:5px; font-weight:400; font-size:0.82rem; margin-right:14px;">
@@ -163,25 +179,118 @@ function agregarFilaCriterio(nombre = '', peso = 4, competenciaIds = []) {
             </div>
             <div class="campo" style="max-width:110px;">
                 <label>Peso (puntos)</label>
-                <input type="number" class="crit-peso" min="0.01" step="0.01" value="${peso}">
+                <input type="number" class="crit-peso" min="0" step="0.01" value="${peso}">
             </div>
-            <button type="button" class="btn peligro chico" onclick="this.closest('[data-criterio-idx]').remove(); recalcularTotal();">Quitar</button>
+            <button type="button" class="btn peligro chico" onclick="this.closest('[data-criterio-idx]').remove(); distribuirIgualEntreAuto();">Quitar</button>
         </div>
         ${competenciasDisponibles.length ? `<div class="campo"><label>Competencia(s) específica(s) que evidencia</label><div>${checkboxes}</div></div>` : ''}
     `;
     document.getElementById('listaCriterios').appendChild(div);
-    div.querySelector('.crit-peso').addEventListener('input', recalcularTotal);
+
+    // Si el docente edita el peso a mano, esa fila queda "fija" y deja de
+    // participar en el reparto automático (el resto del valor se sigue
+    // repartiendo entre las filas que no ha tocado).
+    div.querySelector('.crit-peso').addEventListener('input', () => {
+        div.dataset.pesoManual = '1';
+        recalcularTotal();
+    });
     recalcularTotal();
 }
 window.recalcularTotal = recalcularTotal;
 
+function valorObjetivo() {
+    return parseFloat(document.getElementById('valorActividad').value) || 0;
+}
+
+// Reparte el valor de la actividad entre los criterios que el docente no
+// haya editado manualmente. Las filas fijadas a mano conservan su peso,
+// y el resto del valor se reparte EN PARTES IGUALES entre las demás.
+function distribuirIgualEntreAuto() {
+    const filas = Array.from(document.querySelectorAll('[data-criterio-idx]'));
+    const objetivo = valorObjetivo();
+    const filasAuto = filas.filter(f => f.dataset.pesoManual !== '1');
+    const sumaManual = filas
+        .filter(f => f.dataset.pesoManual === '1')
+        .reduce((s, f) => s + (parseFloat(f.querySelector('.crit-peso').value) || 0), 0);
+
+    if (filasAuto.length > 0) {
+        const restante = Math.max(objetivo - sumaManual, 0);
+        const partes = filasAuto.map(() => Math.floor((restante / filasAuto.length) * 100) / 100);
+        const asignado = partes.reduce((s, p) => s + p, 0);
+        // El último criterio absorbe la diferencia por redondeo, así el
+        // total siempre cuadra exacto con el valor de la actividad.
+        partes[partes.length - 1] = Math.round((partes[partes.length - 1] + (restante - asignado)) * 100) / 100;
+
+        filasAuto.forEach((fila, i) => {
+            fila.querySelector('.crit-peso').value = partes[i];
+        });
+    }
+    recalcularTotal();
+}
+
+// Reparte proporcionalmente entre las filas no fijadas, conservando la
+// proporción que ya tenían entre sí (se usa cuando el docente cambia el
+// valor de la actividad después de ya tener pesos distintos por criterio).
+function redistribuirProporcional() {
+    const filas = Array.from(document.querySelectorAll('[data-criterio-idx]'));
+    const objetivo = valorObjetivo();
+    const filasAuto = filas.filter(f => f.dataset.pesoManual !== '1');
+    const sumaManual = filas
+        .filter(f => f.dataset.pesoManual === '1')
+        .reduce((s, f) => s + (parseFloat(f.querySelector('.crit-peso').value) || 0), 0);
+
+    if (filasAuto.length === 0) { recalcularTotal(); return; }
+
+    const restante = Math.max(objetivo - sumaManual, 0);
+    const sumaActualAuto = filasAuto.reduce((s, f) => s + (parseFloat(f.querySelector('.crit-peso').value) || 0), 0);
+
+    let partes;
+    if (sumaActualAuto > 0) {
+        partes = filasAuto.map(f => {
+            const actual = parseFloat(f.querySelector('.crit-peso').value) || 0;
+            return Math.floor((restante * (actual / sumaActualAuto)) * 100) / 100;
+        });
+    } else {
+        partes = filasAuto.map(() => Math.floor((restante / filasAuto.length) * 100) / 100);
+    }
+    const asignado = partes.reduce((s, p) => s + p, 0);
+    partes[partes.length - 1] = Math.round((partes[partes.length - 1] + (restante - asignado)) * 100) / 100;
+
+    filasAuto.forEach((fila, i) => {
+        fila.querySelector('.crit-peso').value = partes[i];
+    });
+    recalcularTotal();
+}
+
 function recalcularTotal() {
     let total = 0;
     document.querySelectorAll('.crit-peso').forEach(inp => { total += parseFloat(inp.value) || 0; });
+    const objetivo = valorObjetivo();
     document.getElementById('valorTotalCriterios').textContent = total.toFixed(2);
+    document.getElementById('valorObjetivoTexto').textContent = objetivo.toFixed(2);
+
+    const cuadra = Math.abs(total - objetivo) < 0.01;
+    document.getElementById('avisoDescuadre').style.display = cuadra ? 'none' : 'inline';
+    const btnGuardar = document.getElementById('btnGuardarActividad');
+    if (btnGuardar) btnGuardar.disabled = !cuadra || objetivo <= 0;
 }
 
-document.getElementById('btnAgregarCriterio').addEventListener('click', () => agregarFilaCriterio());
+document.getElementById('btnAgregarCriterio').addEventListener('click', () => {
+    agregarFilaCriterio();
+    distribuirIgualEntreAuto();
+});
+
+document.getElementById('btnDistribuirIgual').addEventListener('click', () => {
+    // Botón "reiniciar reparto": libera todas las filas fijadas a mano y
+    // vuelve a repartir el valor de la actividad en partes iguales.
+    document.querySelectorAll('[data-criterio-idx]').forEach(f => { f.dataset.pesoManual = '0'; });
+    distribuirIgualEntreAuto();
+});
+
+document.getElementById('valorActividad').addEventListener('input', (e) => {
+    e.target.dataset.tocado = '1';
+    redistribuirProporcional();
+});
 
 // ---------------------------------------------------------------------
 // Guardar
@@ -190,11 +299,15 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
     const nombre = document.getElementById('nombre').value.trim();
     if (!nombre) { mostrarAlerta('alertaNuevaActividad', 'Ponle un nombre a la actividad.'); return; }
 
+    const valorActividad = valorObjetivo();
+    if (valorActividad <= 0) { mostrarAlerta('alertaNuevaActividad', 'Indica el valor de la actividad (mayor que cero).'); return; }
+
     const body = {
         curso_id: cursoId,
         asignatura_id: asignaturaId,
         nombre,
         descripcion: document.getElementById('descripcion').value.trim(),
+        valor_actividad: valorActividad,
     };
 
     if (asignatura.tipo === 'taller') {
@@ -211,15 +324,24 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
         if (!body.periodo_id) { mostrarAlerta('alertaNuevaActividad', 'Selecciona un período.'); return; }
     }
 
+    const filas = Array.from(document.querySelectorAll('[data-criterio-idx]'));
+    if (!filas.length) { mostrarAlerta('alertaNuevaActividad', 'Agrega al menos un criterio de evaluación.'); return; }
+
     const criterios = [];
-    document.querySelectorAll('[data-criterio-idx]').forEach(row => {
+    for (const row of filas) {
         const nombreCrit = row.querySelector('.crit-nombre').value.trim();
         const peso = parseFloat(row.querySelector('.crit-peso').value) || 0;
-        if (!nombreCrit || peso <= 0) return;
+        if (!nombreCrit) { mostrarAlerta('alertaNuevaActividad', 'Todos los criterios necesitan un nombre.'); return; }
+        if (peso <= 0) { mostrarAlerta('alertaNuevaActividad', `El criterio "${nombreCrit}" no puede tener un peso de 0. Quítalo o repártele algo de valor.`); return; }
         const competenciaIds = Array.from(row.querySelectorAll('.chk-competencia:checked')).map(chk => parseInt(chk.value));
         criterios.push({ nombre: nombreCrit, peso, competencia_ids: competenciaIds });
-    });
-    if (!criterios.length) { mostrarAlerta('alertaNuevaActividad', 'Agrega al menos un criterio de evaluación con su peso.'); return; }
+    }
+
+    const sumaCriterios = criterios.reduce((s, c) => s + c.peso, 0);
+    if (Math.abs(sumaCriterios - valorActividad) >= 0.01) {
+        mostrarAlerta('alertaNuevaActividad', `La suma de los criterios (${sumaCriterios.toFixed(2)}) no coincide con el valor de la actividad (${valorActividad.toFixed(2)}). Usa "Repartir en partes iguales" o ajusta los pesos.`);
+        return;
+    }
     body.criterios = criterios;
 
     const btn = document.getElementById('btnGuardarActividad');

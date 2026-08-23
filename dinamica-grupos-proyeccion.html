@@ -1,0 +1,18 @@
+---
+layout: default
+titulo: Grupos — Proyección
+sin_layout: true
+---
+<div class="proyeccion-shell">
+    <div class="proyeccion-header">
+        <span class="proyeccion-marca"><svg class="icon"><use href="#icon-grupos"></use></svg> Generador de Grupos</span>
+        <span class="proyeccion-curso" id="proyeccionCurso">Esperando al profesor…</span>
+    </div>
+
+    <div id="proyeccionGrupos" class="grupos-proyeccion-grid"></div>
+</div>
+
+<script>
+    if (!Auth.estaAutenticado()) { window.location.href = rutaBase('index.html'); }
+</script>
+<script src="{{ '/assets/js/dinamica-grupos.js' | relative_url }}"></script>
