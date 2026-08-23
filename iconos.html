@@ -1,0 +1,50 @@
+---
+layout: default
+modulo: configuracion
+modulo_nombre: Configuración
+titulo: Pack de íconos
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1><svg class="icon icon-lg icon-primary"><use href="#icon-cuadricula"></use></svg> Pack de íconos del sistema</h1>
+        <p class="subtitulo">Íconos de línea (SVG), listos para usar en cualquier página. Clic en una tarjeta para copiar el código.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Cómo usarlos</h3>
+    <p>El sprite ya está incluido en <code>_layouts/default.html</code>, así que en cualquier página del sitio puedes escribir directamente:</p>
+    <pre style="background:var(--color-surface-alt); padding:12px 14px; border-radius:8px; overflow-x:auto;"><code>&lt;svg class="icon"&gt;&lt;use href="#icon-NOMBRE"&gt;&lt;/use&gt;&lt;/svg&gt;</code></pre>
+    <p style="margin-bottom:0;">Tamaños: agrega <code>icon-xs</code>, <code>icon-sm</code>, <code>icon-lg</code> o <code>icon-xl</code> junto a <code>icon</code>. Colores: <code>icon-primary</code>, <code>icon-soft</code>, <code>icon-presente</code>, <code>icon-ausente</code>, <code>icon-tardanza</code>, <code>icon-excusa</code> — o cualquier <code>color</code> propio, ya que el ícono hereda <code>currentColor</code>. Para generar íconos desde JavaScript (tablas dinámicas, etc.), arma el mismo HTML como string e insértalo con <code>innerHTML</code>.</p>
+</div>
+
+<div class="card">
+    <h3>Íconos disponibles (<span id="totalIconos"></span>)</h3>
+    <div id="grillaIconos" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px; margin-top:14px;"></div>
+</div>
+
+<script>
+    const NOMBRES_ICONOS = ['home','asistencia','calificaciones','horario','conducta','dinamica','estudiantes','asignaciones','grupos','reportes','configuracion','anio-escolar','presente','ausente','tardanza','excusa','plus','editar','eliminar','buscar','filtro','cerrar','chevron-abajo','chevron-arriba','chevron-izquierda','chevron-derecha','guardar','descargar','subir','imprimir','salir','candado','notificacion','info','alerta','ver','actualizar','menu','usuario','correo','pantalla','salud','docente','estrella','lista','cuadricula','escuela','libro','objetivo'];
+
+    const grilla = document.getElementById('grillaIconos');
+    document.getElementById('totalIconos').textContent = NOMBRES_ICONOS.length;
+
+    NOMBRES_ICONOS.forEach(nombre => {
+        const codigo = `<svg class="icon"><use href="#icon-${nombre}"></use></svg>`;
+        const celda = document.createElement('button');
+        celda.type = 'button';
+        celda.title = 'Copiar código';
+        celda.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 8px; background:var(--color-surface-alt); border:1px solid var(--color-line); border-radius:8px; cursor:pointer; font-family:var(--font-mono); font-size:0.72rem; color:var(--color-ink-soft);';
+        celda.innerHTML = `<svg class="icon icon-lg icon-primary"><use href="#icon-${nombre}"></use></svg><span>${nombre}</span>`;
+        celda.addEventListener('click', () => {
+            navigator.clipboard.writeText(codigo).then(() => {
+                const span = celda.querySelector('span');
+                const original = span.textContent;
+                span.textContent = '¡Copiado!';
+                setTimeout(() => { span.textContent = original; }, 1200);
+            });
+        });
+        grilla.appendChild(celda);
+    });
+</script>

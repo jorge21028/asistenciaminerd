@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/icons.css' | relative_url }}">
     <script>
         window.API_URL = "{{ site.api_url }}";
         window.SITE_BASEURL = "{{ site.baseurl }}";
@@ -14,22 +15,26 @@
 </head>
 <body>
 
+{% include icons-sprite.html %}
+
 {% unless page.sin_layout %}
 <div class="topbar">
     <div class="topbar-izquierda">
         <a class="brand" href="{{ '/portal.html' | relative_url }}">
-            <span class="sello">🎓</span>
+            <span class="sello"><svg class="icon icon-sm" style="color:#fff; vertical-align:-3px;"><use href="#icon-estudiantes"></use></svg></span>
             Sistema de Gestión Docente
         </a>
         {% if page.modulo_nombre %}<span class="modulo-actual-pill">{{ page.modulo_nombre }}</span>{% endif %}
     </div>
-    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+        <svg class="icon" style="color:#fff;"><use href="#icon-menu"></use></svg>
+    </button>
     {% include nav.html %}
     <div class="usuario-box">
         <span class="badge" id="anioEscolarBadge" style="display:none;" title="Año escolar activo"></span>
         <span id="nombreUsuario"></span>
         <span class="badge" id="rolUsuario"></span>
-        <button class="btn-salir" onclick="Auth.cerrarSesion()">Salir</button>
+        <button class="btn-salir" onclick="Auth.cerrarSesion()"><svg class="icon icon-sm"><use href="#icon-salir"></use></svg> Salir</button>
     </div>
 </div>
 {% endunless %}
@@ -70,7 +75,7 @@
             apiFetch('anios_escolares.php?activo=1').then(anio => {
                 if (!anio) return;
                 const badge = document.getElementById('anioEscolarBadge');
-                badge.textContent = '📅 ' + anio.nombre;
+                badge.innerHTML = '<svg class="icon icon-xs"><use href="#icon-anio-escolar"></use></svg> ' + anio.nombre;
                 badge.style.display = 'inline-block';
             }).catch(() => { /* no bloquea el resto de la página */ });
         });

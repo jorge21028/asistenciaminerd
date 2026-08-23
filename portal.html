@@ -5,14 +5,14 @@ sin_layout: true
 ---
 <div class="topbar" style="position: static;">
     <a class="brand" href="{{ '/portal.html' | relative_url }}">
-        <span class="sello">🎓</span>
+        <span class="sello"><svg class="icon icon-sm" style="color:#fff; vertical-align:-3px;"><use href="#icon-estudiantes"></use></svg></span>
         Sistema de Gestión Docente
     </a>
     <div class="usuario-box">
         <span class="badge" id="anioEscolarBadge" style="display:none;" title="Año escolar activo"></span>
         <span id="nombreUsuario"></span>
         <span class="badge" id="rolUsuario"></span>
-        <button class="btn-salir" onclick="Auth.cerrarSesion()">Salir</button>
+        <button class="btn-salir" onclick="Auth.cerrarSesion()"><svg class="icon icon-sm"><use href="#icon-salir"></use></svg> Salir</button>
     </div>
 </div>
 
@@ -25,61 +25,71 @@ sin_layout: true
 
 <div class="grid-3">
     <div class="card modulo-card">
-        <h3>📋 Asistencia</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-asistencia"></use></svg></span>
+        <h3>Asistencia</h3>
         <p>Registra la asistencia diaria por curso y asignatura, y consulta reportes diarios, semanales, mensuales y anuales.</p>
         <a class="btn" href="{{ '/dashboard.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card">
-        <h3>📊 Calificaciones</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-calificaciones"></use></svg></span>
+        <h3>Calificaciones</h3>
         <p>Califica tus actividades por taller, RA técnico-profesional o rúbrica de competencias, y consulta los 4 reportes con exportación a Excel.</p>
         <a class="btn" href="{{ '/calificaciones.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card">
-        <h3>🗓️ Horario</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-horario"></use></svg></span>
+        <h3>Horario</h3>
         <p>Consulta el horario semanal de cada profesor, con clase actual, próxima clase y resumen de carga horaria.</p>
         <a class="btn" href="{{ '/horario.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card">
-        <h3>🧭 Conducta</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-conducta"></use></svg></span>
+        <h3>Conducta</h3>
         <p>Registro y gestión de faltas de convivencia, según las Normas MINERD (Ley 136-03) y la guía del centro.</p>
         <a class="btn" href="{{ '/conducta.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card">
-        <h3>🎲 Dinámica de Clase</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-dinamica"></use></svg></span>
+        <h3>Dinámica de Clase</h3>
         <p>Herramientas para usar en vivo en el aula: ruleta de participación, actividades con temporizador, y pantalla de inicio.</p>
         <a class="btn" href="{{ '/dinamica-clase.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card">
-        <h3>🎓 Estudiantes</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-estudiantes"></use></svg></span>
+        <h3>Estudiantes</h3>
         <p>Matrícula, datos generales y gestión de estudiantes por curso.</p>
         <a class="btn" href="{{ '/estudiantes.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card" data-solo-admin>
-        <h3>🔗 Asignaciones</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-asignaciones"></use></svg></span>
+        <h3>Asignaciones</h3>
         <p>Qué profesor imparte qué asignatura en qué curso.</p>
         <a class="btn" href="{{ '/asignaciones.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card modulo-proximamente">
-        <h3>👥 Generador de Grupos</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-grupos"></use></svg></span>
+        <h3>Generador de Grupos</h3>
         <p>Arma equipos de trabajo al azar a partir de la lista del curso.</p>
         <span class="badge">Próximamente</span>
     </div>
 
     <div class="card modulo-card">
-        <h3>📈 Reportes</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-reportes"></use></svg></span>
+        <h3>Reportes</h3>
         <p>Todos los reportes del sistema, en un solo lugar.</p>
         <a class="btn" href="{{ '/reportes.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card" data-solo-admin>
-        <h3>⚙️ Configuración</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-configuracion"></use></svg></span>
+        <h3>Configuración</h3>
         <p>Años escolares, cursos, asignaturas, períodos, competencias y usuarios.</p>
         <a class="btn" href="{{ '/configuracion.html' | relative_url }}">Entrar</a>
     </div>
@@ -104,7 +114,7 @@ sin_layout: true
         apiFetch('anios_escolares.php?activo=1').then(anio => {
             if (!anio) return;
             const badge = document.getElementById('anioEscolarBadge');
-            badge.textContent = '📅 ' + anio.nombre;
+            badge.innerHTML = '<svg class="icon icon-xs"><use href="#icon-anio-escolar"></use></svg> ' + anio.nombre;
             badge.style.display = 'inline-block';
         }).catch(() => { /* no bloquea el resto de la página */ });
     });

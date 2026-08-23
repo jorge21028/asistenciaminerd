@@ -1,0 +1,59 @@
+/* =====================================================================
+   Pack de íconos del sistema
+   Set de íconos de línea (stroke), dibujados a mano para combinar con
+   la identidad del sistema (trazo redondeado, mismo espíritu que los
+   sellos de estado P/A/T/E). Uso:
+
+   <svg class="icon"><use href="#icon-asistencia"></use></svg>
+
+   Tamaño: agregar .icon-sm / .icon-lg, o ajustar --icon-size inline.
+   Color: los íconos heredan `currentColor`, así que cambian de color
+   junto con el texto/ícono padre (o usa las clases .icon-* de abajo).
+   ===================================================================== */
+
+.icon {
+    --icon-size: 20px;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: -4px;
+}
+
+.icon-xs { --icon-size: 14px; }
+.icon-sm { --icon-size: 16px; }
+.icon-lg { --icon-size: 28px; }
+.icon-xl { --icon-size: 40px; }
+
+/* Colores semánticos, reutilizando la paleta ya definida en style.css */
+.icon-primary   { color: var(--color-primary); }
+.icon-soft      { color: var(--color-ink-soft); }
+.icon-presente  { color: var(--color-present); }
+.icon-ausente   { color: var(--color-absent); }
+.icon-tardanza  { color: var(--color-tardanza); }
+.icon-excusa    { color: var(--color-excusa); }
+
+/* Ícono dentro de botones y enlaces de navegación */
+.btn .icon,
+.topbar nav a .icon {
+    vertical-align: -5px;
+}
+
+/* Círculo contenedor, útil en tarjetas de módulo (portal, dashboard) */
+.icon-circulo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-line);
+    color: var(--color-primary);
+    margin-bottom: 6px;
+}
+.icon-circulo .icon { --icon-size: 22px; }

@@ -13,17 +13,20 @@ titulo: Inicio
 
 <div class="grid-3">
     <div class="card">
-        <h3>📋 Tomar asistencia</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-asistencia"></use></svg></span>
+        <h3>Tomar asistencia</h3>
         <p>Registra la asistencia diaria de un curso y asignatura.</p>
         <a class="btn" href="{{ '/asistencia.html' | relative_url }}">Ir a asistencia</a>
     </div>
     <div class="card">
-        <h3>📊 Reportes</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-reportes"></use></svg></span>
+        <h3>Reportes</h3>
         <p>Consulta reportes diarios, semanales, mensuales y anuales.</p>
         <a class="btn secundario" href="{{ '/asistencia-reportes.html' | relative_url }}">Ver reportes</a>
     </div>
     <div class="card" data-solo-admin>
-        <h3>⚙️ Gestión</h3>
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-configuracion"></use></svg></span>
+        <h3>Gestión</h3>
         <p>Administra cursos, asignaturas, estudiantes y profesores.</p>
         <a class="btn secundario" href="{{ '/cursos.html' | relative_url }}">Ir a gestión</a>
     </div>
