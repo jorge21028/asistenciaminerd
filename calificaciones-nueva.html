@@ -20,6 +20,10 @@ titulo: Nueva actividad
             <label for="nombre">Nombre de la actividad</label>
             <input type="text" id="nombre" required>
         </div>
+        <div class="campo" style="max-width:170px;">
+            <label for="valorActividad">Valor de la actividad</label>
+            <input type="number" id="valorActividad" min="0.01" step="0.01" value="20">
+        </div>
     </div>
     <div class="campo">
         <label for="descripcion">Descripción (opcional)</label>
@@ -68,10 +72,16 @@ titulo: Nueva actividad
 
 <div class="card" id="cardRubrica" style="display:none;">
     <h3>Rúbrica (criterios de evaluación)</h3>
-    <p class="subtitulo" id="textoRubrica">Los criterios definen cómo se compone la calificación de la actividad. El valor total es la suma de sus pesos.</p>
+    <p class="subtitulo" id="textoRubrica">Los criterios definen cómo se reparte el valor de la actividad. Cambia el "Valor de la actividad" arriba y los pesos se reparten solos.</p>
     <div id="listaCriterios"></div>
-    <button type="button" class="btn secundario chico" id="btnAgregarCriterio" style="margin-top:10px;">+ Agregar criterio</button>
-    <p style="margin-top:16px; font-weight:700;">Valor total de la actividad: <span id="valorTotalCriterios">0</span> puntos</p>
+    <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+        <button type="button" class="btn secundario chico" id="btnAgregarCriterio">+ Agregar criterio</button>
+        <button type="button" class="btn secundario chico" id="btnDistribuirIgual">Repartir en partes iguales</button>
+    </div>
+    <p style="margin-top:16px; font-weight:700;">
+        Total repartido: <span id="valorTotalCriterios">0</span> / <span id="valorObjetivoTexto">0</span> puntos
+        <span id="avisoDescuadre" style="display:none; color:var(--color-absent); font-weight:600; margin-left:8px;">⚠ No cuadra con el valor de la actividad</span>
+    </p>
 </div>
 
 <div class="card">
