@@ -1,0 +1,38 @@
+---
+layout: default
+titulo: Mi Cuenta
+---
+<div class="page-header">
+    <div>
+        <h1><svg class="icon icon-lg icon-primary"><use href="#icon-usuario"></use></svg> Mi Cuenta</h1>
+        <p class="subtitulo"><a href="{{ '/portal.html' | relative_url }}">← Portal</a></p>
+    </div>
+</div>
+
+<div class="card" style="max-width:480px;">
+    <h3>Datos de la cuenta</h3>
+    <p id="datosCuenta" class="subtitulo">Cargando…</p>
+</div>
+
+<div class="card" style="max-width:480px;">
+    <h3><svg class="icon icon-sm"><use href="#icon-candado"></use></svg> Cambiar contraseña</h3>
+    <div id="alertaCuenta"></div>
+    <form id="formPassword">
+        <div class="campo">
+            <label for="passwordActual">Contraseña actual</label>
+            <input type="password" id="passwordActual" required autocomplete="current-password">
+        </div>
+        <div class="campo">
+            <label for="passwordNueva">Contraseña nueva</label>
+            <input type="password" id="passwordNueva" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="campo">
+            <label for="passwordConfirmar">Confirmar contraseña nueva</label>
+            <input type="password" id="passwordConfirmar" required minlength="8" autocomplete="new-password">
+        </div>
+        <p class="subtitulo" style="margin-top:2px;">Mínimo 8 caracteres.</p>
+        <button type="submit" class="btn" id="btnCambiarPassword">Cambiar contraseña</button>
+    </form>
+</div>
+
+<script src="{{ '/assets/js/mi-cuenta.js' | relative_url }}"></script>

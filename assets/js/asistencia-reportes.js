@@ -183,8 +183,13 @@ function renderMensual(data, cont) {
                 <span style="margin-left:auto;">2 excusas, 2 tardanzas, o 1 excusa + 1 tardanza = 1 inasistencia</span>
             </div>
             ${!dias.length ? '<div class="vacio-estado">No se ha registrado asistencia este mes.</div>' : `
+            <div class="fila-form no-imprimir" style="margin:10px 0 0; justify-content:flex-end;">
+                <button type="button" class="btn secundario chico" id="btnCopiarPorcentaje">
+                    <svg class="icon icon-sm"><use href="#icon-lista"></use></svg> Copiar % de asistencia (solo números)
+                </button>
+            </div>
             <div class="tabla-wrap">
-                <table>
+                <table id="tablaMensual">
                     <thead>
                         <tr>
                             <th>Estudiante</th>
@@ -199,7 +204,7 @@ function renderMensual(data, cont) {
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 ${dias.map(d => `<td class="num">${selloHtml(e.dias[d])}</td>`).join('')}
                                 <td class="num">${e.total_asistencia}</td>
-                                <td class="num"><span class="${claseporcentaje(e.porcentaje)}">${e.porcentaje}%</span></td>
+                                <td class="num" data-porcentaje-entero="${Math.round(e.porcentaje)}"><span class="${claseporcentaje(e.porcentaje)}">${e.porcentaje}%</span></td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -207,6 +212,29 @@ function renderMensual(data, cont) {
             </div>`}
         </div>
     `;
+
+    const btnCopiar = document.getElementById('btnCopiarPorcentaje');
+    if (btnCopiar) btnCopiar.addEventListener('click', () => copiarColumnaPorcentaje(btnCopiar));
+}
+
+// Copia la columna "%" del reporte mensual, una fila por línea, redondeada
+// a número entero y SIN el signo "%" — pensado para pegar directo en el
+// sistema del centro educativo, que espera solo el número.
+function copiarColumnaPorcentaje(boton) {
+    const valores = Array.from(document.querySelectorAll('#tablaMensual td[data-porcentaje-entero]'))
+        .map(td => td.dataset.porcentajeEntero);
+
+    if (!valores.length) return;
+
+    const texto = valores.join('\n');
+    const restaurarTexto = boton.innerHTML;
+
+    navigator.clipboard.writeText(texto).then(() => {
+        boton.innerHTML = '✓ Copiado';
+        setTimeout(() => { boton.innerHTML = restaurarTexto; }, 1500);
+    }).catch(() => {
+        mostrarAlerta('alertaReportes', 'No se pudo copiar automáticamente. Selecciona la columna manualmente.');
+    });
 }
 
 // ---------------------------------------------------------------------
