@@ -8,7 +8,7 @@ requiere_admin: true
 <div class="page-header">
     <div>
         <h1><svg class="icon icon-lg icon-primary"><use href="#icon-configuracion"></use></svg> Configuración</h1>
-        <p class="subtitulo">Tablas maestras y ajustes administrativos del sistema</p>
+        <p class="subtitulo">Tablas maestras, matrícula, asignaciones y ajustes administrativos del sistema</p>
     </div>
 </div>
 
@@ -46,6 +46,20 @@ requiere_admin: true
         <h3>Competencias específicas</h3>
         <p>El catálogo de competencias de cada asignatura académica.</p>
         <a class="btn" href="{{ '/competencias.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-estudiantes"></use></svg></span>
+        <h3>Estudiantes</h3>
+        <p>Matrícula, datos generales y gestión de estudiantes por curso.</p>
+        <a class="btn" href="{{ '/estudiantes.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-asignaciones"></use></svg></span>
+        <h3>Asignaciones</h3>
+        <p>Qué profesor imparte qué asignatura en qué curso, y cuántos bloques por semana necesita.</p>
+        <a class="btn" href="{{ '/asignaciones.html' | relative_url }}">Entrar</a>
     </div>
 
     <div class="card modulo-card">
