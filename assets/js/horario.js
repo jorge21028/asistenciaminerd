@@ -290,7 +290,7 @@ function pintarGrid() {
             }
             const color = colorAsignatura(a.asignatura_nombre);
             return `<td><div class="clase-card" data-celda="${dia}:${b.id}" style="background:${color.bg}; border-color:${color.border}; color:${color.texto};">
-                        <span class="materia">${escaparHtml(a.asignatura_nombre)}</span>
+                        <span class="materia">${escaparHtml(a.asignatura_nombre)}${a.origen === 'generado' ? '<span class="badge-origen-generado" title="Puesto por el Generador de Horario">auto</span>' : ''}</span>
                         <span class="curso">${escaparHtml(a.curso_nombre)}</span>
                     </div></td>`;
         }).join('');

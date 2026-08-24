@@ -1,0 +1,52 @@
+---
+layout: default
+modulo: configuracion
+modulo_nombre: Configuración
+titulo: Restricciones de Horario
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1><svg class="icon icon-lg icon-primary"><use href="#icon-candado"></use></svg> Restricciones de Horario</h1>
+        <p class="subtitulo"><a href="{{ '/configuracion.html' | relative_url }}">← Configuración</a> — disponibilidad y preferencias que usará el <a href="{{ '/horario-generador.html' | relative_url }}">Generador de Horario</a></p>
+    </div>
+</div>
+
+<div class="card">
+    <div id="alertaRestricciones"></div>
+    <div class="campo" style="max-width:360px;">
+        <label for="profesor">Profesor</label>
+        <select id="profesor"></select>
+    </div>
+</div>
+
+<div id="areaRestricciones" style="display:none;">
+    <div class="card">
+        <h3>Disponibilidad</h3>
+        <p class="subtitulo">Haz clic en un bloque para marcarlo como <strong>no disponible</strong> para este profesor (el generador nunca le pondrá clase ahí). Puedes bloquear también el día completo.</p>
+        <div class="tabla-wrap">
+            <table id="tablaDisponibilidad"></table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Preferencias generales</h3>
+        <div class="fila-form">
+            <div class="campo">
+                <label style="display:flex; align-items:center; gap:8px; font-weight:400;">
+                    <input type="checkbox" id="chkMinimizarHuecos" style="width:auto;">
+                    Minimizar huecos (evitar bloques libres entre clases el mismo día)
+                </label>
+            </div>
+        </div>
+        <div class="fila-form">
+            <div class="campo" style="max-width:220px;">
+                <label for="maxBloquesDiaProfesor">Máximo de bloques de clase por día (total, todas las asignaturas)</label>
+                <input type="number" id="maxBloquesDiaProfesor" min="1" max="10" step="1" placeholder="Sin tope">
+            </div>
+            <button type="button" class="btn" id="btnGuardarPreferencias" style="align-self:flex-end;">Guardar preferencias</button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/horario-restricciones.js' | relative_url }}"></script>

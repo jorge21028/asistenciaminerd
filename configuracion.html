@@ -54,6 +54,20 @@ requiere_admin: true
         <p>Profesores y administradores con acceso al sistema.</p>
         <a class="btn" href="{{ '/usuarios.html' | relative_url }}">Entrar</a>
     </div>
+
+    <div class="card modulo-card">
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-candado"></use></svg></span>
+        <h3>Restricciones de Horario</h3>
+        <p>Disponibilidad y preferencias de cada profesor: bloqueos, minimizar huecos, tope de bloques por día.</p>
+        <a class="btn" href="{{ '/horario-restricciones.html' | relative_url }}">Entrar</a>
+    </div>
+
+    <div class="card modulo-card">
+        <span class="icon-circulo"><svg class="icon"><use href="#icon-actualizar"></use></svg></span>
+        <h3>Generador de Horario</h3>
+        <p>Arma el horario de clases automáticamente respetando disponibilidad, bloques dobles/corridos y topes por día.</p>
+        <a class="btn" href="{{ '/horario-generador.html' | relative_url }}">Entrar</a>
+    </div>
 </div>
 
 <p style="margin-top:24px;"><a href="{{ '/iconos.html' | relative_url }}" class="icon-soft" style="font-size:0.85rem;"><svg class="icon icon-xs"><use href="#icon-cuadricula"></use></svg> Ver pack de íconos del sistema (referencia para desarrollo)</a></p>

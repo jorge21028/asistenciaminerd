@@ -1,0 +1,58 @@
+---
+layout: default
+modulo: configuracion
+modulo_nombre: Configuración
+titulo: Generador de Horario
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1><svg class="icon icon-lg icon-primary"><use href="#icon-actualizar"></use></svg> Generador de Horario</h1>
+        <p class="subtitulo"><a href="{{ '/configuracion.html' | relative_url }}">← Configuración</a></p>
+    </div>
+</div>
+
+<div class="card">
+    <p>Arma el horario de clases automáticamente a partir de lo que ya configuraste en <a href="{{ '/asignaciones.html' | relative_url }}">Asignaciones</a> (bloques/semana y distribución) y en <a href="{{ '/horario-restricciones.html' | relative_url }}">Restricciones de Horario</a> (disponibilidad de cada profesor).</p>
+    <p style="margin-bottom:0;"><strong>No reemplaza el horario que armes a mano:</strong> cualquier celda que hayas puesto tú mismo en <a href="{{ '/asignar-horario.html' | relative_url }}">Asignar horario</a> queda intacta — el generador solo llena lo que falta alrededor de eso, y todo lo que él coloca queda marcado como <span class="badge-origen-generado" style="position:relative;">generado</span> para poder revisarlo o revertirlo.</p>
+</div>
+
+<div id="alertaGenerador"></div>
+
+<div class="card">
+    <h3>Diagnóstico</h3>
+    <div id="diagnostico"><p class="subtitulo">Cargando…</p></div>
+</div>
+
+<div class="card">
+    <h3>Correr el generador</h3>
+    <p class="subtitulo">Elige a quién quieres (re)generar. Los profesores que no marques no se tocan.</p>
+    <div id="listaProfesoresScope" class="grupos-check-grid" style="max-height:200px;"></div>
+    <div class="fila-form" style="margin-top:10px;">
+        <button type="button" class="btn secundario chico" id="btnMarcarTodosProf">Marcar todos</button>
+        <button type="button" class="btn secundario chico" id="btnDesmarcarTodosProf">Desmarcar todos</button>
+    </div>
+    <div class="fila-form" style="margin-top:18px;">
+        <button class="btn" id="btnGenerar"><svg class="icon icon-sm"><use href="#icon-actualizar"></use></svg> Generar horario</button>
+    </div>
+    <p class="subtitulo" id="estadoGenerando" style="display:none; margin-top:10px;">Generando… esto puede tardar unos segundos.</p>
+</div>
+
+<div class="card" id="cardResultado" style="display:none;">
+    <h3>Resultado de la última corrida</h3>
+    <div class="generador-resumen-grid" id="resumenResultado"></div>
+    <div id="detalleNoColocadas"></div>
+</div>
+
+<div class="card">
+    <h3>Historial de corridas</h3>
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Fecha</th><th class="num">Colocadas</th><th class="num">Sin colocar</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaHistorial"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacioHistorial" class="vacio-estado" style="display:none;">Todavía no has corrido el generador.</div>
+</div>
+
+<script src="{{ '/assets/js/horario-generador.js' | relative_url }}"></script>

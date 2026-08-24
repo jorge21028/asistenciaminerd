@@ -83,16 +83,19 @@ function construirGrid(profesorId) {
             const clave = `${d.valor}:${b.id}`;
             const actual = asignacionesActuales[clave];
             let valorSel = '';
+            let esGenerado = false;
             if (actual) {
                 valorSel = actual.tipo_asignacion === 'pedagogica' ? 'pedagogica' : `${actual.curso_id}:${actual.asignatura_id}`;
+                esGenerado = actual.origen === 'generado';
             }
             return `
                 <td>
-                    <select onchange="guardarCelda('${profesorId}', '${d.valor}', ${b.id}, this.value)" style="width:100%; padding:6px; border:1px solid var(--color-line); border-radius:6px; background:${actual ? (actual.tipo_asignacion === 'pedagogica' ? 'var(--color-excusa-bg)' : 'var(--color-present-bg)') : '#fff'};">
+                    <select onchange="guardarCelda('${profesorId}', '${d.valor}', ${b.id}, this.value)" style="width:100%; padding:6px; border:1px solid ${esGenerado ? 'var(--color-primary)' : 'var(--color-line)'}; border-radius:6px; background:${actual ? (actual.tipo_asignacion === 'pedagogica' ? 'var(--color-excusa-bg)' : 'var(--color-present-bg)') : '#fff'};" title="${esGenerado ? 'Puesto por el Generador de Horario — si lo cambias aquí pasa a ser manual' : ''}">
                         <option value="">— Sin asignar —</option>
                         <option value="pedagogica" ${valorSel === 'pedagogica' ? 'selected' : ''}>Hora pedagógica</option>
                         ${opcionesCombo.replace(`value="${valorSel}"`, `value="${valorSel}" selected`)}
                     </select>
+                    ${esGenerado ? '<span class="badge-origen-generado">auto</span>' : ''}
                 </td>`;
         }).join('');
         return `<tr><td><strong>${d.etiqueta}</strong></td>${celdas}</tr>`;

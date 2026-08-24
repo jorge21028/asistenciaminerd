@@ -47,7 +47,7 @@ async function cargarHorario() {
             const celdas = DIAS_ORDEN_CURSO.map(dia => {
                 const a = mapa[`${dia}:${b.id}`];
                 if (!a) return '<td>—</td>';
-                return `<td><strong>${escaparHtml(a.asignatura_nombre || '—')}</strong><br><span style="color:var(--color-ink-soft); font-size:0.8rem;">${escaparHtml(a.profesor_nombre)}</span></td>`;
+                return `<td><strong>${escaparHtml(a.asignatura_nombre || '—')}</strong>${a.origen === 'generado' ? '<span class="badge-origen-generado" title="Puesto por el Generador de Horario">auto</span>' : ''}<br><span style="color:var(--color-ink-soft); font-size:0.8rem;">${escaparHtml(a.profesor_nombre)}</span></td>`;
             }).join('');
             return `<tr><td>${formatoHora12Curso(b.hora_inicio)}–${formatoHora12Curso(b.hora_fin)}</td>${celdas}</tr>`;
         }).join('') + '</tbody>';

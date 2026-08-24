@@ -1138,3 +1138,50 @@ table.horario-grid td.celda-dia {
     font-size: 1.05rem;
     line-height: 1.7;
 }
+
+/* ---------------------------------------------------------------------
+   Restricciones de Horario / Generador de Horario
+   --------------------------------------------------------------------- */
+.celda-disponibilidad {
+    width: 100%;
+    min-height: 38px;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    background: var(--color-present-bg);
+    color: var(--color-present);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.celda-disponibilidad:hover { filter: brightness(0.97); }
+.celda-disponibilidad.bloqueada {
+    background: var(--color-absent-bg);
+    color: var(--color-absent);
+    border-color: var(--color-absent);
+}
+.celda-disponibilidad:disabled { cursor: not-allowed; opacity: 0.75; }
+
+.generador-resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin: 14px 0;
+}
+.generador-resumen-grid .card { text-align: center; margin-bottom: 0; }
+.generador-resumen-grid .card h3 { font-size: 1.9rem; margin: 0 0 2px; }
+.generador-resumen-grid .card p { margin: 0; color: var(--color-ink-soft); font-size: 0.85rem; }
+
+.lista-no-colocadas li { padding: 6px 0; border-bottom: 1px solid var(--color-line); }
+.lista-no-colocadas li:last-child { border-bottom: none; }
+
+.badge-origen-generado {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #fff;
+    margin-left: 6px;
+    vertical-align: middle;
+}

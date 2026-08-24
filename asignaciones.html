@@ -8,14 +8,15 @@ requiere_admin: true
 <div class="page-header">
     <div>
         <h1>Asignaciones</h1>
-        <p class="subtitulo">Qué profesor imparte qué asignatura en qué curso</p>
+        <p class="subtitulo">Qué profesor imparte qué asignatura en qué curso, y cuántos bloques por semana necesita (esto alimenta al <a href="{{ '/horario-generador.html' | relative_url }}">Generador de Horario</a>)</p>
     </div>
 </div>
 
 <div class="card">
-    <h3>Nueva asignación</h3>
+    <h3 id="tituloFormAsignacion">Nueva asignación</h3>
     <div id="alertaAsignacion"></div>
     <form id="formAsignacion">
+        <input type="hidden" id="idEdicion" value="">
         <div class="fila-form">
             <div class="campo">
                 <label for="profesor">Profesor</label>
@@ -29,15 +30,35 @@ requiere_admin: true
                 <label for="asignatura">Asignatura</label>
                 <select id="asignatura" required></select>
             </div>
-            <button type="submit" class="btn">Asignar</button>
         </div>
+        <div class="fila-form">
+            <div class="campo" style="max-width:160px;">
+                <label for="bloquesSemana">Bloques / semana</label>
+                <input type="number" id="bloquesSemana" min="0" max="25" step="1" value="0">
+            </div>
+            <div class="campo" style="max-width:220px;">
+                <label for="distribucion">Distribución</label>
+                <select id="distribucion">
+                    <option value="libre">Libre (bloques sueltos)</option>
+                    <option value="pares">En pares (doble bloque)</option>
+                    <option value="todo_corrido">Todo corrido (un solo día)</option>
+                </select>
+            </div>
+            <div class="campo" style="max-width:160px;">
+                <label for="maxBloquesDia">Tope por día</label>
+                <input type="number" id="maxBloquesDia" min="1" max="10" step="1" placeholder="Sin tope">
+            </div>
+            <button type="submit" class="btn" id="btnGuardarAsignacion">Asignar</button>
+            <button type="button" class="btn secundario" id="btnCancelarEdicion" style="display:none;">Cancelar</button>
+        </div>
+        <p class="subtitulo" style="margin-top:2px;">"Bloques / semana" en 0 significa que esta asignación no entra en el Generador de Horario (útil si la sigues armando 100% a mano).</p>
     </form>
 </div>
 
 <div class="card">
     <div class="tabla-wrap">
         <table>
-            <thead><tr><th>Profesor</th><th>Curso</th><th>Asignatura</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Profesor</th><th>Curso</th><th>Asignatura</th><th class="num">Bloques/sem.</th><th>Distribución</th><th class="num">Tope/día</th><th>Acciones</th></tr></thead>
             <tbody id="tablaAsignaciones"></tbody>
         </table>
     </div>
