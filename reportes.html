@@ -37,10 +37,10 @@ titulo: Reportes
         <a class="btn" href="{{ '/reporte-estudiantes.html' | relative_url }}">Ver reporte</a>
     </div>
 
-    <div class="card modulo-card modulo-proximamente">
+    <div class="card modulo-card" data-solo-admin>
         <h3><svg class="icon icon-sm"><use href="#icon-docente"></use></svg> Profesores</h3>
-        <p>Asignaciones, cursos, asignaturas y cursos como profesor guía.</p>
-        <span class="badge">Próximamente</span>
+        <p>Asignaciones, cursos, asignaturas, cursos como profesor guía y carga horaria semanal.</p>
+        <a class="btn" href="{{ '/reporte-profesores.html' | relative_url }}">Ver reporte</a>
     </div>
 
     <div class="card modulo-card">
