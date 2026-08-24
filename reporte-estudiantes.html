@@ -1,0 +1,31 @@
+---
+layout: default
+modulo: reportes
+modulo_nombre: Reportes
+titulo: Reporte de Estudiantes
+---
+<div class="page-header">
+    <div>
+        <h1><svg class="icon icon-lg icon-primary"><use href="#icon-estudiantes"></use></svg> Reporte de Estudiantes</h1>
+        <p class="subtitulo"><a href="{{ '/reportes.html' | relative_url }}">← Reportes</a></p>
+    </div>
+    <div class="fila-form no-imprimir" style="gap:8px;">
+        <button class="btn secundario" id="btnExcel" style="display:none;"><svg class="icon icon-sm"><use href="#icon-descargar"></use></svg> Exportar a Excel</button>
+        <button class="btn secundario" id="btnImprimir" style="display:none;"><svg class="icon icon-sm"><use href="#icon-imprimir"></use></svg> Imprimir</button>
+    </div>
+</div>
+
+<div class="card no-imprimir">
+    <div id="alertaReporteEstudiantes"></div>
+    <div class="fila-form">
+        <div class="campo" style="flex:2;">
+            <label for="curso">Curso</label>
+            <select id="curso"></select>
+        </div>
+    </div>
+</div>
+
+<div id="contenedorReporte"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="{{ '/assets/js/reporte-estudiantes.js' | relative_url }}"></script>
