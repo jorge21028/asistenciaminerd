@@ -6,12 +6,12 @@ const TIPO_ACCION_ETIQUETA = { nota: 'Nota', comunicacion_familia: 'Comunicació
 
 let incidenteId = null;
 let incidenteActual = null;
-let esAdmin = false;
+let esAdmin = false; // admin U orientador (Gestión de Convivencia): puede resolver/gestionar cualquier incidente
 
 async function cargarDetalle() {
     const params = new URLSearchParams(window.location.search);
     incidenteId = params.get('id');
-    esAdmin = Auth.esAdmin();
+    esAdmin = Auth.tieneRol('admin', 'orientador');
 
     if (!incidenteId) {
         mostrarAlerta('alertaDetalle', 'No se indicó qué incidente mostrar.');

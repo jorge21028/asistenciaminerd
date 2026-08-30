@@ -12,20 +12,20 @@ titulo: Reportes
 </div>
 
 <div class="grid-3">
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor,coordinador">
         <h3><svg class="icon icon-sm"><use href="#icon-asistencia"></use></svg> Asistencia</h3>
         <p>Diario por curso (última toma del día), diario/semanal/mensual/anual por asignatura.</p>
         <a class="btn" href="{{ '/asistencia-reporte-diario-curso.html' | relative_url }}">Diario por curso</a>
         <a class="btn secundario" style="margin-top:8px;" href="{{ '/asistencia-reportes.html' | relative_url }}">Otros reportes</a>
     </div>
 
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor,coordinador">
         <h3><svg class="icon icon-sm"><use href="#icon-calificaciones"></use></svg> Calificaciones</h3>
         <p>Por actividad, por RA/competencia, por período y anual, con exportación a Excel.</p>
         <a class="btn" href="{{ '/calificaciones-reportes.html' | relative_url }}">Ver reportes</a>
     </div>
 
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor,orientador">
         <h3><svg class="icon icon-sm"><use href="#icon-conducta"></use></svg> Conducta</h3>
         <p>Listado de incidentes y expediente de conducta por estudiante.</p>
         <a class="btn" href="{{ '/conducta.html' | relative_url }}">Ver incidentes</a>
@@ -43,9 +43,15 @@ titulo: Reportes
         <a class="btn" href="{{ '/reporte-profesores.html' | relative_url }}">Ver reporte</a>
     </div>
 
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor,coordinador">
         <h3><svg class="icon icon-sm"><use href="#icon-horario"></use></svg> Horarios</h3>
         <p>Horario semanal por curso (todos los profesores), listo para imprimir. El horario individual por profesor ya está en el módulo Horario.</p>
         <a class="btn" href="{{ '/horario-curso.html' | relative_url }}">Ver horario por curso</a>
+    </div>
+
+    <div class="card modulo-card" data-solo-admin>
+        <h3><svg class="icon icon-sm"><use href="#icon-ver"></use></svg> Registro de Accesos</h3>
+        <p>Estadísticas de inicio de sesión por usuario: quién entra, con qué frecuencia, e intentos fallidos.</p>
+        <a class="btn" href="{{ '/reporte-accesos.html' | relative_url }}">Ver registro</a>
     </div>
 </div>

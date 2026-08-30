@@ -406,6 +406,8 @@ td.num, th.num { text-align: center; font-family: var(--font-mono); }
 }
 .badge.admin { background: var(--color-tardanza-bg); color: var(--color-tardanza); border-color: var(--color-tardanza); }
 .badge.profesor { background: var(--color-excusa-bg); color: var(--color-excusa); border-color: var(--color-excusa); }
+.badge.orientador { background: var(--color-present-bg); color: var(--color-present); border-color: var(--color-present); }
+.badge.coordinador { background: var(--color-surface-alt); color: var(--color-primary); border-color: var(--color-primary); }
 
 .porcentaje-alto { color: var(--color-present); font-weight: 700; }
 .porcentaje-medio { color: var(--color-tardanza); font-weight: 700; }

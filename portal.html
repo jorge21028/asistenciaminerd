@@ -25,35 +25,35 @@ sin_layout: true
 </div>
 
 <div class="grid-3">
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor">
         <span class="icon-circulo"><svg class="icon"><use href="#icon-asistencia"></use></svg></span>
         <h3>Asistencia</h3>
         <p>Registra la asistencia diaria por curso y asignatura, y consulta reportes diarios, semanales, mensuales y anuales.</p>
         <a class="btn" href="{{ '/dashboard.html' | relative_url }}">Entrar</a>
     </div>
 
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor">
         <span class="icon-circulo"><svg class="icon"><use href="#icon-calificaciones"></use></svg></span>
         <h3>Calificaciones</h3>
         <p>Califica tus actividades por taller, RA técnico-profesional o rúbrica de competencias, y consulta los 4 reportes con exportación a Excel.</p>
         <a class="btn" href="{{ '/calificaciones.html' | relative_url }}">Entrar</a>
     </div>
 
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor">
         <span class="icon-circulo"><svg class="icon"><use href="#icon-horario"></use></svg></span>
         <h3>Horario</h3>
         <p>Consulta el horario semanal de cada profesor, con clase actual, próxima clase y resumen de carga horaria.</p>
         <a class="btn" href="{{ '/horario.html' | relative_url }}">Entrar</a>
     </div>
 
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor,orientador">
         <span class="icon-circulo"><svg class="icon"><use href="#icon-conducta"></use></svg></span>
         <h3>Conducta</h3>
         <p>Registro y gestión de faltas de convivencia, según las Normas MINERD (Ley 136-03) y la guía del centro.</p>
         <a class="btn" href="{{ '/conducta.html' | relative_url }}">Entrar</a>
     </div>
 
-    <div class="card modulo-card">
+    <div class="card modulo-card" data-roles="admin,profesor">
         <span class="icon-circulo"><svg class="icon"><use href="#icon-dinamica"></use></svg></span>
         <h3>Dinámica de Clase</h3>
         <p>Herramientas para usar en vivo en el aula: ruleta de participación, generador de grupos, actividades con temporizador, y pantalla de inicio.</p>
@@ -83,13 +83,18 @@ sin_layout: true
         }
         const u = Auth.getUsuario();
         document.getElementById('nombreUsuario').textContent = u.nombre;
+        const ETIQUETAS_ROL = { admin: 'Administrador', profesor: 'Profesor', orientador: 'Orientador', coordinador: 'Coordinador' };
         const rolEl = document.getElementById('rolUsuario');
-        rolEl.textContent = u.rol === 'admin' ? 'Administrador' : 'Profesor';
+        rolEl.textContent = ETIQUETAS_ROL[u.rol] || u.rol;
         rolEl.classList.add(u.rol);
 
         if (u.rol !== 'admin') {
             document.querySelectorAll('[data-solo-admin]').forEach(el => el.style.display = 'none');
         }
+        document.querySelectorAll('[data-roles]').forEach(el => {
+            const permitidos = el.dataset.roles.split(',').map(r => r.trim());
+            if (!permitidos.includes(u.rol)) el.style.display = 'none';
+        });
 
         apiFetch('anios_escolares.php?activo=1').then(anio => {
             if (!anio) return;

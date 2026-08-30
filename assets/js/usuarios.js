@@ -1,5 +1,7 @@
 let usuarios = [];
 
+const ETIQUETAS_ROL = { admin: 'Administrador', profesor: 'Profesor', orientador: 'Orientador', coordinador: 'Coordinador' };
+
 async function cargarUsuarios() {
     try {
         usuarios = await apiFetch('usuarios.php');
@@ -15,7 +17,7 @@ function pintarUsuarios() {
         <tr>
             <td><strong>${escaparHtml(u.nombre)}</strong></td>
             <td>${escaparHtml(u.email)}</td>
-            <td><span class="badge ${u.rol}">${u.rol === 'admin' ? 'Administrador' : 'Profesor'}</span></td>
+            <td><span class="badge ${u.rol}">${ETIQUETAS_ROL[u.rol] || u.rol}</span></td>
             <td>${u.activo == 1 ? 'Activo' : 'Inactivo'}</td>
             <td class="acciones-tabla">
                 <button class="btn secundario chico" onclick="editarUsuario(${u.id})">Editar</button>

@@ -23,6 +23,10 @@ const Auth = {
         const u = this.getUsuario();
         return u && u.rol === 'admin';
     },
+    tieneRol(...roles) {
+        const u = this.getUsuario();
+        return u && roles.includes(u.rol);
+    },
 };
 
 // Resuelve rutas relativas respetando el baseurl configurado en Jekyll (window.SITE_BASEURL)

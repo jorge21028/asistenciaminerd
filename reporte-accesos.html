@@ -1,0 +1,35 @@
+---
+layout: default
+modulo: reportes
+modulo_nombre: Reportes
+titulo: Registro de Accesos
+requiere_admin: true
+---
+<div class="page-header">
+    <div>
+        <h1><svg class="icon icon-lg icon-primary"><use href="#icon-ver"></use></svg> Registro de Accesos</h1>
+        <p class="subtitulo"><a href="{{ '/reportes.html' | relative_url }}">← Reportes</a></p>
+    </div>
+    <div class="fila-form no-imprimir" style="gap:8px;">
+        <button class="btn secundario" id="btnExcel" style="display:none;"><svg class="icon icon-sm"><use href="#icon-descargar"></use></svg> Exportar a Excel</button>
+        <button class="btn secundario" id="btnImprimir" style="display:none;"><svg class="icon icon-sm"><use href="#icon-imprimir"></use></svg> Imprimir</button>
+    </div>
+</div>
+
+<div id="alertaAccesos"></div>
+<div id="contenedorReporte"></div>
+
+<div class="card">
+    <h3>Últimos accesos</h3>
+    <p class="subtitulo">Los 100 intentos de inicio de sesión más recientes (exitosos y fallidos).</p>
+    <div class="tabla-wrap">
+        <table>
+            <thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Correo usado</th><th class="num">Resultado</th><th>IP</th></tr></thead>
+            <tbody id="tablaHistorialAccesos"></tbody>
+        </table>
+    </div>
+    <div id="estadoVacioHistorial" class="vacio-estado" style="display:none;">Todavía no hay accesos registrados.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="{{ '/assets/js/reporte-accesos.js' | relative_url }}"></script>

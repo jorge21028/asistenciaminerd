@@ -9,6 +9,12 @@ requiere_admin: true
     <div>
         <h1>Usuarios</h1>
         <p class="subtitulo">Profesores y administradores con acceso al sistema</p>
+        <p class="subtitulo" style="margin-top:4px;">
+            <strong>Profesor:</strong> solo sus cursos/asignaturas asignadas ·
+            <strong>Coordinador:</strong> acceso académico (asistencia, calificaciones, estudiantes, horarios) de todos los cursos, sin Configuración ·
+            <strong>Orientador:</strong> acceso a Conducta de todos los cursos ·
+            <strong>Administrador:</strong> acceso total
+        </p>
     </div>
 </div>
 
@@ -30,6 +36,8 @@ requiere_admin: true
                 <label for="rol">Rol</label>
                 <select id="rol">
                     <option value="profesor">Profesor</option>
+                    <option value="coordinador">Coordinador</option>
+                    <option value="orientador">Orientador</option>
                     <option value="admin">Administrador</option>
                 </select>
             </div>

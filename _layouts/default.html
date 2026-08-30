@@ -59,13 +59,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             const u = Auth.getUsuario();
             document.getElementById('nombreUsuario').textContent = u.nombre;
+            const ETIQUETAS_ROL = { admin: 'Administrador', profesor: 'Profesor', orientador: 'Orientador', coordinador: 'Coordinador' };
             const rolEl = document.getElementById('rolUsuario');
-            rolEl.textContent = u.rol === 'admin' ? 'Administrador' : 'Profesor';
+            rolEl.textContent = ETIQUETAS_ROL[u.rol] || u.rol;
             rolEl.classList.add(u.rol);
 
             if (u.rol !== 'admin') {
                 document.querySelectorAll('[data-solo-admin]').forEach(el => el.style.display = 'none');
             }
+            // Visibilidad genérica por rol: data-roles="admin,profesor" oculta el
+            // elemento para cualquier rol que no esté en esa lista.
+            document.querySelectorAll('[data-roles]').forEach(el => {
+                const permitidos = el.dataset.roles.split(',').map(r => r.trim());
+                if (!permitidos.includes(u.rol)) el.style.display = 'none';
+            });
 
             document.querySelectorAll('.topbar nav a').forEach(a => {
                 if (a.getAttribute('href').endsWith(window.location.pathname.split('/').pop())) {
