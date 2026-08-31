@@ -54,10 +54,11 @@ async function generar() {
                 <p class="subtitulo">Año escolar: ${escaparHtml(data.anio_escolar)} · Referencia: última toma del día, en <strong>${escaparHtml(data.asignatura_referencia)}</strong> (${formatoHora(data.hora_referencia)})</p>
                 <div class="tabla-wrap">
                     <table>
-                        <thead><tr><th>Estudiante</th><th class="num">Estado</th><th>Observación</th></tr></thead>
+                        <thead><tr><th class="num">Matrícula</th><th>Estudiante</th><th class="num">Estado</th><th>Observación</th></tr></thead>
                         <tbody>
                             ${data.estudiantes.map(e => `
                                 <tr>
+                                    <td class="num">${escaparHtml(e.matricula || '—')}</td>
                                     <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                     <td class="num">${e.estado ? selloHtmlLocal(e.estado) : '<span class="sello-estado vacio">·</span>'}</td>
                                     <td>${escaparHtml(e.observacion || '')}</td>

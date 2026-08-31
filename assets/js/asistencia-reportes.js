@@ -107,10 +107,11 @@ function renderDiario(data, cont) {
             <p class="subtitulo">${data.porcentaje_presentes}% de asistencia el día de hoy · ${data.total_estudiantes} estudiantes matriculados</p>
             <div class="tabla-wrap">
                 <table>
-                    <thead><tr><th>Estudiante</th><th class="num">Estado</th><th>Observación</th></tr></thead>
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th><th class="num">Estado</th><th>Observación</th></tr></thead>
                     <tbody>
                         ${data.estudiantes.map(e => `
                             <tr>
+                                <td class="num">${escaparHtml(e.matricula || '—')}</td>
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 <td class="num">${e.estado ? selloHtml({presente:'P',ausente:'A',tardanza:'T',excusa:'E'}[e.estado]) : selloHtml(null)}</td>
                                 <td>${escaparHtml(e.observacion || '')}</td>
@@ -139,6 +140,7 @@ function renderSemanal(data, cont) {
                 <table>
                     <thead>
                         <tr>
+                            <th class="num">Matrícula</th>
                             <th>Estudiante</th>
                             ${dias.map(f => `<th class="num">${formatoFechaCorta(f)}</th>`).join('')}
                             <th class="num">Total</th>
@@ -148,6 +150,7 @@ function renderSemanal(data, cont) {
                     <tbody>
                         ${data.estudiantes.map(e => `
                             <tr>
+                                <td class="num">${escaparHtml(e.matricula || '—')}</td>
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 ${dias.map(f => `<td class="num">${selloHtml(e.dias[f])}</td>`).join('')}
                                 <td class="num">${e.total_asistencia}/${e.dias_trabajados}</td>
@@ -192,6 +195,7 @@ function renderMensual(data, cont) {
                 <table id="tablaMensual">
                     <thead>
                         <tr>
+                            <th class="num">Matrícula</th>
                             <th>Estudiante</th>
                             ${dias.map(d => `<th class="num">${d}</th>`).join('')}
                             <th class="num">Total<br>asistencia</th>
@@ -201,6 +205,7 @@ function renderMensual(data, cont) {
                     <tbody>
                         ${data.estudiantes.map(e => `
                             <tr>
+                                <td class="num">${escaparHtml(e.matricula || '—')}</td>
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 ${dias.map(d => `<td class="num">${selloHtml(e.dias[d])}</td>`).join('')}
                                 <td class="num">${e.total_asistencia}</td>
@@ -266,11 +271,12 @@ function renderAnual(data, cont) {
             <div class="tabla-wrap">
                 <table>
                     <thead>
-                        <tr><th>Estudiante</th><th class="num">Días trabajados</th><th class="num">Total asistencia</th><th class="num">Ausentes</th><th class="num">Tardanzas</th><th class="num">Excusas</th><th class="num">%</th></tr>
+                        <tr><th class="num">Matrícula</th><th>Estudiante</th><th class="num">Días trabajados</th><th class="num">Total asistencia</th><th class="num">Ausentes</th><th class="num">Tardanzas</th><th class="num">Excusas</th><th class="num">%</th></tr>
                     </thead>
                     <tbody>
                         ${data.estudiantes.map(e => `
                             <tr>
+                                <td class="num">${escaparHtml(e.matricula || '—')}</td>
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 <td class="num">${e.dias_trabajados}</td>
                                 <td class="num">${e.total_asistencia}</td>
