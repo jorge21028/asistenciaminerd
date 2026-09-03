@@ -1,3 +1,41 @@
+// ---------------------------------------------------------------------
+// Planificación de Clases
+// Este módulo llama al API con apiFetch(), exactamente igual que
+// cualquier otra pantalla del sistema (mismo Auth, mismo formato de
+// respuesta) — Api de abajo son solo nombres cortos, no una capa aparte.
+// ---------------------------------------------------------------------
+const Api = {
+  docentes: () => apiFetch('planificacion/api/docentes.php'),
+  modulosPorDocente: (docenteId) => apiFetch(`planificacion/api/modulos.php?docente_id=${docenteId}`),
+  todosLosModulos: () => apiFetch('planificacion/api/modulos.php?todos=1'),
+  resultadosAprendizaje: (moduloId) => apiFetch(`planificacion/api/resultados_aprendizaje.php?modulo_id=${moduloId}`),
+  instrumentosEvaluacion: () => apiFetch('planificacion/api/instrumentos_evaluacion.php'),
+
+  listarContenidos: (asignaturaId) => apiFetch(`planificacion/api/contenidos_listar.php?asignatura_id=${asignaturaId}`),
+  guardarContenido: (payload) => apiFetch('planificacion/api/contenidos_guardar.php', { method: 'POST', body: payload }),
+  eliminarContenido: (id) => apiFetch('planificacion/api/contenidos_eliminar.php', { method: 'POST', body: { id } }),
+
+  listarLogos: () => apiFetch('planificacion/api/logos_listar.php'),
+  subirLogo: (tipo, imagenBase64) => apiFetch('planificacion/api/logos_subir.php', { method: 'POST', body: { tipo, imagen_base64: imagenBase64 } }),
+
+  generarIA: (payload) => apiFetch('planificacion/api/generar_ia.php', { method: 'POST', body: payload }),
+  guardarPlanificacion: (payload) => apiFetch('planificacion/api/guardar_planificacion.php', { method: 'POST', body: payload }),
+  listarPlanificaciones: (docenteId) => apiFetch(`planificacion/api/listar_planificaciones.php?docente_id=${docenteId || ''}`),
+
+  // Ver/Word/PDF se abren con <a href> (nueva pestaña/descarga), y un
+  // navegador no puede mandar el header Authorization al navegar a un
+  // link. Por eso primero se pide un enlace firmado de un solo uso
+  // (vence en 2 minutos) y RECIÉN con eso se arma la URL final.
+  async _urlFirmada(id, endpoint) {
+    const firma = await apiFetch(`planificacion/api/link_firmado.php?id=${id}`);
+    const base = (window.API_URL || '').replace(/\/+$/, '');
+    return `${base}/planificacion/api/${endpoint}.php?id=${firma.id}&t=${encodeURIComponent(firma.t)}&exp=${firma.exp}`;
+  },
+  urlDocx(id) { return this._urlFirmada(id, 'exportar_docx'); },
+  urlPdf(id) { return this._urlFirmada(id, 'exportar_pdf'); },
+  urlVer(id) { return this._urlFirmada(id, 'ver_planificacion'); },
+};
+
 const state = {
   step: 1,
   docente: null,        // { id, nombre_completo, institucion_id, institucion_nombre, bachillerato_tecnico }
@@ -15,7 +53,7 @@ const state = {
 };
 
 // ---------- Navegación entre pasos ----------
-// Ver/Word/PDF requieren un enlace firmado (ver planificacion-api.js) que
+// Ver/Word/PDF requieren un enlace firmado (ver la función _urlFirmada que
 // vence en 2 minutos — por eso se pide FRESCO justo al hacer clic, no de
 // antemano (si el docente se tarda en hacer clic, un enlace pre-generado
 // ya podría estar vencido).
@@ -40,10 +78,10 @@ function goToStep(n) {
   document.querySelectorAll('.step-view').forEach(el => el.classList.add('is-hidden'));
   document.getElementById(`view-${n}`).classList.remove('is-hidden');
 
-  document.querySelectorAll('.step').forEach(el => {
+  document.querySelectorAll('.planif-paso').forEach(el => {
     const s = parseInt(el.dataset.step, 10);
     el.classList.toggle('active', s === n);
-    el.classList.toggle('done', s < n);
+    el.classList.toggle('completado', s < n);
   });
 }
 
@@ -155,13 +193,10 @@ function bindEvents() {
   });
 
   // --- Paso 2 ---
-  document.querySelectorAll('.seg-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.tipo = btn.dataset.tipo;
-    });
+  document.getElementById('selTipo').addEventListener('change', (e) => {
+    state.tipo = e.target.value;
   });
+  state.tipo = document.getElementById('selTipo').value; // "Individual" por defecto
 
   document.getElementById('btnPaso2Back').addEventListener('click', () => goToStep(1));
 
@@ -494,9 +529,9 @@ async function abrirHistorial() {
         <strong>${p.enunciado_actividad}</strong>
         <small>${p.modulo_nombre} · ${p.ra_codigo} · ${p.fecha_realizacion} · ${p.docente_nombre}</small>
         <div style="margin-top:6px;">
-          <a class="btn btn-ghost" href="#" data-id="${p.id}" data-metodo="urlVer" target="_blank">Ver</a>
-          <a class="btn btn-ghost" href="#" data-id="${p.id}" data-metodo="urlDocx" target="_blank">Word</a>
-          <a class="btn btn-ghost" href="#" data-id="${p.id}" data-metodo="urlPdf" target="_blank">PDF</a>
+          <a class="btn secundario chico" href="#" data-id="${p.id}" data-metodo="urlVer" target="_blank">Ver</a>
+          <a class="btn secundario chico" href="#" data-id="${p.id}" data-metodo="urlDocx" target="_blank">Word</a>
+          <a class="btn secundario chico" href="#" data-id="${p.id}" data-metodo="urlPdf" target="_blank">PDF</a>
         </div>
       </div>
     `).join('');
