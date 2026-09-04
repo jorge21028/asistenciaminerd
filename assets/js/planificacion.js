@@ -18,6 +18,10 @@ const Api = {
   listarLogos: () => apiFetch('planificacion/api/logos_listar.php'),
   subirLogo: (tipo, imagenBase64) => apiFetch('planificacion/api/logos_subir.php', { method: 'POST', body: { tipo, imagen_base64: imagenBase64 } }),
 
+  bachilleratos: () => apiFetch('planificacion/api/bachilleratos.php'),
+  agregarBachillerato: (nombre) => apiFetch('planificacion/api/bachilleratos.php', { method: 'POST', body: { nombre } }),
+  eliminarBachillerato: (id) => apiFetch(`planificacion/api/bachilleratos.php?id=${id}`, { method: 'DELETE' }),
+
   generarIA: (payload) => apiFetch('planificacion/api/generar_ia.php', { method: 'POST', body: payload }),
   guardarPlanificacion: (payload) => apiFetch('planificacion/api/guardar_planificacion.php', { method: 'POST', body: payload }),
   listarPlanificaciones: (docenteId) => apiFetch(`planificacion/api/listar_planificaciones.php?docente_id=${docenteId || ''}`),
@@ -38,9 +42,10 @@ const Api = {
 
 const state = {
   step: 1,
-  docente: null,        // { id, nombre_completo, institucion_id, institucion_nombre, bachillerato_tecnico }
+  docente: null,        // { id, nombre_completo, institucion_id, institucion_nombre }
   modulo: null,          // { id, nombre, codigo }
   ra: null,              // { id, codigo, descripcion }
+  bachillerato: '',      // nombre del programa/ciclo elegido en el paso 1
   tipo: 'Individual',
   tiempo: 50,
   fecha: '',
@@ -89,27 +94,14 @@ function goToStep(n) {
 async function init() {
   const usuario = Auth.getUsuario();
   const esSupervisor = usuario && (usuario.rol === 'admin' || usuario.rol === 'coordinador');
+  let docentesCargados = [];
 
   try {
-    const docentes = await Api.docentes();
+    docentesCargados = await Api.docentes();
     const sel = document.getElementById('selDocente');
     sel.innerHTML = '<option value="">Selecciona tu nombre…</option>' +
-      docentes.map(d => `<option value="${d.id}">${d.nombre_completo}</option>`).join('');
-    sel.dataset.raw = JSON.stringify(docentes);
-
-    if (!esSupervisor) {
-      // Un profesor siempre planifica como sí mismo — no hace falta que
-      // elija su nombre de una lista (ya inició sesión en el portal).
-      const propio = docentes.find(d => String(d.id) === String(usuario.id));
-      document.getElementById('campoDocente').classList.add('is-hidden');
-      const indicador = document.getElementById('docentePlanificando');
-      indicador.classList.remove('is-hidden');
-      indicador.textContent = `Planificando como: ${usuario.nombre}`;
-      if (propio) {
-        sel.value = String(propio.id);
-        sel.dispatchEvent(new Event('change'));
-      }
-    }
+      docentesCargados.map(d => `<option value="${d.id}">${d.nombre_completo}</option>`).join('');
+    sel.dataset.raw = JSON.stringify(docentesCargados);
   } catch (e) {
     alert('No se pudo conectar con la API de Planificación.\n' + e.message);
   }
@@ -121,11 +113,49 @@ async function init() {
       + '<option value="otro">Otro (especificar)</option>';
   } catch (e) { /* silencioso: no bloquea el flujo */ }
 
+  await cargarBachilleratos();
+
   const hoy = new Date().toISOString().slice(0, 10);
   document.getElementById('dateFecha').value = hoy;
 
+  // Los listeners (incluido el que carga los módulos al cambiar el
+  // docente) se registran ANTES de intentar auto-seleccionar abajo —
+  // si no, el evento "change" se dispara al vacío y no pasa nada
+  // (esto era el bug: al profesor nunca le cargaban los módulos).
   bindEvents();
+
+  if (!esSupervisor) {
+    // Un profesor siempre planifica como sí mismo — no hace falta que
+    // elija su nombre de una lista (ya inició sesión en el portal).
+    const propio = docentesCargados.find(d => String(d.id) === String(usuario.id));
+    document.getElementById('campoDocente').classList.add('is-hidden');
+    const indicador = document.getElementById('docentePlanificando');
+    indicador.classList.remove('is-hidden');
+    indicador.textContent = `Planificando como: ${usuario.nombre}`;
+
+    if (propio) {
+      const sel = document.getElementById('selDocente');
+      sel.value = String(propio.id);
+      sel.dispatchEvent(new Event('change'));
+    } else {
+      alert('Tu usuario no aparece en el listado de docentes de Planificación. Pide a un administrador que revise tu cuenta.');
+    }
+  }
+
   goToStep(1);
+}
+
+async function cargarBachilleratos() {
+  try {
+    const lista = await Api.bachilleratos();
+    const sel = document.getElementById('selBachillerato');
+    const valorActual = sel.value;
+    sel.innerHTML = '<option value="">Selecciona un programa/ciclo…</option>' +
+      lista.map(b => `<option value="${escapeHtml(b.nombre)}">${escapeHtml(b.nombre)}</option>`).join('');
+    if (valorActual) sel.value = valorActual;
+  } catch (e) {
+    document.getElementById('selBachillerato').innerHTML = '<option value="">No se pudo cargar el catálogo</option>';
+  }
 }
 
 function bindEvents() {
@@ -136,7 +166,6 @@ function bindEvents() {
     state.docente = d || null;
 
     document.getElementById('txtInstitucion').value = d ? d.institucion_nombre : '';
-    document.getElementById('txtBachillerato').value = d ? d.bachillerato_tecnico : '';
 
     const selModulo = document.getElementById('selModulo');
     const selRA = document.getElementById('selRA');
@@ -187,6 +216,9 @@ function bindEvents() {
 
   document.getElementById('btnPaso1Next').addEventListener('click', () => {
     if (!state.docente) return alert('Selecciona un docente.');
+    const bachillerato = document.getElementById('selBachillerato').value;
+    if (!bachillerato) return alert('Selecciona el Bachillerato/Programa al que pertenece esta clase.');
+    state.bachillerato = bachillerato;
     if (!state.modulo) return alert('Selecciona un módulo formativo.');
     if (!state.ra) return alert('Selecciona un Resultado de Aprendizaje (RA).');
     goToStep(2);
@@ -251,6 +283,62 @@ function bindEvents() {
   document.getElementById('fileLogoCentro').addEventListener('change', (e) => subirLogoDesdeInput(e, 'centro'));
   document.getElementById('fileLogoMinerd').addEventListener('change', (e) => subirLogoDesdeInput(e, 'minerd'));
   document.getElementById('fileLogoDetp').addEventListener('change', (e) => subirLogoDesdeInput(e, 'detp'));
+
+  // --- Programas/Bachilleratos ---
+  document.getElementById('btnBachilleratos').addEventListener('click', abrirModalBachilleratos);
+  document.getElementById('btnCerrarBachilleratos').addEventListener('click', () => {
+    document.getElementById('modalBachilleratos').classList.add('is-hidden');
+  });
+  document.getElementById('btnAgregarBachillerato').addEventListener('click', agregarBachilleratoNuevo);
+}
+
+// ---------- Programas/Bachilleratos ----------
+async function abrirModalBachilleratos() {
+  document.getElementById('modalBachilleratos').classList.remove('is-hidden');
+  await pintarListaBachilleratos();
+}
+
+async function pintarListaBachilleratos() {
+  const cont = document.getElementById('listaBachilleratos');
+  try {
+    const lista = await Api.bachilleratos();
+    cont.innerHTML = lista.length
+      ? lista.map(b => `
+          <div class="contenido-item">
+            <span>${escapeHtml(b.nombre)}</span>
+            <button type="button" class="btn-eliminar" data-id="${b.id}" title="Quitar">✕</button>
+          </div>
+        `).join('')
+      : '<p class="subtitulo">Todavía no hay programas cargados.</p>';
+
+    cont.querySelectorAll('.btn-eliminar').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('¿Quitar este programa del catálogo? Las planificaciones que ya lo usaron no se ven afectadas.')) return;
+        try {
+          await Api.eliminarBachillerato(btn.dataset.id);
+          await pintarListaBachilleratos();
+          await cargarBachilleratos(); // refresca el <select> del paso 1
+        } catch (e) { alert(e.message); }
+      });
+    });
+  } catch (e) {
+    cont.innerHTML = `<p class="subtitulo">Error al cargar: ${escapeHtml(e.message)}</p>`;
+  }
+}
+
+async function agregarBachilleratoNuevo() {
+  const input = document.getElementById('txtNuevoBachillerato');
+  const nombre = input.value.trim();
+  if (!nombre) return alert('Escribe el nombre del programa/ciclo.');
+
+  try {
+    await Api.agregarBachillerato(nombre);
+    input.value = '';
+    await pintarListaBachilleratos();
+    await cargarBachilleratos(); // refresca el <select> del paso 1
+  } catch (e) {
+    alert(e.message);
+  }
 }
 
 // ---------- Logos institucionales ----------
@@ -467,6 +555,7 @@ async function guardarPlanificacion() {
     institucion_id: state.docente.institucion_id,
     modulo_id: state.modulo.id,
     ra_id: state.ra.id,
+    bachillerato: state.bachillerato,
     tipo: state.tipo,
     tiempo_estimado_min: state.tiempo,
     fecha_realizacion: state.fecha,

@@ -11,6 +11,7 @@ titulo: Planificación de Clases
     </div>
     <div class="fila-form" style="gap:8px;">
         <button class="btn secundario chico" id="btnLogos" type="button" data-roles="admin,coordinador"><svg class="icon icon-xs"><use href="#icon-escuela"></use></svg> Logos institucionales</button>
+        <button class="btn secundario chico" id="btnBachilleratos" type="button" data-roles="admin,coordinador"><svg class="icon icon-xs"><use href="#icon-objetivo"></use></svg> Programas/Bachilleratos</button>
         <button class="btn secundario chico" id="btnGestionarContenidos" type="button" data-roles="admin,coordinador"><svg class="icon icon-xs"><use href="#icon-libro"></use></svg> Banco de contenidos</button>
         <button class="btn secundario chico" id="btnHistorial" type="button"><svg class="icon icon-xs"><use href="#icon-lista"></use></svg> Mis planificaciones</button>
     </div>
@@ -43,8 +44,8 @@ titulo: Planificación de Clases
             <input type="text" id="txtInstitucion" disabled placeholder="Se completa automáticamente">
         </div>
         <div class="campo">
-            <label for="txtBachillerato">Bachillerato Técnico</label>
-            <input type="text" id="txtBachillerato" disabled placeholder="Se completa automáticamente">
+            <label for="selBachillerato">Bachillerato / Programa</label>
+            <select id="selBachillerato"><option value="">Cargando…</option></select>
         </div>
     </div>
 
@@ -245,6 +246,29 @@ titulo: Planificación de Clases
                 </label>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ===== Modal: programas/bachilleratos ===== -->
+<div class="planif-modal-overlay is-hidden" id="modalBachilleratos">
+    <div class="card planif-modal">
+        <div class="planif-modal-header">
+            <h3 style="margin:0;">Programas / Bachilleratos</h3>
+            <button class="btn secundario chico" id="btnCerrarBachilleratos" type="button"><svg class="icon icon-sm"><use href="#icon-cerrar"></use></svg></button>
+        </div>
+        <p class="subtitulo">Estos son los títulos que ofrece el centro (ej. "Comercio y Mercadeo", "Primer Ciclo"). Aparecen en el paso 1 para que el docente elija a cuál pertenece la clase, y en la cabecera del documento exportado.</p>
+
+        <div class="fila-form">
+            <div class="campo">
+                <label for="txtNuevoBachillerato">Nuevo programa/ciclo</label>
+                <input type="text" id="txtNuevoBachillerato" placeholder="Ej: Turismo y Hostelería">
+            </div>
+            <button class="btn" id="btnAgregarBachillerato" type="button" style="align-self:flex-end;">+ Agregar</button>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--color-line); margin:16px 0;">
+
+        <div id="listaBachilleratos"><p class="subtitulo">Cargando…</p></div>
     </div>
 </div>
 
