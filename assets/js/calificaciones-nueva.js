@@ -2,6 +2,14 @@ let cursoId, asignaturaId, asignatura, curso;
 let competenciasDisponibles = [];
 let contadorCriterio = 0;
 
+// Modo edición: si la URL trae ?id=, se está editando una actividad ya
+// creada en vez de crear una nueva. actividadExistente guarda lo que ya
+// había (incluyendo los criterios con su id real), para precargar el
+// formulario y para que al guardar sepamos qué UPDATE hacer.
+let modoEdicion = false;
+let actividadIdEdicion = null;
+let actividadExistente = null;
+
 // Textos de ayuda de la rúbrica, según el tipo de asignatura (cada
 // componente tiene su propia lógica de evaluación, como pidió el docente).
 const TEXTO_RUBRICA = {
@@ -12,13 +20,31 @@ const TEXTO_RUBRICA = {
 
 function parametros() {
     const p = new URLSearchParams(window.location.search);
-    return { cursoId: p.get('curso_id'), asignaturaId: p.get('asignatura_id') };
+    return { cursoId: p.get('curso_id'), asignaturaId: p.get('asignatura_id'), id: p.get('id') };
 }
 
 async function inicializar() {
     const params = parametros();
-    cursoId = params.cursoId;
-    asignaturaId = params.asignaturaId;
+    actividadIdEdicion = params.id;
+    modoEdicion = !!actividadIdEdicion;
+
+    if (modoEdicion) {
+        try {
+            actividadExistente = await apiFetch(`calif_actividades.php?id=${actividadIdEdicion}`);
+            cursoId = actividadExistente.curso_id;
+            asignaturaId = actividadExistente.asignatura_id;
+        } catch (err) {
+            mostrarAlerta('alertaNuevaActividad', err.message);
+            document.getElementById('btnGuardarActividad').disabled = true;
+            return;
+        }
+        document.getElementById('tituloPagina').textContent = 'Editar actividad';
+        document.getElementById('btnGuardarActividad').textContent = 'Guardar cambios';
+        document.getElementById('avisoEdicion').classList.remove('is-hidden');
+    } else {
+        cursoId = params.cursoId;
+        asignaturaId = params.asignaturaId;
+    }
 
     if (!cursoId || !asignaturaId) {
         mostrarAlerta('alertaNuevaActividad', 'Falta indicar el curso y la asignatura. Vuelve a "Calificaciones" y elige una combinación primero.');
@@ -39,6 +65,14 @@ async function inicializar() {
         document.getElementById('textoRubrica').textContent = TEXTO_RUBRICA[asignatura.tipo] || TEXTO_RUBRICA.academica;
         document.getElementById('cardRubrica').style.display = 'block';
 
+        if (modoEdicion) {
+            document.getElementById('nombre').value = actividadExistente.nombre || '';
+            document.getElementById('descripcion').value = actividadExistente.descripcion || '';
+            const valorInput = document.getElementById('valorActividad');
+            valorInput.value = actividadExistente.valor_maximo;
+            valorInput.dataset.tocado = '1'; // no lo pise ninguna plantilla
+        }
+
         if (asignatura.tipo === 'taller') await inicializarTaller();
         else if (asignatura.tipo === 'tecnico') await inicializarTecnico();
         else await inicializarAcademica();
@@ -56,11 +90,31 @@ async function cargarSelectorTipoActividad(selectId, competencias) {
     const tiposData = await apiFetch('calif_tipos_actividad.php');
     select.innerHTML += tiposData.tipos.map(t => `<option value="${t.id}">${escaparHtml(t.nombre)}</option>`).join('');
     select.addEventListener('change', () => cargarPlantillaIndicadores(selectId));
-    agregarFilaCriterio(); // arranca con una fila vacía por si el docente no elige un tipo
-    distribuirIgualEntreAuto();
+
+    if (modoEdicion) {
+        // No se dispara el evento "change": elegir la plantilla de nuevo
+        // reemplazaría los criterios ya guardados. Solo se muestra cuál
+        // se había usado, y se pintan los criterios TAL COMO ESTÁN.
+        if (actividadExistente.tipo_actividad_id) select.value = actividadExistente.tipo_actividad_id;
+        (actividadExistente.criterios || []).forEach(c => {
+            agregarFilaCriterio(c.nombre, c.peso, c.competencia_ids || [], c.id);
+        });
+        if (!actividadExistente.criterios || !actividadExistente.criterios.length) agregarFilaCriterio();
+        recalcularTotal();
+    } else {
+        agregarFilaCriterio(); // arranca con una fila vacía por si el docente no elige un tipo
+        distribuirIgualEntreAuto();
+    }
 }
 
 async function cargarPlantillaIndicadores(selectId) {
+    if (modoEdicion && !confirm('Cambiar la plantilla reemplaza los criterios actuales por los de la nueva plantilla, y los criterios que quites perderán las calificaciones que ya tuvieran. ¿Continuar?')) {
+        // Deshace la selección visualmente, dejando el valor que tenía antes
+        const select = document.getElementById(selectId);
+        select.value = actividadExistente.tipo_actividad_id || '';
+        return;
+    }
+
     const tipoId = document.getElementById(selectId).value;
     document.getElementById('listaCriterios').innerHTML = '';
     if (!tipoId) { agregarFilaCriterio(); distribuirIgualEntreAuto(); return; }
@@ -98,6 +152,7 @@ async function inicializarTaller() {
     document.getElementById('periodoTaller').innerHTML = periodos.length
         ? periodos.map(p => `<option value="${p.id}">${escaparHtml(p.nombre)}</option>`).join('')
         : '<option value="">— No hay períodos para este año escolar —</option>';
+    if (modoEdicion && actividadExistente.periodo_id) document.getElementById('periodoTaller').value = actividadExistente.periodo_id;
 
     await cargarSelectorTipoActividad('tipoActividadTaller', []);
 }
@@ -125,6 +180,7 @@ async function inicializarTecnico() {
             `Valor total del RA: ${opt.dataset.valor || '—'} puntos · Período: ${periodo ? periodo.nombre : 'sin asignar'} — el valor de esta actividad (suma de sus criterios) debe ser parte de ese total.`;
     }
     selectRA.addEventListener('change', actualizarInfoRA);
+    if (modoEdicion && actividadExistente.unidad_id) selectRA.value = actividadExistente.unidad_id;
     actualizarInfoRA();
 
     await cargarSelectorTipoActividad('tipoActividadTecnico', []);
@@ -144,6 +200,7 @@ async function inicializarAcademica() {
     document.getElementById('periodoAcademica').innerHTML = periodos.length
         ? periodos.map(p => `<option value="${p.id}">${escaparHtml(p.nombre)}</option>`).join('')
         : '<option value="">— No hay períodos para este año escolar —</option>';
+    if (modoEdicion && actividadExistente.periodo_id) document.getElementById('periodoAcademica').value = actividadExistente.periodo_id;
 
     if (!competencias.length) {
         mostrarAlerta('alertaNuevaActividad', 'Esta asignatura todavía no tiene competencias específicas registradas. Puedes crear la actividad igual, y agregar competencias más tarde desde "Competencias".', 'info');
@@ -155,7 +212,7 @@ async function inicializarAcademica() {
 // ---------------------------------------------------------------------
 // Criterios de la rúbrica (compartido por los 3 tipos)
 // ---------------------------------------------------------------------
-function agregarFilaCriterio(nombre = '', peso = 0, competenciaIds = []) {
+function agregarFilaCriterio(nombre = '', peso = 0, competenciaIds = [], criterioId = null) {
     const idx = contadorCriterio++;
     const div = document.createElement('div');
     div.className = 'card';
@@ -163,6 +220,7 @@ function agregarFilaCriterio(nombre = '', peso = 0, competenciaIds = []) {
     div.style.marginBottom = '10px';
     div.dataset.criterioIdx = idx;
     div.dataset.pesoManual = '0';
+    div.dataset.criterioId = criterioId || '';
 
     const checkboxes = competenciasDisponibles.map(c => `
         <label style="display:inline-flex; align-items:center; gap:5px; font-weight:400; font-size:0.82rem; margin-right:14px;">
@@ -181,7 +239,7 @@ function agregarFilaCriterio(nombre = '', peso = 0, competenciaIds = []) {
                 <label>Peso (puntos)</label>
                 <input type="number" class="crit-peso" min="0" step="0.01" value="${peso}">
             </div>
-            <button type="button" class="btn peligro chico" onclick="this.closest('[data-criterio-idx]').remove(); distribuirIgualEntreAuto();">Quitar</button>
+            <button type="button" class="btn peligro chico" onclick="quitarFilaCriterio(this)">Quitar</button>
         </div>
         ${competenciasDisponibles.length ? `<div class="campo"><label>Competencia(s) específica(s) que evidencia</label><div>${checkboxes}</div></div>` : ''}
     `;
@@ -197,6 +255,16 @@ function agregarFilaCriterio(nombre = '', peso = 0, competenciaIds = []) {
     recalcularTotal();
 }
 window.recalcularTotal = recalcularTotal;
+
+function quitarFilaCriterio(boton) {
+    const fila = boton.closest('[data-criterio-idx]');
+    if (fila.dataset.criterioId) {
+        if (!confirm('Este criterio ya tiene calificaciones registradas. Si lo quitas, esas calificaciones se pierden. ¿Continuar?')) return;
+    }
+    fila.remove();
+    distribuirIgualEntreAuto();
+}
+window.quitarFilaCriterio = quitarFilaCriterio;
 
 function valorObjetivo() {
     return parseFloat(document.getElementById('valorActividad').value) || 0;
@@ -334,7 +402,9 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
         if (!nombreCrit) { mostrarAlerta('alertaNuevaActividad', 'Todos los criterios necesitan un nombre.'); return; }
         if (peso <= 0) { mostrarAlerta('alertaNuevaActividad', `El criterio "${nombreCrit}" no puede tener un peso de 0. Quítalo o repártele algo de valor.`); return; }
         const competenciaIds = Array.from(row.querySelectorAll('.chk-competencia:checked')).map(chk => parseInt(chk.value));
-        criterios.push({ nombre: nombreCrit, peso, competencia_ids: competenciaIds });
+        const criterio = { nombre: nombreCrit, peso, competencia_ids: competenciaIds };
+        if (row.dataset.criterioId) criterio.id = parseInt(row.dataset.criterioId);
+        criterios.push(criterio);
     }
 
     const sumaCriterios = criterios.reduce((s, c) => s + c.peso, 0);
@@ -349,12 +419,21 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
     btn.textContent = 'Guardando…';
 
     try {
-        await apiFetch('calif_actividades.php', { method: 'POST', body });
+        if (modoEdicion) {
+            body.id = actividadIdEdicion;
+            const res = await apiFetch('calif_actividades.php', { method: 'PUT', body });
+            const n = res.estudiantes_actualizados || 0;
+            alert(n > 0
+                ? `Actividad actualizada. Se recalcularon las calificaciones de ${n} estudiante(s) según el nuevo valor.`
+                : 'Actividad actualizada.');
+        } else {
+            await apiFetch('calif_actividades.php', { method: 'POST', body });
+        }
         window.location.href = `${rutaBase('calificaciones.html')}`;
     } catch (err) {
         mostrarAlerta('alertaNuevaActividad', err.message);
         btn.disabled = false;
-        btn.textContent = 'Guardar actividad';
+        btn.textContent = modoEdicion ? 'Guardar cambios' : 'Guardar actividad';
     }
 });
 

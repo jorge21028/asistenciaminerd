@@ -2,16 +2,20 @@
 layout: default
 modulo: calificaciones
 modulo_nombre: Calificaciones
-titulo: Nueva actividad
+titulo: Actividad
 ---
 <div class="page-header">
     <div>
-        <h1>Nueva actividad</h1>
+        <h1 id="tituloPagina">Nueva actividad</h1>
         <p class="subtitulo" id="subtituloContexto"><a href="{{ '/calificaciones.html' | relative_url }}">← Calificaciones</a></p>
     </div>
 </div>
 
 <div id="alertaNuevaActividad"></div>
+
+<div class="vacio-estado is-hidden" id="avisoEdicion" style="border-color:var(--color-tardanza); color:var(--color-tardanza);">
+    Estás editando una actividad que ya tiene calificaciones registradas. Si cambias el valor o los pesos, las calificaciones de los estudiantes que ya evaluaste se <strong>recalculan automáticamente</strong> con el nivel que ya les habías puesto en la rúbrica — no tienes que volver a calificar a nadie.
+</div>
 
 <div class="card">
     <h3>Datos generales</h3>

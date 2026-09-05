@@ -75,6 +75,7 @@ function pintarActividades() {
             <td>${new Date(a.created_at).toLocaleDateString('es-DO')}</td>
             <td class="acciones-tabla">
                 <a class="btn secundario chico" href="${rutaBase('calificaciones-calificar.html')}?id=${a.id}">Calificar</a>
+                <a class="btn secundario chico" href="${rutaBase('calificaciones-nueva.html')}?id=${a.id}">Editar</a>
                 <a class="btn secundario chico" href="${rutaBase('calificaciones-reportes.html')}?curso_id=${a.curso_id}&asignatura_id=${a.asignatura_id}&tipo=actividad&actividad_id=${a.id}">Reporte</a>
                 <button class="btn peligro chico" onclick="eliminarActividad(${a.id})">Eliminar</button>
             </td>
