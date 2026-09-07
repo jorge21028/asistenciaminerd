@@ -181,6 +181,7 @@ async function generarReporte() {
 function renderActividad(data) {
     const filas = data.estudiantes.map(e => `
         <tr ${claseFila(e.aprobado)}>
+            <td class="num">${escaparHtml(e.matricula || '—')}</td>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
             <td class="num">${e.obtenida ?? '—'}</td>
             <td class="num">${e.maxima}</td>
@@ -196,7 +197,7 @@ function renderActividad(data) {
             <div class="tabla-wrap">
                 <table id="tablaReporte">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
-                    <thead><tr><th>Estudiante</th><th class="num">Obtenida</th><th class="num">Máxima</th><th class="num">%</th><th class="num">Estado</th><th>Observaciones</th></tr></thead>
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th><th class="num">Obtenida</th><th class="num">Máxima</th><th class="num">%</th><th class="num">Estado</th><th>Observaciones</th></tr></thead>
                     <tbody>${filas}</tbody>
                 </table>
             </div>
@@ -212,6 +213,7 @@ function renderUnidad(data) {
             return `<td class="num">${c.obtenida}/${c.maxima}</td>`;
         }).join('');
         return `<tr ${claseFila(e.aprobado)}>
+            <td class="num">${escaparHtml(e.matricula || '—')}</td>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
             ${celdas}
             <td class="num">${e.total_obtenido}</td>
@@ -227,7 +229,7 @@ function renderUnidad(data) {
             <div class="tabla-wrap">
                 <table id="tablaReporte">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
-                    <thead><tr><th>Estudiante</th>${thActs}<th class="num">Total</th><th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thActs}<th class="num">Total</th><th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
                     <tbody>${filas}</tbody>
                 </table>
             </div>
@@ -240,6 +242,7 @@ function renderPeriodo(data) {
     const filas = data.estudiantes.map(e => {
         const celdas = data.columnas.map(c => `<td class="num">${e.celdas[c.id] ?? 0}</td>`).join('');
         return `<tr ${claseFila(e.aprobado)}>
+            <td class="num">${escaparHtml(e.matricula || '—')}</td>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
             ${celdas}
             <td class="num">${e.total_obtenido ?? '—'}</td>
@@ -255,7 +258,7 @@ function renderPeriodo(data) {
             <div class="tabla-wrap">
                 <table id="tablaReporte">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
-                    <thead><tr><th>Estudiante</th>${thCols}<th class="num">Total</th><th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thCols}<th class="num">Total</th><th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
                     <tbody>${filas}</tbody>
                 </table>
             </div>
@@ -268,6 +271,7 @@ function renderAnual(data) {
     const filas = data.estudiantes.map(e => {
         const celdas = data.periodos.map(p => `<td class="num">${e.periodos[p.id] !== null ? e.periodos[p.id] + '%' : '—'}</td>`).join('');
         return `<tr ${claseFila(e.aprobado)}>
+            <td class="num">${escaparHtml(e.matricula || '—')}</td>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
             ${celdas}
             <td class="num">${e.promedio !== null ? e.promedio + '%' + marca(e.promedio, data.minmax) : '—'}</td>
@@ -281,7 +285,7 @@ function renderAnual(data) {
             <div class="tabla-wrap">
                 <table id="tablaReporte">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
-                    <thead><tr><th>Estudiante</th>${thPer}<th class="num">Promedio</th><th class="num">Estado</th></tr></thead>
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thPer}<th class="num">Promedio</th><th class="num">Estado</th></tr></thead>
                     <tbody>${filas}</tbody>
                 </table>
             </div>
