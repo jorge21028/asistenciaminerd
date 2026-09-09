@@ -68,12 +68,36 @@ dentro de `api/config.php` mientras pruebas localmente.
 ## Cómo funciona el sistema
 
 ### Roles
-- **Administrador/director:** gestiona usuarios, cursos, asignaturas, estudiantes y asignaciones (qué profesor da qué asignatura en qué curso). Ve todos los reportes.
-- **Profesor:** solo ve y pasa asistencia en los cursos/asignaturas que el admin le haya asignado (sección "Asignaciones").
+- **Administrador/director (`admin`):** gestiona usuarios, cursos, asignaturas, estudiantes y asignaciones (qué profesor da qué asignatura en qué curso). Ve todos los reportes y es el único que entra a "Configuración".
+- **Profesor (`profesor`):** ve y trabaja en los cursos/asignaturas que el admin le haya asignado (sección "Asignaciones"). Si además es **profesor guía** de un curso, puede consultar (sin poder registrar) los datos de ese curso aunque no imparta ninguna asignatura ahí.
+- **Orientador (`orientador`):** acceso al módulo de Conducta, igual que admin/coordinador.
+- **Coordinador (`coordinador`):** mismo nivel de acceso que el admin en Cursos y Conducta.
+
+### Portal (`portal.html`) — pantalla de inicio
+
+Es la primera pantalla que ve cualquier usuario autenticado. Muestra una tarjeta por cada módulo del sistema, y cada tarjeta se muestra u oculta según el rol de quien inició sesión (`data-roles` en el HTML de cada tarjeta):
+
+| Módulo | Página a la que lleva | Roles que la ven | Qué se hace ahí |
+|---|---|---|---|
+| 📘 Planificación de Clases | `planificacion.html` | admin, profesor, coordinador | Armar la Matriz de Planificación Diaria del MINERD-DETP con ayuda de IA, y exportarla en Word o PDF. |
+| 📝 Asistencia | `dashboard.html` | admin, profesor | Registrar la asistencia diaria por curso y asignatura, y consultar reportes diarios, semanales, mensuales y anuales. |
+| 🏆 Calificaciones | `calificaciones.html` | admin, profesor | Calificar actividades por taller, RA técnico-profesional o rúbrica de competencias, y consultar los 4 reportes con exportación a Excel. |
+| 🕒 Horario | `horario.html` | admin, profesor | Consultar el horario semanal de cada profesor: clase actual, próxima clase y resumen de carga horaria. |
+| ⚖️ Conducta | `conducta.html` | admin, profesor, orientador | Registro y gestión de faltas de convivencia, según las Normas MINERD (Ley 136-03) y la guía del centro. |
+| 🎲 Dinámica de Clase | `dinamica-clase.html` | admin, profesor | Herramientas para usar en vivo en el aula: ruleta de participación, generador de grupos, actividades con temporizador y pantalla de inicio. |
+| 📊 Reportes | `reportes.html` | todos los roles | Todos los reportes del sistema (asistencia, calificaciones, conducta y los que se vayan agregando) reunidos en un solo lugar. |
+| ⚙️ Configuración | `configuracion.html` | solo admin | Tablas maestras del sistema: años escolares, cursos, asignaturas, períodos, competencias, estudiantes, asignaciones, usuarios y horario. |
+
+Además de las tarjetas, la barra superior del portal muestra:
+- El **nombre del usuario** y una **etiqueta con su rol** (Administrador / Profesor / Orientador / Coordinador).
+- Una **insignia con el año escolar activo** (📅), obtenida de `anios_escolares.php?activo=1` — no aparece si no hay ningún año marcado como activo.
+- Un botón de **"Mi cuenta"** y otro para **cerrar sesión**.
+
+Si un usuario no autenticado intenta entrar a `portal.html`, se le redirige automáticamente al login (`index.html`).
 
 ### Flujo normal de uso
 1. El admin crea **cursos** (grado + sección), **asignaturas**, matricula **estudiantes** por curso, crea **usuarios** (profesores) y los **asigna** a curso+asignatura.
-2. Al iniciar sesión, todos llegan primero a **`portal.html`** — la página principal del sistema, con una tarjeta por cada módulo (por ahora solo "Asistencia" está activo; los demás son marcadores de posición para cuando se construyan).
+2. Al iniciar sesión, todos llegan primero al **Portal** (ver tabla arriba) y eligen el módulo con el que van a trabajar.
 3. Al entrar al módulo de Asistencia, cada profesor va a **"Tomar asistencia"**, elige su curso/asignatura y la fecha, marca **P / A / T / E** por estudiante y guarda.
 4. Cualquiera con acceso puede ir a **"Reportes"** y ver el reporte diario, semanal, mensual o anual de ese curso/asignatura.
 
