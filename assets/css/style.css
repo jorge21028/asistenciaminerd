@@ -903,7 +903,7 @@ table.horario-grid td.celda-dia {
 }
 .proyeccion-actividad-info h1 { color: #fff; font-size: 1.9rem; margin: 6px 0 4px; }
 .proyeccion-actividad-info h3 { color: #B9C6DC; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 4px; }
-.proyeccion-actividad-info p { color: #EDF1F7; font-size: 1.05rem; line-height: 1.6; }
+.proyeccion-actividad-info p { color: #EDF1F7; font-size: 1.05rem; line-height: 1.6; white-space: pre-line; }
 .proyeccion-actividad-unidad { font-family: var(--font-mono); color: #DCE4F0; }
 .proyeccion-actividad-valor { color: #FBD98A; font-weight: 700; font-size: 1.1rem; }
 .proyeccion-actividad-timer {
