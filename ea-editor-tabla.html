@@ -1,0 +1,57 @@
+---
+layout: default
+titulo: Tabla comparativa
+sin_layout: true
+---
+<div class="topbar no-imprimir" style="position: static;">
+    <a class="brand" href="{{ '/espacio-academico.html' | relative_url }}">
+        <span class="sello"><svg class="icon icon-sm" style="color:#fff; vertical-align:-3px;"><use href="#icon-libro"></use></svg></span>
+        Espacio Académico
+    </a>
+    <div class="usuario-box">
+        <span id="nombreEstudiante"></span>
+        <button class="btn-salir" onclick="AuthEA.cerrarSesion()"><svg class="icon icon-sm"><use href="#icon-salir"></use></svg> Salir</button>
+    </div>
+</div>
+
+<div class="page-header no-imprimir">
+    <div>
+        <h1 id="tituloTrabajo">Tabla comparativa</h1>
+        <p class="subtitulo" id="volverAsignatura"><a href="{{ '/espacio-academico.html' | relative_url }}">← Volver</a></p>
+    </div>
+    <span class="badge" id="badgeEstado"></span>
+</div>
+
+<div id="alertaEditorTabla"></div>
+
+<div class="vacio-estado is-hidden no-imprimir" id="avisoSoloLectura">
+    Este trabajo ya fue entregado y no se puede editar. Si el profesor lo devuelve para corrección, podrás volver a editarlo aquí mismo.
+</div>
+
+<div class="card no-imprimir">
+    <div class="fila-form" style="flex-wrap:wrap;">
+        <button class="btn secundario" id="btnAgregarFila"><svg class="icon icon-sm"><use href="#icon-plus"></use></svg> Fila</button>
+        <button class="btn secundario" id="btnQuitarFila"><svg class="icon icon-sm"><use href="#icon-eliminar"></use></svg> Fila</button>
+        <button class="btn secundario" id="btnAgregarColumna"><svg class="icon icon-sm"><use href="#icon-plus"></use></svg> Columna</button>
+        <button class="btn secundario" id="btnQuitarColumna"><svg class="icon icon-sm"><use href="#icon-eliminar"></use></svg> Columna</button>
+        <span style="flex:1;"></span>
+        <button class="btn secundario" onclick="window.print()"><svg class="icon icon-sm"><use href="#icon-imprimir"></use></svg> Exportar a PDF</button>
+        <button class="btn" id="btnGuardarTabla"><svg class="icon icon-sm"><use href="#icon-guardar"></use></svg> Guardar</button>
+        <button class="btn" id="btnEntregarTabla" style="display:none; background:var(--color-present);"><svg class="icon icon-sm"><use href="#icon-presente"></use></svg> Entregar</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="tabla-wrap">
+        <table id="tablaComparativa"></table>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/api-estudiante.js' | relative_url }}"></script>
+<script>
+    window.__sesionEAValida = protegerPaginaEA();
+    if (window.__sesionEAValida) {
+        document.getElementById('nombreEstudiante').textContent = AuthEA.getEstudiante().nombre;
+    }
+</script>
+<script src="{{ '/assets/js/ea-editor-tabla.js' | relative_url }}"></script>

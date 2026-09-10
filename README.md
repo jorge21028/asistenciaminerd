@@ -125,7 +125,7 @@ Este módulo reutiliza las mismas tablas de `usuarios`, `cursos` y `asignaturas`
 
 ---
 
-### Módulo Espacio Académico (Fase 1 — en construcción)
+### Módulo Espacio Académico (Fase 1 y 2 — en construcción)
 
 Espacio de trabajo digital para que los **estudiantes** creen, guarden y entreguen trabajos académicos dentro del SGD, organizado como **Estudiante → Asignatura → Creaciones / Actividades**.
 
@@ -137,6 +137,12 @@ Espacio de trabajo digital para que los **estudiantes** creen, guarden y entregu
 - **Página de asignatura** (`ea-asignatura.html`): lista "Mis creaciones" (personales o ligadas a una actividad) y "Actividades asignadas" por el profesor (`calif_actividades` con `requiere_entrega_digital = 1`).
 - Por ahora se puede crear una creación (título + tipo de herramienta) y guardarla como borrador; **los editores de cada herramienta** (tabla comparativa, resumen, mapa mental, infografía, presentación) llegan en las fases 2 a 6 del roadmap del módulo.
 - Endpoints nuevos: `auth_estudiante.php`, `ea_asignaturas.php`, `ea_actividades.php`, `ea_creaciones.php`, `ea_herramientas.php`. Todos usan `requerirAuthEstudiante()` (nueva, en `middleware.php`), separada de `requerirAuth()`.
+
+**Fase 2 — Editor de tabla comparativa** (`ea-editor-tabla.html` / `assets/js/ea-editor-tabla.js`):
+- Agregar/quitar filas y columnas, editar encabezados y celdas directamente sobre la tabla (`contenteditable`), guardar como borrador, exportar a PDF con `window.print()` (mismo patrón que los reportes de Asistencia/Horario — sin depender de librerías externas).
+- El contenido se guarda en `ea_creaciones.contenido` como JSON: `{ "tipo": "tabla_comparativa", "columnas": [...], "filas": [[...], ...] }`.
+- Desde "Actividades asignadas", si la actividad pide una tabla comparativa aparece un botón **"Crear trabajo"** que crea la creación ya ligada a esa actividad y abre el editor directamente (como describe el flujo del documento de diseño). Una vez entregado (`estado = 'entregado'`), el editor pasa a solo lectura hasta que el profesor lo devuelva.
+- Las demás herramientas (resumen, mapa mental, infografía, presentación) muestran "Próximamente" hasta sus fases correspondientes.
 
 ### Módulo de Conducta (Gestión de la Convivencia)
 

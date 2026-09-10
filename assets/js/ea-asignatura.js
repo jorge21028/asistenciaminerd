@@ -46,15 +46,22 @@ async function cargarCreaciones() {
             return;
         }
         vacio.classList.add('is-hidden');
-        lista.innerHTML = creaciones.map(c => `
+        lista.innerHTML = creaciones.map(c => {
+            const abrible = c.herramienta_clave === 'tabla_comparativa';
+            const accion = abrible
+                ? `<a class="btn secundario" href="${rutaBase('ea-editor-tabla.html')}?id=${c.id}">Abrir</a>`
+                : `<button class="btn secundario" disabled title="El editor de ${escaparHtml(c.herramienta_nombre)} llega en una próxima fase">Próximamente</button>`;
+            return `
             <div class="fila-form" style="align-items:center; border-top:1px solid var(--color-line); padding-top:10px; margin-top:10px;">
                 <div style="flex:1;">
                     <strong>${escaparHtml(c.titulo)}</strong><br>
                     <span class="subtitulo">${escaparHtml(c.herramienta_nombre)}${c.actividad_nombre ? ' · ' + escaparHtml(c.actividad_nombre) : ' · Creación personal'}</span>
                 </div>
                 <span class="badge">${ETIQUETAS_ESTADO[c.estado] || c.estado}</span>
+                ${accion}
             </div>
-        `).join('');
+        `;
+        }).join('');
     } catch (err) {
         mostrarAlerta('alertaAsignaturaEA', err.message);
     }
@@ -71,15 +78,46 @@ async function cargarActividades() {
             return;
         }
         vacio.classList.add('is-hidden');
-        lista.innerHTML = actividades.map(a => `
+        lista.innerHTML = actividades.map(a => {
+            let accion;
+            if (a.creacion_id) {
+                accion = a.herramienta_clave === 'tabla_comparativa'
+                    ? `<a class="btn secundario" href="${rutaBase('ea-editor-tabla.html')}?id=${a.creacion_id}">Abrir</a>`
+                    : `<button class="btn secundario" disabled>Próximamente</button>`;
+            } else if (a.herramienta_clave === 'tabla_comparativa') {
+                accion = `<button class="btn" onclick="crearTrabajoDeActividadET(${a.id}, ${a.herramienta_id ?? 'null'}, '${escaparHtml(a.nombre).replace(/'/g, "\\'")}')">Crear trabajo</button>`;
+            } else {
+                accion = `<button class="btn secundario" disabled title="El editor llega en una próxima fase">Próximamente</button>`;
+            }
+            return `
             <div class="fila-form" style="align-items:center; border-top:1px solid var(--color-line); padding-top:10px; margin-top:10px;">
                 <div style="flex:1;">
                     <strong>${escaparHtml(a.nombre)}</strong><br>
                     <span class="subtitulo">${escaparHtml(a.herramienta_nombre || 'Sin herramienta definida')}${a.fecha_limite ? ' · Fecha límite: ' + new Date(a.fecha_limite).toLocaleDateString() : ''}</span>
                 </div>
                 <span class="badge">${a.estado_entrega ? (ETIQUETAS_ESTADO[a.estado_entrega] || a.estado_entrega) : 'Pendiente'}</span>
+                ${accion}
             </div>
-        `).join('');
+        `;
+        }).join('');
+    } catch (err) {
+        mostrarAlerta('alertaAsignaturaEA', err.message);
+    }
+}
+
+async function crearTrabajoDeActividadET(actividadId, herramientaId, nombreActividad) {
+    try {
+        const data = await apiFetchEA('ea_creaciones.php', {
+            method: 'POST',
+            body: {
+                asignatura_id: asignaturaIdEA,
+                herramienta_id: herramientaId,
+                actividad_id: actividadId,
+                titulo: nombreActividad,
+                contenido: null,
+            },
+        });
+        window.location.href = rutaBase('ea-editor-tabla.html') + '?id=' + data.id;
     } catch (err) {
         mostrarAlerta('alertaAsignaturaEA', err.message);
     }
