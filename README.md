@@ -123,6 +123,21 @@ Además de la asistencia, el sistema ahora incluye un módulo de **Horario**:
 
 Este módulo reutiliza las mismas tablas de `usuarios`, `cursos` y `asignaturas` del módulo de asistencia — no hay que duplicar datos.
 
+---
+
+### Módulo Espacio Académico (Fase 1 — en construcción)
+
+Espacio de trabajo digital para que los **estudiantes** creen, guarden y entreguen trabajos académicos dentro del SGD, organizado como **Estudiante → Asignatura → Creaciones / Actividades**.
+
+**Punto de partida importante:** el SGD no tenía login de estudiante — `estudiantes` es solo un registro administrativo. Por eso este módulo usa una tabla de credenciales **separada** (`estudiante_credenciales`, 1:1 con `estudiantes`), y una sesión (JWT con `tipo:'estudiante'`) completamente aparte de la de `usuarios`. Nada del módulo de Asistencia/Calificaciones/Conducta/Horario se modifica.
+
+- **Ejecuta `database/migracion_espacio_academico.sql`** en phpMyAdmin: crea `estudiante_credenciales`, `ea_herramientas` (catálogo de editores) y `ea_creaciones`, y agrega 3 columnas (con `DEFAULT`) a `calif_actividades` para que una actividad de Calificaciones pueda pedir también una entrega digital.
+- **Login de estudiante** (`login-estudiante.html` → `auth_estudiante.php`): separado del login de staff (`index.html` → `auth.php`).
+- **Dashboard del estudiante** (`espacio-academico.html`): una tarjeta por asignatura de su curso (según `profesor_asignaciones`), con el conteo de creaciones y actividades entregadas.
+- **Página de asignatura** (`ea-asignatura.html`): lista "Mis creaciones" (personales o ligadas a una actividad) y "Actividades asignadas" por el profesor (`calif_actividades` con `requiere_entrega_digital = 1`).
+- Por ahora se puede crear una creación (título + tipo de herramienta) y guardarla como borrador; **los editores de cada herramienta** (tabla comparativa, resumen, mapa mental, infografía, presentación) llegan en las fases 2 a 6 del roadmap del módulo.
+- Endpoints nuevos: `auth_estudiante.php`, `ea_asignaturas.php`, `ea_actividades.php`, `ea_creaciones.php`, `ea_herramientas.php`. Todos usan `requerirAuthEstudiante()` (nueva, en `middleware.php`), separada de `requerirAuth()`.
+
 ### Módulo de Conducta (Gestión de la Convivencia)
 
 Basado fielmente en:

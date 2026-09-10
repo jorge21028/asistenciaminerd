@@ -1,0 +1,66 @@
+---
+layout: default
+titulo: Espacio Académico
+sin_layout: true
+---
+<div class="topbar" style="position: static;">
+    <a class="brand" href="{{ '/espacio-academico.html' | relative_url }}">
+        <span class="sello"><svg class="icon icon-sm" style="color:#fff; vertical-align:-3px;"><use href="#icon-libro"></use></svg></span>
+        Espacio Académico
+    </a>
+    <div class="usuario-box">
+        <span id="nombreEstudiante"></span>
+        <button class="btn-salir" onclick="AuthEA.cerrarSesion()"><svg class="icon icon-sm"><use href="#icon-salir"></use></svg> Salir</button>
+    </div>
+</div>
+
+<div class="page-header">
+    <div>
+        <h1 id="tituloAsignatura">Asignatura</h1>
+        <p class="subtitulo"><a href="{{ '/espacio-academico.html' | relative_url }}">← Mis asignaturas</a></p>
+    </div>
+</div>
+
+<div id="alertaAsignaturaEA"></div>
+
+<div class="card">
+    <div class="fila-form" style="align-items:flex-end;">
+        <h3 style="flex:1; margin:0;">Mis creaciones</h3>
+        <button class="btn" id="btnNuevaCreacion"><svg class="icon icon-sm"><use href="#icon-plus"></use></svg> Nueva creación</button>
+    </div>
+
+    <div class="card is-hidden" id="formNuevaCreacion" style="background:var(--color-fondo-suave, #f6f7fb); margin-top:14px;">
+        <div class="fila-form">
+            <div class="campo" style="flex:2;">
+                <label for="tituloCreacion">Título</label>
+                <input type="text" id="tituloCreacion" placeholder="Ej. Infografía sobre estructuras de control">
+            </div>
+            <div class="campo">
+                <label for="herramientaCreacion">Tipo de trabajo</label>
+                <select id="herramientaCreacion"></select>
+            </div>
+        </div>
+        <div class="fila-form" style="justify-content:flex-end;">
+            <button class="btn secundario" type="button" id="btnCancelarCreacion">Cancelar</button>
+            <button class="btn" type="button" id="btnGuardarCreacion">Guardar</button>
+        </div>
+    </div>
+
+    <div id="listaCreaciones" style="margin-top:14px;"></div>
+    <div class="vacio-estado is-hidden" id="vacioCreaciones">Todavía no tienes creaciones en esta asignatura.</div>
+</div>
+
+<div class="card">
+    <h3>Actividades asignadas</h3>
+    <div id="listaActividades"></div>
+    <div class="vacio-estado is-hidden" id="vacioActividades">Tu profesor no ha asignado actividades con entrega digital todavía.</div>
+</div>
+
+<script src="{{ '/assets/js/api-estudiante.js' | relative_url }}"></script>
+<script>
+    window.__sesionEAValida = protegerPaginaEA();
+    if (window.__sesionEAValida) {
+        document.getElementById('nombreEstudiante').textContent = AuthEA.getEstudiante().nombre;
+    }
+</script>
+<script src="{{ '/assets/js/ea-asignatura.js' | relative_url }}"></script>

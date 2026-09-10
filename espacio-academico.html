@@ -1,0 +1,36 @@
+---
+layout: default
+titulo: Espacio Académico
+sin_layout: true
+---
+<div class="topbar" style="position: static;">
+    <a class="brand" href="{{ '/espacio-academico.html' | relative_url }}">
+        <span class="sello"><svg class="icon icon-sm" style="color:#fff; vertical-align:-3px;"><use href="#icon-libro"></use></svg></span>
+        Espacio Académico
+    </a>
+    <div class="usuario-box">
+        <span id="nombreEstudiante"></span>
+        <button class="btn-salir" onclick="AuthEA.cerrarSesion()"><svg class="icon icon-sm"><use href="#icon-salir"></use></svg> Salir</button>
+    </div>
+</div>
+
+<div class="page-header">
+    <div>
+        <h1>Mis asignaturas</h1>
+        <p class="subtitulo">Elige la asignatura en la que quieres trabajar</p>
+    </div>
+</div>
+
+<div id="alertaEA"></div>
+
+<div class="grid-3" id="gridAsignaturas"></div>
+<div class="vacio-estado is-hidden" id="vacioAsignaturas">Todavía no tienes asignaturas visibles aquí. Consulta con tu profesor guía.</div>
+
+<script src="{{ '/assets/js/api-estudiante.js' | relative_url }}"></script>
+<script>
+    window.__sesionEAValida = protegerPaginaEA(); // si no hay sesión, ya redirigió a login-estudiante.html
+    if (window.__sesionEAValida) {
+        document.getElementById('nombreEstudiante').textContent = AuthEA.getEstudiante().nombre;
+    }
+</script>
+<script src="{{ '/assets/js/espacio-academico.js' | relative_url }}"></script>
