@@ -169,7 +169,7 @@ const thead = '<thead><tr><th class="col-estudiante">Estudiante</th>' +
             </td>`;
         }).join('');
         return `<tr data-fila-est="${e.id}">
-            <td class="nombre-estudiante">${escaparHtml(e.nombre)} ${escaparHtml(e.apellido)}</td>
+            <td class="nombre-estudiante">${escaparHtml(e.nombre)} </td>
             ${celdas}
             <td class="num" id="total-${e.id}">—</td>
             <td class="num" id="estadoRub-${e.id}">—</td>
