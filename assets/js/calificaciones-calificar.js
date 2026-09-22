@@ -79,7 +79,7 @@ async function cargarModoSimple() {
     document.getElementById('cardSimple').style.display = 'block';
     document.getElementById('tablaSimple').innerHTML = data.estudiantes.map(e => `
         <tr data-fila="${e.estudiante_id}">
-            <td class="nombre-estudiante">${escaparHtml(e.nombre)} ${escaparHtml(e.apellido)}</td>
+            <td class="nombre-estudiante">${escaparHtml(e.nombre)} </td>
             <td class="num"><input type="number" class="input-punt" min="0" max="${valorMaximo}" step="0.01"
                 value="${e.puntuacion_obtenida ?? ''}" data-id="${e.estudiante_id}" style="width:90px; text-align:center; padding:6px; border:1px solid var(--color-line); border-radius:6px;"></td>
             <td class="num" id="pct-${e.estudiante_id}">${e.puntuacion_obtenida !== null ? ((e.puntuacion_obtenida / valorMaximo) * 100).toFixed(1) + '%' : '—'}</td>
