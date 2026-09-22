@@ -210,7 +210,7 @@ function renderUnidad(data) {
     const filas = data.estudiantes.map(e => {
         const celdas = data.actividades.map(a => {
             const c = e.actividades[a.id] || { obtenida: 0, maxima: a.valor_maximo };
-            return `<td class="num">${c.obtenida}/${c.maxima}</td>`;
+            return `<td class="num">${c.obtenida !== null && c.obtenida !== undefined ? Number(c.obtenida).toFixed(2) : '—'}</td>`;
         }).join('');
         return `<tr ${claseFila(e.aprobado)}>
             <td class="num">${escaparHtml(e.matricula || '—')}</td>
