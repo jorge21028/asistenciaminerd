@@ -148,9 +148,14 @@ async function cargarModoRubrica() {
     pintarLeyendaNiveles(niveles);
     const tabla = document.getElementById('tablaRubrica');
 
-    const thead = '<thead><tr><th>Estudiante</th>' +
-        criterios.map(c => `<th>${escaparHtml(c.nombre)}<br><span style="font-weight:400;">(${c.peso} pts)</span></th>`).join('') +
-        '<th class="num">Total</th><th class="num">Estado</th></tr></thead>';
+const thead = '<thead><tr><th class="col-estudiante">Estudiante</th>' +
+    criterios.map(c => `
+        <th class="indicador-header">
+            <div class="indicador-nombre">${escaparHtml(c.nombre)}</div>
+            <div class="indicador-peso">(${c.peso} pts)</div>
+        </th>
+    `).join('') +
+    '<th class="num col-total">Total</th><th class="num col-estado">Estado</th></tr></thead>';
 
     const tbody = '<tbody>' + estudiantes.map(e => {
         const celdas = criterios.map(c => {
