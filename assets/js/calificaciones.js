@@ -58,10 +58,7 @@ async function cargarActividades() {
 }
 
 function referenciaActividad(a) {
-    if (a.periodo_nombre && a.unidad_titulo) return `${a.unidad_codigo ? a.unidad_codigo + ': ' : ''}${a.unidad_titulo}`;
-    if (a.unidad_titulo) return `${a.unidad_codigo ? a.unidad_codigo + ': ' : ''}${a.unidad_titulo}`;
-    if (a.periodo_nombre) return a.periodo_nombre;
-    return '—';
+    return a.unidad_codigo || '—';
 }
 
 function pintarActividades() {
