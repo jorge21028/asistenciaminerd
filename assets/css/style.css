@@ -1400,18 +1400,18 @@ table.horario-grid td.celda-dia {
     margin-top: 3px;
 }
 
-/* Primera columna fija */
-#tablaRubrica th.col-estudiante,
-#tablaRubrica td.nombre-estudiante {
+/* Encabezado fijo al desplazarse verticalmente */
+#tablaRubrica thead th {
     position: sticky;
-    left: 0;
-    z-index: 3;
+    top: 0;
+    z-index: 10;
     background: var(--color-bg, #fff);
 }
 
-/* El encabezado de Estudiante queda por encima */
-#tablaRubrica th.col-estudiante {
-    z-index: 5;
+/* Evita que el encabezado se vea transparente */
+#tablaRubrica thead {
+    position: relative;
+    z-index: 10;
 }
 
 /* Mantener visible Total y Estado */
