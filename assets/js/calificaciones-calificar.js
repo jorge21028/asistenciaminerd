@@ -35,7 +35,7 @@ let tipoAsignaturaActual = 'academica';
 function badgeEstado(pct) {
     if (pct === null || pct === undefined) return '<span class="badge">Sin calificar</span>';
     const aprobado = pct >= notaMinima;
-    return `<span class="badge ${aprobado ? 'badge-aprobado' : 'badge-reprobado'}">${aprobado ? 'Aprobado' : 'Reprobado'} (${pct.toFixed(1)}%)</span>`;
+    return `<span class="badge ${aprobado ? 'badge-aprobado' : 'badge-reprobado'}">${aprobado ? 'A' : 'R'} (${pct.toFixed(1)}%)</span>`;
 }
 
 async function inicializar() {
