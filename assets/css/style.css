@@ -1364,4 +1364,71 @@ table.horario-grid td.celda-dia {
 .hist-item:last-child { border-bottom: none; }
 .hist-item small { display: block; color: var(--color-ink-soft); margin-top: 2px; }
 
+/* Tabla de rúbrica */
+#tablaRubrica {
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: max-content;
+}
+
+/* Encabezados de los indicadores */
+#tablaRubrica .indicador-header {
+    width: 130px;
+    max-width: 130px;
+    min-width: 130px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.2;
+}
+
+/* Nombre del indicador */
+#tablaRubrica .indicador-nombre {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Peso */
+#tablaRubrica .indicador-peso {
+    font-weight: 400;
+    font-size: 0.85em;
+    margin-top: 3px;
+}
+
+/* Primera columna fija */
+#tablaRubrica th.col-estudiante,
+#tablaRubrica td.nombre-estudiante {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: var(--color-bg, #fff);
+}
+
+/* El encabezado de Estudiante queda por encima */
+#tablaRubrica th.col-estudiante {
+    z-index: 5;
+}
+
+/* Mantener visible Total y Estado */
+#tablaRubrica th.col-total,
+#tablaRubrica th.col-estado {
+    white-space: nowrap;
+}
+
+#tablaRubrica thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--color-bg, #fff);
+}
+
+#tablaRubrica thead th.col-estudiante {
+    z-index: 6;
+}
+
 
