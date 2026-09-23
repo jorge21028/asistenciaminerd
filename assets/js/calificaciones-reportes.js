@@ -210,7 +210,7 @@ function renderUnidad(data) {
     const filas = data.estudiantes.map(e => {
         const celdas = data.actividades.map(a => {
             const c = e.actividades[a.id] || { obtenida: 0, maxima: a.valor_maximo };
-            return `<td class="num">${c.obtenida !== null && c.obtenida !== undefined ? Number(c.obtenida).toFixed(2) : '—'}</td>`;
+            return `<td class="num">${c.obtenida}/${c.maxima}</td>`;
         }).join('');
         return `<tr ${claseFila(e.aprobado)}>
             <td class="num">${escaparHtml(e.matricula || '—')}</td>
@@ -258,15 +258,7 @@ function renderPeriodo(data) {
             <div class="tabla-wrap">
                 <table id="tablaReporte">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
-                    ${filaCabeceraTabla(`
-    <tr>
-        <th class="num">Matrícula</th>
-        <th>Estudiante</th>
-        ${thPer}
-        <th class="num">Promedio</th>
-        <th class="num">Estado</th>
-    </tr>
-`)}
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thCols}<th class="num">Total</th><th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
                     <tbody>${filas}</tbody>
                 </table>
             </div>
@@ -291,44 +283,11 @@ function renderAnual(data) {
         <div class="card">
             <h3>Calificación anual — ${escaparHtml(data.encabezado.anio_escolar)}</h3>
             <div class="tabla-wrap">
-<div class="card">
-    <h3>${escaparHtml(data.encabezado.unidad)}
-        <span style="font-weight:400; color:var(--color-ink-soft);">
-            (valor total: ${data.valor_total})
-        </span>
-    </h3>
-
-    <div class="info-reporte">
-        <table class="tabla-info-reporte">
-            <tbody>
-                ${filasEncabezado(data.encabezado)}
-            </tbody>
-        </table>
-
-        <table class="tabla-minmax">
-            <tbody>
-                ${filaMinMax(data.minmax)}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="tabla-wrap">
-        <table id="tablaReporte">
-            ${filaCabeceraTabla(`
-                <tr>
-                    <th class="num">Matrícula</th>
-                    <th>Estudiante</th>
-                    ${thActs}
-                    <th class="num">Total</th>
-                    <th class="num">Valor</th>
-                    <th class="num">%</th>
-                    <th class="num">Estado</th>
-                </tr>
-            `)}
-            <tbody>${filas}</tbody>
-        </table>
-    </div>
-</div>
+                <table id="tablaReporte">
+                    <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thPer}<th class="num">Promedio</th><th class="num">Estado</th></tr></thead>
+                    <tbody>${filas}</tbody>
+                </table>
             </div>
         </div>
     `;
