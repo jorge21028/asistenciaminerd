@@ -298,11 +298,42 @@ function renderAnual(data) {
 // ---------------------------------------------------------------------
 function exportarExcel() {
     const tabla = document.getElementById('tablaReporte');
-    if (!tabla) { mostrarAlerta('alertaReportesCalif', 'Genera un reporte primero.'); return; }
+
+    if (!tabla) {
+        mostrarAlerta('alertaReportesCalif', 'Genera un reporte primero.');
+        return;
+    }
+
     const tipo = document.getElementById('tipoReporte').value;
     const fecha = new Date().toISOString().slice(0, 10).replace(/-/g, '_');
-    const wb = XLSX.utils.table_to_book(tabla, { sheet: 'Calificaciones' });
-    XLSX.writeFile(wb, `Calificaciones_${tipo}_${fecha}.xlsx`);
+
+    // Clonamos la tabla para no modificar la que se muestra en pantalla
+    const tablaClon = tabla.cloneNode(true);
+
+    // Procesar todas las celdas
+    tablaClon.querySelectorAll('td').forEach(td => {
+        let valor = td.textContent.trim();
+
+        // Si tiene formato "3/10", "8/10", "10/10", etc.,
+        // conservar solamente el número antes de "/"
+        const match = valor.match(/^(\d+(?:\.\d+)?)\s*\/\s*\d+(?:\.\d+)?$/);
+
+        if (match) {
+            valor = match[1];
+        }
+
+        td.textContent = valor;
+    });
+
+    // Crear el libro de Excel
+    const wb = XLSX.utils.table_to_book(tablaClon, {
+        sheet: 'Calificaciones'
+    });
+
+    XLSX.writeFile(
+        wb,
+        `Calificaciones_${tipo}_${fecha}.xlsx`
+    );
 }
 
 inicializar();
