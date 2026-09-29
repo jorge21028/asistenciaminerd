@@ -1,6 +1,6 @@
 const TEXTO_TIPO = {
     taller: 'Taller: cada actividad pertenece a un período. La nota del período es el promedio de sus actividades, y la del año es el promedio de los períodos.',
-    tecnico: 'Técnico-profesional: cada actividad pertenece a un RA. El RA suma los puntos de sus actividades hasta su valor asignado; el período suma los RA que le pertenecen.',
+    tecnico: 'Técnico-profesional: cada actividad pertenece a un RA. El RA suma los puntos de sus actividades (CRA) hasta su valor asignado. Si el estudiante no aprueba el RA, tiene hasta 3 recuperaciones (R1, R2, R3): crea una actividad de tipo "Recuperación" en el RA. Como calificación final del RA (Total RA) cuenta el CRA si aprobó, o la recuperación con la que aprobó.',
     academica: 'Académica: cada actividad tiene una rúbrica con criterios de evaluación, que pueden evidenciar una o varias competencias específicas.',
 };
 
@@ -58,7 +58,9 @@ async function cargarActividades() {
 }
 
 function referenciaActividad(a) {
-    return a.unidad_codigo || '—';
+    const base = a.unidad_codigo || '—';
+    const r = parseInt(a.recuperacion) || 0;
+    return r > 0 ? `${base} · Recuperación R${r}` : base;
 }
 
 function pintarActividades() {

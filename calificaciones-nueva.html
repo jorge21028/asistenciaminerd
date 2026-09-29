@@ -58,6 +58,21 @@ titulo: Actividad
                 <select id="tipoActividadTecnico"><option value="">— Elegir para autocompletar la rúbrica —</option></select>
             </div>
         </div>
+        <div class="fila-form">
+            <div class="campo" style="max-width:360px;">
+                <label for="tipoRecuperacion">¿Actividad del RA o recuperación?</label>
+                <select id="tipoRecuperacion">
+                    <option value="0">Actividad del RA (cuenta para el CRA)</option>
+                    <option value="1">Recuperación 1 (R1)</option>
+                    <option value="2">Recuperación 2 (R2)</option>
+                    <option value="3">Recuperación 3 (R3)</option>
+                </select>
+            </div>
+        </div>
+        <p class="horario-info-sub" id="infoRecuperacion" style="display:none; color:var(--color-ink-soft);">
+            Recuperación: solo se califica a los estudiantes que no aprobaron el RA. Su valor máximo es el valor del RA (si hay varias actividades en la misma R, entre todas no pueden pasar de ese valor).
+            En los reportes, el <strong>Total RA</strong> es el CRA si aprobó, o la nota de la recuperación con la que aprobó.
+        </p>
         <p class="horario-info-sub" id="infoRA" style="color:var(--color-ink-soft);"></p>
     </div>
 

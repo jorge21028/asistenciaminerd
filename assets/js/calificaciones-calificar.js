@@ -32,6 +32,17 @@ let actividadId;
 let notaMinima = 70;
 let tipoAsignaturaActual = 'academica';
 
+// En una recuperación de RA solo aparecen los estudiantes que aún no han aprobado el RA.
+function avisoRecuperacion(omitidos) {
+    const aviso = document.getElementById('avisoRecuperacion');
+    if (!aviso) return;
+    if (omitidos === undefined || omitidos === null) return;
+    aviso.style.display = 'block';
+    aviso.textContent = omitidos > 0
+        ? `Recuperación: solo se muestran los estudiantes que no han aprobado el RA. ${omitidos} estudiante(s) que ya aprobaron no aparecen y no necesitan esta recuperación.`
+        : 'Recuperación: se muestran todos los estudiantes, porque ninguno ha aprobado el RA todavía.';
+}
+
 function badgeEstado(pct) {
     if (pct === null || pct === undefined) return '<span class="badge">Sin calificar</span>';
     const aprobado = pct >= notaMinima;
@@ -51,8 +62,10 @@ async function inicializar() {
         const referencia = actividad.unidad_titulo
             ? `${actividad.unidad_codigo ? actividad.unidad_codigo + ': ' : ''}${actividad.unidad_titulo}`
             : (actividad.periodo_nombre || '');
+        const recuperacion = parseInt(actividad.recuperacion) || 0;
+        const etiquetaRecuperacion = recuperacion > 0 ? ` · <strong>Recuperación R${recuperacion}</strong>` : '';
         document.getElementById('subtituloActividad').innerHTML =
-            `<a href="${rutaBase('calificaciones.html')}">← Calificaciones</a> · ${escaparHtml(actividad.curso_nombre)} — ${escaparHtml(actividad.asignatura_nombre)} · ${escaparHtml(referencia)} · Valor: ${actividad.valor_maximo} pts · Nota mínima: ${notaMinima}%`;
+            `<a href="${rutaBase('calificaciones.html')}">← Calificaciones</a> · ${escaparHtml(actividad.curso_nombre)} — ${escaparHtml(actividad.asignatura_nombre)} · ${escaparHtml(referencia)}${etiquetaRecuperacion} · Valor: ${actividad.valor_maximo} pts · Nota mínima: ${notaMinima}%`;
 
         // El modo de calificación depende de si la actividad TIENE rúbrica
         // (criterios), no del tipo de asignatura — así las actividades
@@ -76,6 +89,7 @@ async function cargarModoSimple() {
     const data = await apiFetch(`calif_calificaciones.php?actividad_id=${actividadId}`);
     const valorMaximo = parseFloat(data.actividad.valor_maximo);
 
+    if (parseInt(data.actividad.recuperacion) > 0) avisoRecuperacion(data.omitidos);
     document.getElementById('cardSimple').style.display = 'block';
     document.getElementById('tablaSimple').innerHTML = data.estudiantes.map(e => `
         <tr data-fila="${e.estudiante_id}">
@@ -141,6 +155,7 @@ function pintarLeyendaNiveles(niveles) {
 async function cargarModoRubrica() {
     const data = await apiFetch(`calif_calificaciones_criterio.php?actividad_id=${actividadId}`);
     const { criterios, estudiantes, calificaciones } = data;
+    if (parseInt(data.actividad.recuperacion) > 0) avisoRecuperacion(data.omitidos);
     const niveles = NIVELES_POR_TIPO[tipoAsignaturaActual] || NIVELES_POR_TIPO.academica;
     const nivelPorDefecto = niveles[0].valor; // el nivel más alto de la escala de este componente
 
@@ -155,7 +170,7 @@ const thead = '<thead><tr><th class="col-estudiante">Estudiante</th>' +
             <div class="indicador-peso">(${c.peso} pts)</div>
         </th>
     `).join('') +
-    '<th class="num col-total">Total</th><th class="num col-estado">Estado</th></tr></thead>';
+    '<th class="num col-total">Total</th><th class="num col-estado">Estado</th><th class="col-observaciones">Observaciones</th></tr></thead>';
 
     const tbody = '<tbody>' + estudiantes.map(e => {
         const celdas = criterios.map(c => {
@@ -173,6 +188,8 @@ const thead = '<thead><tr><th class="col-estudiante">Estudiante</th>' +
             ${celdas}
             <td class="num" id="total-${e.id}">—</td>
             <td class="num" id="estadoRub-${e.id}">—</td>
+            <td class="col-observaciones"><textarea class="input-obs" rows="1" maxlength="500" data-id="${e.id}" placeholder="Observaciones sobre esta calificación…"
+                style="width:100%; min-width:220px; padding:6px; border:1px solid var(--color-line); border-radius:6px; font:inherit; resize:vertical;">${escaparHtml(e.observaciones || '')}</textarea></td>
         </tr>`;
     }).join('') + '</tbody>';
 
@@ -204,11 +221,15 @@ const thead = '<thead><tr><th class="col-estudiante">Estudiante</th>' +
         document.querySelectorAll('.nivel-select').forEach(sel => {
             registros.push({ estudiante_id: sel.dataset.est, criterio_id: sel.dataset.crit, nivel: sel.value });
         });
+        const observaciones = {};
+        document.querySelectorAll('#tablaRubrica .input-obs').forEach(inp => {
+            observaciones[inp.dataset.id] = inp.value.trim();
+        });
         const btn = document.getElementById('btnGuardarCalificaciones');
         btn.disabled = true;
         btn.textContent = 'Guardando…';
         try {
-            await apiFetch('calif_calificaciones_criterio.php', { method: 'POST', body: { actividad_id: actividadId, calificaciones: registros } });
+            await apiFetch('calif_calificaciones_criterio.php', { method: 'POST', body: { actividad_id: actividadId, calificaciones: registros, observaciones } });
             mostrarAlerta('alertaCalificar', 'Rúbrica guardada.', 'exito');
         } catch (err) {
             mostrarAlerta('alertaCalificar', err.message);

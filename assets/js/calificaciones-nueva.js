@@ -131,7 +131,8 @@ async function cargarPlantillaIndicadores(selectId) {
         const valorInput = document.getElementById('valorActividad');
         if (valorInput.dataset.tocado !== '1') {
             const sumaSugerida = data.indicadores.reduce((s, ind) => s + (parseFloat(ind.peso_sugerido) || 0), 0);
-            valorInput.value = sumaSugerida.toFixed(2);
+            const valorRecup = valorSugeridoRecuperacion();
+            valorInput.value = (valorRecup !== null ? valorRecup : sumaSugerida).toFixed(2);
         }
 
         data.indicadores.forEach(ind => agregarFilaCriterio(ind.nombre, 0));
@@ -172,6 +173,22 @@ async function inicializarTecnico() {
         ? ras.map(r => `<option value="${r.id}" data-valor="${r.valor ?? ''}" data-periodo="${r.periodo_id ?? ''}">${escaparHtml(r.codigo ? r.codigo + ': ' : '')}${escaparHtml(r.titulo)}</option>`).join('')
         : '<option value="">— No hay RA creados para esta asignatura —</option>';
 
+    const selectRecup = document.getElementById('tipoRecuperacion');
+    function actualizarInfoRecuperacion() {
+        document.getElementById('infoRecuperacion').style.display = selectRecup.value !== '0' ? 'block' : 'none';
+    }
+    selectRecup.addEventListener('change', () => {
+        actualizarInfoRecuperacion();
+        sugerirValorRecuperacion();
+    });
+    if (modoEdicion) {
+        // El nivel (regular / R1-R3) no se cambia al editar: las calificaciones ya dependen de él
+        selectRecup.value = String(actividadExistente.recuperacion || 0);
+        selectRecup.disabled = true;
+        selectRecup.title = 'No se puede cambiar al editar. Si te equivocaste, elimina la actividad y créala de nuevo.';
+        actualizarInfoRecuperacion();
+    }
+
     function actualizarInfoRA() {
         const opt = selectRA.options[selectRA.selectedIndex];
         if (!opt || !opt.value) { document.getElementById('infoRA').textContent = ''; return; }
@@ -179,11 +196,31 @@ async function inicializarTecnico() {
         document.getElementById('infoRA').textContent =
             `Valor total del RA: ${opt.dataset.valor || '—'} puntos · Período: ${periodo ? periodo.nombre : 'sin asignar'} — el valor de esta actividad (suma de sus criterios) debe ser parte de ese total.`;
     }
-    selectRA.addEventListener('change', actualizarInfoRA);
+    selectRA.addEventListener('change', () => { actualizarInfoRA(); sugerirValorRecuperacion(); });
     if (modoEdicion && actividadExistente.unidad_id) selectRA.value = actividadExistente.unidad_id;
     actualizarInfoRA();
 
     await cargarSelectorTipoActividad('tipoActividadTecnico', []);
+}
+
+// Valor del RA seleccionado si la actividad es una recuperación (R1-R3); si no, null.
+function valorSugeridoRecuperacion() {
+    const selectRecup = document.getElementById('tipoRecuperacion');
+    const selectRA = document.getElementById('ra');
+    if (!selectRecup || !selectRA || selectRecup.value === '0') return null;
+    const opt = selectRA.options[selectRA.selectedIndex];
+    const valor = opt ? parseFloat(opt.dataset.valor) : NaN;
+    return isNaN(valor) ? null : valor;
+}
+
+// Al elegir una recuperación, el valor de la actividad arranca en el valor del RA
+// (siempre que el docente no haya escrito ya su propio valor).
+function sugerirValorRecuperacion() {
+    const valor = valorSugeridoRecuperacion();
+    const valorInput = document.getElementById('valorActividad');
+    if (valor === null || valorInput.dataset.tocado === '1') return;
+    valorInput.value = valor;
+    distribuirIgualEntreAuto();
 }
 
 // ---------------------------------------------------------------------
@@ -384,6 +421,7 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
         if (!body.periodo_id) { mostrarAlerta('alertaNuevaActividad', 'Selecciona un período.'); return; }
     } else if (asignatura.tipo === 'tecnico') {
         body.unidad_id = document.getElementById('ra').value;
+        body.recuperacion = parseInt(document.getElementById('tipoRecuperacion').value) || 0;
         body.tipo_actividad_id = document.getElementById('tipoActividadTecnico').value || null;
         if (!body.unidad_id) { mostrarAlerta('alertaNuevaActividad', 'Selecciona el RA.'); return; }
     } else {

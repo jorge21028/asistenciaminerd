@@ -13,6 +13,9 @@ titulo: Calificar actividad
 
 <div id="alertaCalificar"></div>
 
+<!-- Solo se muestra en actividades de recuperación (R1, R2, R3) de un RA -->
+<div class="vacio-estado" id="avisoRecuperacion" style="display:none; margin-bottom:14px; text-align:left;"></div>
+
 <!-- Modo simple: taller y técnico-profesional -->
 <div class="card" id="cardSimple" style="display:none;">
     <div class="tabla-wrap">
@@ -23,7 +26,7 @@ titulo: Calificar actividad
     </div>
 </div>
 
-<!-- Modo rúbrica: académica -->
+<!-- Modo rúbrica: académica, técnico y taller (incluye observaciones por estudiante) -->
 <div class="card" id="cardRubrica" style="display:none;">
     <div class="leyenda" style="margin-bottom:14px;">
         <span>🟢 Estratégico</span>

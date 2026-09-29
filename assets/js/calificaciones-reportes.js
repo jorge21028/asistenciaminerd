@@ -136,6 +136,27 @@ function marca(pct, minmax) {
     return '';
 }
 
+// Asignaturas que trabajan con RA: cada RA se muestra como CRA, R1, R2, R3 y Total RA.
+//   CRA      = lo que obtuvo en el RA (aunque no haya aprobado)
+//   R1-R3    = lo que obtuvo en cada recuperación
+//   Total RA = CRA si aprobó; si no, la recuperación con la que aprobó
+const SUBCOLUMNAS_RA = ['CRA', 'R1', 'R2', 'R3', 'Total RA'];
+
+function thSubcolumnasRA() {
+    return SUBCOLUMNAS_RA.map(s => `<th class="num">${s}</th>`).join('');
+}
+
+function celdasRA(d) {
+    const num = v => (v === null || v === undefined) ? '—' : v;
+    const negrita = clave => d && d.aprobo_en === clave ? ' style="font-weight:700;"' : '';
+    if (!d) return SUBCOLUMNAS_RA.map(() => '<td class="num">—</td>').join('');
+    return `<td class="num"${negrita('CRA')}>${num(d.cra)}</td>` +
+        `<td class="num"${negrita('R1')}>${num(d.r[0])}</td>` +
+        `<td class="num"${negrita('R2')}>${num(d.r[1])}</td>` +
+        `<td class="num"${negrita('R3')}>${num(d.r[2])}</td>` +
+        `<td class="num" style="font-weight:700;">${num(d.total)}</td>`;
+}
+
 // ---------------------------------------------------------------------
 // Generar
 // ---------------------------------------------------------------------
@@ -206,6 +227,7 @@ function renderActividad(data) {
 }
 
 function renderUnidad(data) {
+    const esRA = data.modo === 'ra';
     const thActs = data.actividades.map(a => `<th class="num">${escaparHtml(a.nombre)}<br>(${a.valor_maximo})</th>`).join('');
     const filas = data.estudiantes.map(e => {
         const celdas = data.actividades.map(a => {
@@ -216,7 +238,7 @@ function renderUnidad(data) {
             <td class="num">${escaparHtml(e.matricula || '—')}</td>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
             ${celdas}
-            <td class="num">${e.total_obtenido}</td>
+            ${esRA ? celdasRA(e.ra) : `<td class="num">${e.total_obtenido}</td>`}
             <td class="num">${e.total_maximo}</td>
             <td class="num">${e.porcentaje !== null ? e.porcentaje + '%' + marca(e.porcentaje, data.minmax) : '—'}</td>
             <td class="num">${estadoTexto(e.aprobado)}</td>
@@ -229,7 +251,7 @@ function renderUnidad(data) {
             <div class="tabla-wrap">
                 <table id="tablaReporte">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
-                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thActs}<th class="num">Total</th><th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
+                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thActs}${esRA ? thSubcolumnasRA() : '<th class="num">Total</th>'}<th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
                     <tbody>${filas}</tbody>
                 </table>
             </div>
@@ -238,9 +260,19 @@ function renderUnidad(data) {
 }
 
 function renderPeriodo(data) {
-    const thCols = data.columnas.map(c => `<th class="num">${escaparHtml(c.nombre)}</th>`).join('');
+    const esRA = data.modo === 'ra';
+
+    // RA: cada RA se abre en CRA / R1 / R2 / R3 / Total RA (dos filas de encabezado)
+    const thCols = esRA
+        ? data.columnas.map(c => `<th class="num" colspan="5" title="${escaparHtml(c.nombre)}">${escaparHtml(c.codigo || c.nombre)}</th>`).join('')
+        : data.columnas.map(c => `<th class="num">${escaparHtml(c.nombre)}</th>`).join('');
+    const thSub = esRA ? `<tr>${data.columnas.map(() => thSubcolumnasRA()).join('')}</tr>` : '';
+    const rs = esRA ? ' rowspan="2"' : '';
+
     const filas = data.estudiantes.map(e => {
-        const celdas = data.columnas.map(c => `<td class="num">${e.celdas[c.id] ?? 0}</td>`).join('');
+        const celdas = esRA
+            ? data.columnas.map(c => celdasRA(e.celdas[c.id])).join('')
+            : data.columnas.map(c => `<td class="num">${e.celdas[c.id] ?? 0}</td>`).join('');
         return `<tr ${claseFila(e.aprobado)}>
             <td class="num">${escaparHtml(e.matricula || '—')}</td>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
@@ -258,7 +290,10 @@ function renderPeriodo(data) {
             <div class="tabla-wrap">
                 <table id="tablaReporte">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
-                    <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thCols}<th class="num">Total</th><th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
+                    <thead>
+                        <tr><th class="num"${rs}>Matrícula</th><th${rs}>Estudiante</th>${thCols}<th class="num"${rs}>${esRA ? 'Total período' : 'Total'}</th><th class="num"${rs}>Valor</th><th class="num"${rs}>%</th><th class="num"${rs}>Estado</th></tr>
+                        ${thSub}
+                    </thead>
                     <tbody>${filas}</tbody>
                 </table>
             </div>
@@ -266,7 +301,51 @@ function renderPeriodo(data) {
     `;
 }
 
+function renderAnualRA(data) {
+    // Fila 1: períodos · Fila 2: RA de cada período · Fila 3: CRA / R1 / R2 / R3 / Total RA
+    const thPeriodos = data.periodos.map(p => `<th class="num" colspan="${p.ras.length * 5}">${escaparHtml(p.nombre)}</th>`).join('');
+    const thRAs = data.periodos.map(p => p.ras.map(r =>
+        `<th class="num" colspan="5" title="${escaparHtml((r.codigo ? r.codigo + ': ' : '') + r.titulo)}">${escaparHtml(r.codigo || r.titulo)}</th>`).join('')).join('');
+    const thSub = data.periodos.map(p => p.ras.map(() => thSubcolumnasRA()).join('')).join('');
+
+    const filas = data.estudiantes.map(e => {
+        const celdas = data.periodos.map(p => p.ras.map(r => celdasRA(e.ras[r.id])).join('')).join('');
+        return `<tr ${claseFila(e.aprobado)}>
+            <td class="num">${escaparHtml(e.matricula || '—')}</td>
+            <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
+            ${celdas}
+            <td class="num" style="font-weight:700;">${e.cfm}</td>
+            <td class="num">${e.porcentaje !== null ? e.porcentaje + '%' + marca(e.porcentaje, data.minmax) : '—'}</td>
+            <td class="num">${estadoTexto(e.aprobado)}</td>
+        </tr>`;
+    }).join('');
+
+    const aviso = data.ras_sin_periodo > 0
+        ? `<p class="subtitulo" style="color:var(--color-absent); margin-top:10px;">⚠ ${data.ras_sin_periodo} RA de esta asignatura no tienen período asignado y no se incluyen en el CFM.</p>`
+        : '';
+
+    document.getElementById('contenedorReporte').innerHTML = `
+        <div class="card">
+            <h3>Calificación anual — ${escaparHtml(data.encabezado.anio_escolar)} <span style="font-weight:400; color:var(--color-ink-soft);">(CFM sobre ${data.cfm_maximo} pts)</span></h3>
+            <div class="tabla-wrap">
+                <table id="tablaReporte">
+                    <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
+                    <thead>
+                        <tr><th class="num" rowspan="3">Matrícula</th><th rowspan="3">Estudiante</th>${thPeriodos}<th class="num" rowspan="3">CFM</th><th class="num" rowspan="3">%</th><th class="num" rowspan="3">Estado</th></tr>
+                        <tr>${thRAs}</tr>
+                        <tr>${thSub}</tr>
+                    </thead>
+                    <tbody>${filas}</tbody>
+                </table>
+            </div>
+            ${aviso}
+        </div>
+    `;
+}
+
 function renderAnual(data) {
+    if (data.modo === 'ra') { renderAnualRA(data); return; }
+
     const thPer = data.periodos.map(p => `<th class="num">${escaparHtml(p.nombre)}</th>`).join('');
     const filas = data.estudiantes.map(e => {
         const celdas = data.periodos.map(p => `<td class="num">${e.periodos[p.id] !== null ? e.periodos[p.id] + '%' : '—'}</td>`).join('');
@@ -321,6 +400,9 @@ function exportarExcel() {
         if (match) {
             valor = match[1];
         }
+
+        // Las celdas sin dato ("—", p. ej. recuperaciones que no aplican) salen vacías en Excel
+        if (valor === '—') valor = '';
 
         td.textContent = valor;
     });
