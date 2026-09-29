@@ -297,4 +297,23 @@ document.getElementById('tipoReporte').addEventListener('change', actualizarCamp
 document.getElementById('btnGenerar').addEventListener('click', generarReporte);
 
 actualizarCamposVisibles();
+function activarEncabezadosFijos() {
+    // Crear los estilos una sola vez
+    if (!document.getElementById('estilosEncabezadoFijo')) {
+        const estilo = document.createElement('style');
+        estilo.id = 'estilosEncabezadoFijo';
+
+        estilo.textContent = `
+            .tabla-wrap table thead th {
+                position: sticky;
+                top: 0;
+                z-index: 20;
+                background: #ffffff;
+                box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12);
+            }
+        `;
+
+        document.head.appendChild(estilo);
+    }
+}
 inicializarReportes();
