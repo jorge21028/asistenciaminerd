@@ -296,20 +296,41 @@ function renderAnual(data, cont) {
 document.getElementById('tipoReporte').addEventListener('change', actualizarCamposVisibles);
 document.getElementById('btnGenerar').addEventListener('click', generarReporte);
 
-actualizarCamposVisibles();
 function activarEncabezadosFijos() {
-    // Crear los estilos una sola vez
     if (!document.getElementById('estilosEncabezadoFijo')) {
         const estilo = document.createElement('style');
         estilo.id = 'estilosEncabezadoFijo';
 
         estilo.textContent = `
+            /* Toda la fila del encabezado queda fija arriba */
+            .tabla-wrap table thead {
+                position: relative;
+                z-index: 100;
+            }
+
             .tabla-wrap table thead th {
-                position: sticky;
-                top: 0;
-                z-index: 20;
-                background: #ffffff;
-                box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12);
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 100 !important;
+                background-color: #ffffff !important;
+                background-clip: padding-box;
+            }
+
+            /* Matrícula y Estudiante pueden tener sticky horizontal.
+               Deben quedar por encima del resto. */
+            .tabla-wrap table thead th:first-child,
+            .tabla-wrap table thead th:nth-child(2) {
+                z-index: 110 !important;
+            }
+
+            /* Evita transparencias del encabezado */
+            .tabla-wrap table thead tr {
+                background-color: #ffffff !important;
+            }
+
+            /* Línea inferior para distinguir el encabezado */
+            .tabla-wrap table thead th {
+                box-shadow: 0 2px 2px rgba(0,0,0,0.12);
             }
         `;
 
