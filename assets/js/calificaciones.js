@@ -68,7 +68,7 @@ function pintarActividades() {
     document.getElementById('estadoVacio').style.display = actividades.length ? 'none' : 'block';
     tbody.innerHTML = actividades.map(a => `
         <tr>
-            <td><strong>${escaparHtml(a.nombre)}</strong></td>
+            <td><strong>${escaparHtml(a.nombre)}</strong>${a.tipo_personalizado ? `<br><span style="color:var(--color-ink-soft); font-size:0.85em;">${escaparHtml(a.tipo_personalizado)}</span>` : ''}</td>
             <td>${escaparHtml(referenciaActividad(a))}</td>
             <td class="num">${a.valor_maximo}</td>
             <td>${new Date(a.created_at).toLocaleDateString('es-DO')}</td>

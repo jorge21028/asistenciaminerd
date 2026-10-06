@@ -63,9 +63,11 @@ async function inicializar() {
             ? `${actividad.unidad_codigo ? actividad.unidad_codigo + ': ' : ''}${actividad.unidad_titulo}`
             : (actividad.periodo_nombre || '');
         const recuperacion = parseInt(actividad.recuperacion) || 0;
+        const nombreTipo = actividad.tipo_personalizado || actividad.tipo_actividad_nombre || '';
+        const etiquetaTipo = nombreTipo ? ` · Tipo: ${escaparHtml(nombreTipo)}` : '';
         const etiquetaRecuperacion = recuperacion > 0 ? ` · <strong>Recuperación R${recuperacion}</strong>` : '';
         document.getElementById('subtituloActividad').innerHTML =
-            `<a href="${rutaBase('calificaciones.html')}">← Calificaciones</a> · ${escaparHtml(actividad.curso_nombre)} — ${escaparHtml(actividad.asignatura_nombre)} · ${escaparHtml(referencia)}${etiquetaRecuperacion} · Valor: ${actividad.valor_maximo} pts · Nota mínima: ${notaMinima}%`;
+            `<a href="${rutaBase('calificaciones.html')}">← Calificaciones</a> · ${escaparHtml(actividad.curso_nombre)} — ${escaparHtml(actividad.asignatura_nombre)} · ${escaparHtml(referencia)}${etiquetaRecuperacion}${etiquetaTipo} · Valor: ${actividad.valor_maximo} pts · Nota mínima: ${notaMinima}%`;
 
         // El modo de calificación depende de si la actividad TIENE rúbrica
         // (criterios), no del tipo de asignatura — así las actividades

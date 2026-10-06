@@ -87,6 +87,17 @@ titulo: Actividad
             <select id="tipoActividad"><option value="">— Elegir para autocompletar la rúbrica —</option></select>
         </div>
     </div>
+
+    <!-- Tipo "Otros": se califica con un valor directo, sin rúbrica -->
+    <div id="campoTipoPersonalizado" style="display:none;">
+        <div class="campo" style="max-width:480px;">
+            <label for="tipoPersonalizado">¿Qué tipo de actividad es?</label>
+            <input type="text" id="tipoPersonalizado" maxlength="100" placeholder="Ej.: Quiz en Kahoot, Examen en Google Forms…">
+        </div>
+        <p class="horario-info-sub" style="color:var(--color-ink-soft);">
+            Esta actividad no usa rúbrica: al calificar escribes directamente la nota de cada estudiante (de 0 al valor de la actividad).
+        </p>
+    </div>
 </div>
 
 <div class="card" id="cardRubrica" style="display:none;">

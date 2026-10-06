@@ -88,7 +88,7 @@ async function cargarSelectorTipoActividad(selectId, competencias) {
     competenciasDisponibles = competencias || [];
     const select = document.getElementById(selectId);
     const tiposData = await apiFetch('calif_tipos_actividad.php');
-    select.innerHTML += tiposData.tipos.map(t => `<option value="${t.id}">${escaparHtml(t.nombre)}</option>`).join('');
+    select.innerHTML += tiposData.tipos.map(t => `<option value="${t.id}" data-valor-directo="${parseInt(t.valor_directo) === 1 ? '1' : '0'}">${escaparHtml(t.nombre)}</option>`).join('');
     select.addEventListener('change', () => cargarPlantillaIndicadores(selectId));
 
     if (modoEdicion) {
@@ -101,13 +101,49 @@ async function cargarSelectorTipoActividad(selectId, competencias) {
         });
         if (!actividadExistente.criterios || !actividadExistente.criterios.length) agregarFilaCriterio();
         recalcularTotal();
+
+        if (parseInt(actividadExistente.tipo_valor_directo) === 1) {
+            // Actividad "Otros": no cambia de tipo (pasaría a necesitar rúbrica)
+            select.disabled = true;
+            select.title = 'No se puede cambiar el tipo de una actividad "Otros". Crea una nueva actividad.';
+            document.getElementById('tipoPersonalizado').value = actividadExistente.tipo_personalizado || '';
+            document.getElementById('avisoEdicion').classList.add('is-hidden');
+            aplicarModoValorDirecto(true);
+        }
     } else {
         agregarFilaCriterio(); // arranca con una fila vacía por si el docente no elige un tipo
         distribuirIgualEntreAuto();
     }
 }
 
+// Tipo "Otros" (valor directo): sin rúbrica; se escribe el tipo y al calificar se digita la nota.
+function tipoSeleccionadoEsValorDirecto(selectId) {
+    const sel = document.getElementById(selectId);
+    const opt = sel && sel.options[sel.selectedIndex];
+    return !!opt && opt.dataset.valorDirecto === '1';
+}
+
+function aplicarModoValorDirecto(activo) {
+    document.getElementById('cardRubrica').style.display = activo ? 'none' : 'block';
+    document.getElementById('campoTipoPersonalizado').style.display = activo ? 'block' : 'none';
+}
+
+function modoValorDirectoActivo() {
+    return document.getElementById('campoTipoPersonalizado').style.display === 'block';
+}
+
 async function cargarPlantillaIndicadores(selectId) {
+    const esDirecto = tipoSeleccionadoEsValorDirecto(selectId);
+
+    if (modoEdicion && esDirecto) {
+        // Una actividad que ya tiene rúbrica no se convierte en "Otros"
+        alert('Una actividad con rúbrica no se puede cambiar a "Otros". Crea una nueva actividad de tipo Otros.');
+        document.getElementById(selectId).value = actividadExistente.tipo_actividad_id || '';
+        return;
+    }
+    if (esDirecto) { aplicarModoValorDirecto(true); return; }
+    aplicarModoValorDirecto(false);
+
     if (modoEdicion && !confirm('Cambiar la plantilla reemplaza los criterios actuales por los de la nueva plantilla, y los criterios que quites perderán las calificaciones que ya tuvieran. ¿Continuar?')) {
         // Deshace la selección visualmente, dejando el valor que tenía antes
         const select = document.getElementById(selectId);
@@ -430,6 +466,16 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
         if (!body.periodo_id) { mostrarAlerta('alertaNuevaActividad', 'Selecciona un período.'); return; }
     }
 
+    // Tipo "Otros": se guarda solo el valor y el tipo escrito, sin criterios
+    if (modoValorDirectoActivo()) {
+        const tipoPersonalizado = document.getElementById('tipoPersonalizado').value.trim();
+        if (!tipoPersonalizado) { mostrarAlerta('alertaNuevaActividad', 'Escribe qué tipo de actividad es (por ejemplo: Quiz en Kahoot).'); return; }
+        body.tipo_personalizado = tipoPersonalizado;
+        body.criterios = [];
+        await guardarActividad(body);
+        return;
+    }
+
     const filas = Array.from(document.querySelectorAll('[data-criterio-idx]'));
     if (!filas.length) { mostrarAlerta('alertaNuevaActividad', 'Agrega al menos un criterio de evaluación.'); return; }
 
@@ -451,7 +497,10 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
         return;
     }
     body.criterios = criterios;
+    await guardarActividad(body);
+});
 
+async function guardarActividad(body) {
     const btn = document.getElementById('btnGuardarActividad');
     btn.disabled = true;
     btn.textContent = 'Guardando…';
@@ -473,6 +522,6 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
         btn.disabled = false;
         btn.textContent = modoEdicion ? 'Guardar cambios' : 'Guardar actividad';
     }
-});
+}
 
 inicializar();
