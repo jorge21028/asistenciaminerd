@@ -39,7 +39,7 @@ async function generar() {
 
         cont.innerHTML = `
             <div class="grid-3">
-                <div class="card"><h3>${data.total_estudiantes}</h3><p>Total de estudiantes</p></div>
+                <div class="card"><h3>${data.total_estudiantes}</h3><p>Total de estudiantes${data.total_retirados ? ` (+${data.total_retirados} retirado(s))` : ''}</p></div>
                 <div class="card"><h3>${data.conteo.presente}</h3><p>Presentes</p></div>
                 <div class="card"><h3>${data.conteo.ausente}</h3><p>Ausentes</p></div>
             </div>
@@ -76,8 +76,8 @@ async function generar() {
 }
 
 function selloHtmlLocal(estado) {
-    const codigos = { presente: 'P', ausente: 'A', tardanza: 'T', excusa: 'E' };
-    const clases = { presente: 'presente', ausente: 'ausente', tardanza: 'tardanza', excusa: 'excusa' };
+    const codigos = { presente: 'P', ausente: 'A', tardanza: 'T', excusa: 'E', retirado: 'R' };
+    const clases = { presente: 'presente', ausente: 'ausente', tardanza: 'tardanza', excusa: 'excusa', retirado: 'retirado' };
     return `<span class="sello-estado ${clases[estado]}">${codigos[estado]}</span>`;
 }
 

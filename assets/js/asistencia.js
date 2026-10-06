@@ -1,7 +1,7 @@
 let combos = [];
 let listaActual = []; // [{estudiante_id, nombre, matricula, estado, observacion}]
 
-const ETIQUETAS = { presente: 'P', ausente: 'A', tardanza: 'T', excusa: 'E' };
+const ETIQUETAS = { presente: 'P', ausente: 'A', tardanza: 'T', excusa: 'E', retirado: 'R' };
 
 async function inicializar() {
     document.getElementById('fecha').value = new Date().toISOString().slice(0, 10);
@@ -34,6 +34,8 @@ async function cargarLista() {
             matricula: e.matricula,
             estado: e.estado || 'presente', // por defecto se sugiere presente
             observacion: e.observacion || '',
+            // Estudiante retirado en esta fecha: sale con R y no se puede editar
+            bloqueado: !!e.bloqueado,
         }));
         pintarLista();
         document.getElementById('cardLista').style.display = 'block';
@@ -45,7 +47,14 @@ async function cargarLista() {
 
 function pintarLista() {
     const tbody = document.getElementById('tablaLista');
-    tbody.innerHTML = listaActual.map((e, idx) => `
+    tbody.innerHTML = listaActual.map((e, idx) => e.bloqueado ? `
+        <tr>
+            <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
+            <td>${escaparHtml(e.matricula || '—')}</td>
+            <td><span class="sello-estado retirado" title="Retirado">R</span> <span style="color:var(--color-ink-soft); font-size:0.85em;">Retirado</span></td>
+            <td></td>
+        </tr>
+    ` : `
         <tr>
             <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
             <td>${escaparHtml(e.matricula || '—')}</td>
@@ -65,6 +74,7 @@ function pintarLista() {
 }
 
 function cambiarEstado(idx, estado) {
+    if (listaActual[idx].bloqueado) return;
     listaActual[idx].estado = estado;
     pintarLista();
 }
@@ -74,7 +84,7 @@ function cambiarObservacion(idx, valor) {
 }
 
 function marcarTodos(estado) {
-    listaActual.forEach(e => e.estado = estado);
+    listaActual.forEach(e => { if (!e.bloqueado) e.estado = estado; });
     pintarLista();
 }
 
@@ -92,7 +102,7 @@ async function guardarAsistencia() {
                 curso_id: cursoId,
                 asignatura_id: asignaturaId,
                 fecha,
-                registros: listaActual.map(e => ({
+                registros: listaActual.filter(e => !e.bloqueado).map(e => ({
                     estudiante_id: e.estudiante_id,
                     estado: e.estado,
                     observacion: e.observacion,

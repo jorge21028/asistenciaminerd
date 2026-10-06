@@ -54,6 +54,28 @@ requiere_admin: true
     </form>
 </div>
 
+<div class="card" id="cardRetiro" style="display:none;">
+    <h3 id="tituloRetiro">Retirar estudiante</h3>
+    <p class="subtitulo">
+        Desde la fecha de retiro, en la asistencia aparecerá con <strong>R</strong> (y no cuenta como inasistencia),
+        y en las actividades que se creen desde esa fecha quedará automáticamente en <strong>No realizada</strong>.
+        Lo que ya tenía registrado antes de esa fecha no cambia.
+    </p>
+    <input type="hidden" id="retiroEstudianteId">
+    <div class="fila-form">
+        <div class="campo">
+            <label for="fechaRetiro">Fecha de retiro</label>
+            <input type="date" id="fechaRetiro">
+        </div>
+        <div class="campo" style="flex:2;">
+            <label for="motivoRetiro">Motivo (opcional)</label>
+            <input type="text" id="motivoRetiro" maxlength="255" placeholder="Ej.: Traslado a otro centro">
+        </div>
+        <button type="button" class="btn peligro" id="btnConfirmarRetiro">Confirmar retiro</button>
+        <button type="button" class="btn secundario" id="btnCancelarRetiro">Cancelar</button>
+    </div>
+</div>
+
 <div class="card">
     <div class="tabla-wrap">
         <table>

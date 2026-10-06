@@ -1,7 +1,7 @@
 let combosReporte = [];
 const NOMBRES_MES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const CLASE_ESTADO = { P: 'presente', A: 'ausente', T: 'tardanza', E: 'excusa' };
-const NOMBRE_ESTADO = { P: 'Presente', A: 'Ausente', T: 'Tardanza', E: 'Excusa' };
+const CLASE_ESTADO = { P: 'presente', A: 'ausente', T: 'tardanza', E: 'excusa', R: 'retirado' };
+const NOMBRE_ESTADO = { P: 'Presente', A: 'Ausente', T: 'Tardanza', E: 'Excusa', R: 'Retirado' };
 
 async function inicializarReportes() {
     // Selector de mes
@@ -50,6 +50,11 @@ function claseporcentaje(p) {
     if (p >= 90) return 'porcentaje-alto';
     if (p >= 75) return 'porcentaje-medio';
     return 'porcentaje-bajo';
+}
+
+// Estudiante retirado todo el periodo: no hay porcentaje (llega null)
+function textoPorcentaje(p) {
+    return p === null || p === undefined ? '—' : `<span class="${claseporcentaje(p)}">${p}%</span>`;
 }
 
 function selloHtml(codigo) {
@@ -104,7 +109,7 @@ function renderDiario(data, cont) {
         </div>
         <div class="card">
             <h3>Reporte diario — ${data.fecha}</h3>
-            <p class="subtitulo">${data.porcentaje_presentes}% de asistencia el día de hoy · ${data.total_estudiantes} estudiantes matriculados</p>
+            <p class="subtitulo">${data.porcentaje_presentes}% de asistencia el día de hoy · ${data.total_estudiantes} estudiantes${data.total_retirados ? ` (más ${data.total_retirados} retirado(s), no cuentan en el %)` : ' matriculados'}</p>
             <div class="tabla-wrap">
                 <table>
                     <thead><tr><th class="num">Matrícula</th><th>Estudiante</th><th class="num">Estado</th><th>Observación</th></tr></thead>
@@ -113,7 +118,7 @@ function renderDiario(data, cont) {
                             <tr>
                                 <td class="num">${escaparHtml(e.matricula || '—')}</td>
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
-                                <td class="num">${e.estado ? selloHtml({presente:'P',ausente:'A',tardanza:'T',excusa:'E'}[e.estado]) : selloHtml(null)}</td>
+                                <td class="num">${e.estado ? selloHtml({presente:'P',ausente:'A',tardanza:'T',excusa:'E',retirado:'R'}[e.estado]) : selloHtml(null)}</td>
                                 <td>${escaparHtml(e.observacion || '')}</td>
                             </tr>
                         `).join('')}
@@ -154,7 +159,7 @@ function renderSemanal(data, cont) {
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 ${dias.map(f => `<td class="num">${selloHtml(e.dias[f])}</td>`).join('')}
                                 <td class="num">${e.total_asistencia}/${e.dias_trabajados}</td>
-                                <td class="num"><span class="${claseporcentaje(e.porcentaje)}">${e.porcentaje}%</span></td>
+                                <td class="num">${textoPorcentaje(e.porcentaje)}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -183,6 +188,7 @@ function renderMensual(data, cont) {
                 <span><span class="sello-estado ausente" style="width:20px;height:20px;font-size:0.65rem;">A</span> Ausente</span>
                 <span><span class="sello-estado tardanza" style="width:20px;height:20px;font-size:0.65rem;">T</span> Tardanza</span>
                 <span><span class="sello-estado excusa" style="width:20px;height:20px;font-size:0.65rem;">E</span> Excusa</span>
+                <span><span class="sello-estado retirado" style="width:20px;height:20px;font-size:0.65rem;">R</span> Retirado</span>
                 <span style="margin-left:auto;">2 excusas, 2 tardanzas, o 1 excusa + 1 tardanza = 1 inasistencia</span>
             </div>
             ${!dias.length ? '<div class="vacio-estado">No se ha registrado asistencia este mes.</div>' : `
@@ -209,7 +215,7 @@ function renderMensual(data, cont) {
                                 <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
                                 ${dias.map(d => `<td class="num">${selloHtml(e.dias[d])}</td>`).join('')}
                                 <td class="num">${e.total_asistencia}</td>
-                                <td class="num" data-porcentaje-entero="${Math.round(e.porcentaje)}"><span class="${claseporcentaje(e.porcentaje)}">${e.porcentaje}%</span></td>
+                                <td class="num" data-porcentaje-entero="${e.porcentaje === null ? '' : Math.round(e.porcentaje)}">${textoPorcentaje(e.porcentaje)}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -271,7 +277,7 @@ function renderAnual(data, cont) {
             <div class="tabla-wrap">
                 <table>
                     <thead>
-                        <tr><th class="num">Matrícula</th><th>Estudiante</th><th class="num">Días trabajados</th><th class="num">Total asistencia</th><th class="num">Ausentes</th><th class="num">Tardanzas</th><th class="num">Excusas</th><th class="num">%</th></tr>
+                        <tr><th class="num">Matrícula</th><th>Estudiante</th><th class="num">Días trabajados</th><th class="num">Total asistencia</th><th class="num">Ausentes</th><th class="num">Tardanzas</th><th class="num">Excusas</th><th class="num">Días retirado</th><th class="num">%</th></tr>
                     </thead>
                     <tbody>
                         ${data.estudiantes.map(e => `
@@ -283,7 +289,8 @@ function renderAnual(data, cont) {
                                 <td class="num">${e.ausentes}</td>
                                 <td class="num">${e.tardanzas}</td>
                                 <td class="num">${e.excusas}</td>
-                                <td class="num"><span class="${claseporcentaje(e.porcentaje)}">${e.porcentaje}%</span></td>
+                                <td class="num">${e.retirados || 0}</td>
+                                <td class="num">${textoPorcentaje(e.porcentaje)}</td>
                             </tr>
                         `).join('')}
                     </tbody>

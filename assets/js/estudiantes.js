@@ -36,13 +36,16 @@ function pintarEstudiantes() {
         <tr>
             <td>${escaparHtml(e.matricula || '—')}</td>
             <td class="nombre-estudiante">${escaparHtml(e.apellido)}</td>
-            <td class="nombre-estudiante">${escaparHtml(e.nombre)}</td>
+            <td class="nombre-estudiante">${escaparHtml(e.nombre)}${parseInt(e.retirado) === 1 ? ` <span class="sello-estado retirado" style="width:auto; padding:0 8px; border-radius:12px; transform:none;" title="${escaparHtml(e.motivo_retiro || 'Retirado')}">Retirado desde ${escaparHtml(e.fecha_retiro || '')}</span>` : ''}</td>
             <td>${e.sexo === 'F' ? 'Hembra' : 'Varón'}</td>
             <td>${escaparHtml(e.fecha_nacimiento || '—')}</td>
             <td class="acciones-tabla">
                 <a class="btn chico" href="${rutaBase('estudiante-ficha.html')}?id=${e.id}">Ficha</a>
                 <a class="btn secundario chico" href="${rutaBase('conducta-expediente.html')}?estudiante_id=${e.id}">Conducta</a>
                 <button class="btn secundario chico" onclick="editarEstudiante(${e.id})">Editar</button>
+                ${parseInt(e.retirado) === 1
+                    ? `<button class="btn secundario chico" onclick="reincorporarEstudiante(${e.id})">Reincorporar</button>`
+                    : `<button class="btn secundario chico" onclick="abrirRetiro(${e.id})">Retirar</button>`}
                 <button class="btn peligro chico" onclick="eliminarEstudiante(${e.id})">Eliminar</button>
             </td>
         </tr>
@@ -60,6 +63,47 @@ function editarEstudiante(id) {
     document.getElementById('fechaNacimiento').value = e.fecha_nacimiento || '';
     document.getElementById('tituloForm').textContent = 'Editar estudiante';
     document.getElementById('btnCancelar').style.display = 'inline-flex';
+}
+
+function abrirRetiro(id) {
+    const e = estudiantes.find(x => x.id === id);
+    if (!e) return;
+    document.getElementById('retiroEstudianteId').value = id;
+    document.getElementById('tituloRetiro').textContent = `Retirar a ${e.nombre} ${e.apellido}`;
+    document.getElementById('fechaRetiro').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('motivoRetiro').value = '';
+    document.getElementById('cardRetiro').style.display = 'block';
+    document.getElementById('cardRetiro').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function cerrarRetiro() {
+    document.getElementById('cardRetiro').style.display = 'none';
+    document.getElementById('retiroEstudianteId').value = '';
+}
+
+async function confirmarRetiro() {
+    const id = document.getElementById('retiroEstudianteId').value;
+    const fecha = document.getElementById('fechaRetiro').value;
+    if (!id || !fecha) { mostrarAlerta('alertaEstudiante', 'Indica la fecha de retiro.'); return; }
+    try {
+        await apiFetch('estudiantes.php', { method: 'PUT', body: {
+            id, accion: 'retirar', fecha_retiro: fecha, motivo_retiro: document.getElementById('motivoRetiro').value.trim(),
+        } });
+        cerrarRetiro();
+        cargarEstudiantes();
+    } catch (err) {
+        mostrarAlerta('alertaEstudiante', err.message);
+    }
+}
+
+async function reincorporarEstudiante(id) {
+    if (!confirm('¿Reincorporar a este estudiante? Volverá a aparecer normal en la asistencia (las calificaciones que ya se guardaron como "No realizada" no se modifican).')) return;
+    try {
+        await apiFetch('estudiantes.php', { method: 'PUT', body: { id, accion: 'reincorporar' } });
+        cargarEstudiantes();
+    } catch (err) {
+        mostrarAlerta('alertaEstudiante', err.message);
+    }
 }
 
 function cancelarEdicion() {
@@ -104,6 +148,8 @@ document.getElementById('formEstudiante').addEventListener('submit', async (e) =
 });
 
 document.getElementById('btnCancelar').addEventListener('click', cancelarEdicion);
+document.getElementById('btnConfirmarRetiro').addEventListener('click', confirmarRetiro);
+document.getElementById('btnCancelarRetiro').addEventListener('click', cerrarRetiro);
 document.getElementById('filtroCurso').addEventListener('change', cargarEstudiantes);
 
 cargarCursosSelect();

@@ -43,6 +43,9 @@ function avisoRecuperacion(omitidos) {
         : 'Recuperación: se muestran todos los estudiantes, porque ninguno ha aprobado el RA todavía.';
 }
 
+// Estudiante retirado + actividad creada desde su retiro: "No realizada" automático
+const ETIQUETA_RETIRADO = '<span class="sello-estado retirado" style="width:auto; padding:0 8px; border-radius:12px; transform:none; margin-left:6px;" title="Retirado: esta actividad se registra como No realizada">Retirado</span>';
+
 function badgeEstado(pct) {
     if (pct === null || pct === undefined) return '<span class="badge">Sin calificar</span>';
     const aprobado = pct >= notaMinima;
@@ -95,8 +98,8 @@ async function cargarModoSimple() {
     document.getElementById('cardSimple').style.display = 'block';
     document.getElementById('tablaSimple').innerHTML = data.estudiantes.map(e => `
         <tr data-fila="${e.estudiante_id}">
-            <td class="nombre-estudiante">${escaparHtml(e.nombre)} </td>
-            <td class="num"><input type="number" class="input-punt" min="0" max="${valorMaximo}" step="0.01"
+            <td class="nombre-estudiante">${escaparHtml(e.nombre)} ${e.bloqueado_retiro ? ETIQUETA_RETIRADO : ''}</td>
+            <td class="num"><input type="number" class="input-punt" min="0" max="${valorMaximo}" step="0.01" ${e.bloqueado_retiro ? 'readonly tabindex="-1" title="No realizada (retirado)"' : ''}
                 value="${e.puntuacion_obtenida ?? ''}" data-id="${e.estudiante_id}" style="width:90px; text-align:center; padding:6px; border:1px solid var(--color-line); border-radius:6px;"></td>
             <td class="num" id="pct-${e.estudiante_id}">${e.puntuacion_obtenida !== null ? ((e.puntuacion_obtenida / valorMaximo) * 100).toFixed(1) + '%' : '—'}</td>
             <td class="num" id="estado-${e.estudiante_id}">${badgeEstado(e.puntuacion_obtenida !== null ? (e.puntuacion_obtenida / valorMaximo) * 100 : null)}</td>
@@ -180,13 +183,13 @@ const thead = '<thead><tr><th class="col-estudiante">Estudiante</th>' +
             const existente = calificaciones[clave];
             const nivel = existente ? existente.nivel : nivelPorDefecto;
             return `<td>
-                <select class="nivel-select nivel-${nivel}" data-est="${e.id}" data-crit="${c.id}" data-peso="${c.peso}">
+                <select class="nivel-select nivel-${nivel}" data-est="${e.id}" data-crit="${c.id}" data-peso="${c.peso}" ${e.bloqueado_retiro ? 'disabled title="No realizada (retirado)"' : ''}>
                     ${niveles.map(n => `<option value="${n.valor}" ${n.valor === nivel ? 'selected' : ''}>${n.etiqueta}</option>`).join('')}
                 </select>
             </td>`;
         }).join('');
         return `<tr data-fila-est="${e.id}">
-            <td class="nombre-estudiante">${escaparHtml(e.nombre)} </td>
+            <td class="nombre-estudiante">${escaparHtml(e.nombre)} ${e.bloqueado_retiro ? ETIQUETA_RETIRADO : ''}</td>
             ${celdas}
             <td class="num" id="total-${e.id}">—</td>
             <td class="num" id="estadoRub-${e.id}">—</td>

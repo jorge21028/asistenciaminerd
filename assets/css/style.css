@@ -351,6 +351,7 @@ td.num, th.num { text-align: center; font-family: var(--font-mono); }
 .sello-estado.ausente  { color: var(--color-absent); background: var(--color-absent-bg); }
 .sello-estado.tardanza { color: var(--color-tardanza); background: var(--color-tardanza-bg); }
 .sello-estado.excusa   { color: var(--color-excusa); background: var(--color-excusa-bg); }
+.sello-estado.retirado { color: #4A5560; background: #E3E7EB; }
 .sello-estado.vacio    { border-style: dashed; color: var(--color-ink-soft); background: transparent; opacity: 0.4; }
 
 /* selector de estado en la pantalla de tomar asistencia */
