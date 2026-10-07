@@ -349,8 +349,9 @@ td.num, th.num { text-align: center; font-family: var(--font-mono); }
 }
 .sello-estado.presente { color: var(--color-present); background: var(--color-present-bg); }
 .sello-estado.ausente  { color: var(--color-absent); background: var(--color-absent-bg); }
-.sello-estado.tardanza { color: var(--color-tardanza); background: var(--color-tardanza-bg); }
-.sello-estado.excusa   { color: var(--color-excusa); background: var(--color-excusa-bg); }
+/* Tardanza: morado con borde rojo · Excusa: amarillo */
+.sello-estado.tardanza { color: #5B4E9C; background: #EBE8F7; border-color: #B23A2E; }
+.sello-estado.excusa   { color: #8A6A00; background: #FFF3BF; border-color: #E0B400; }
 .sello-estado.retirado { color: #4A5560; background: #E3E7EB; }
 .sello-estado.vacio    { border-style: dashed; color: var(--color-ink-soft); background: transparent; opacity: 0.4; }
 
@@ -371,8 +372,8 @@ td.num, th.num { text-align: center; font-family: var(--font-mono); }
 .selector-estado button:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
 .selector-estado button.activo.p { background: var(--color-present-bg); color: var(--color-present); border-color: var(--color-present); }
 .selector-estado button.activo.a { background: var(--color-absent-bg); color: var(--color-absent); border-color: var(--color-absent); }
-.selector-estado button.activo.t { background: var(--color-tardanza-bg); color: var(--color-tardanza); border-color: var(--color-tardanza); }
-.selector-estado button.activo.e { background: var(--color-excusa-bg); color: var(--color-excusa); border-color: var(--color-excusa); }
+.selector-estado button.activo.t { background: #EBE8F7; color: #5B4E9C; border-color: #B23A2E; }
+.selector-estado button.activo.e { background: #FFF3BF; color: #8A6A00; border-color: #E0B400; }
 
 .leyenda { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0 4px; font-size: 0.8rem; color: var(--color-ink-soft); }
 .leyenda span { display: inline-flex; align-items: center; gap: 6px; }
