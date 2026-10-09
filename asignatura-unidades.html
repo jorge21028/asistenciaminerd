@@ -13,10 +13,20 @@ requiere_admin: true
 </div>
 
 <div class="card">
-    <div class="campo" style="max-width:360px;">
-        <label for="asignatura">Asignatura</label>
-        <select id="asignatura"></select>
+    <div class="fila-form">
+        <div class="campo" style="max-width:360px;">
+            <label for="asignatura">Asignatura</label>
+            <select id="asignatura"></select>
+        </div>
+        <div class="campo" id="campoCursoValores" style="max-width:360px; display:none;">
+            <label for="cursoValores">Valor y período de los RA para…</label>
+            <select id="cursoValores"><option value="">Todos los cursos (valores de la asignatura)</option></select>
+        </div>
     </div>
+    <p class="horario-info-sub" id="notaCursoValores" style="display:none; color:var(--color-ink-soft); margin-top:10px;">
+        Si la misma asignatura tiene valores o períodos distintos según el curso, elige el curso y edita el valor y el período de cada RA
+        para ese curso. Los cursos que no personalices usan los valores de la asignatura.
+    </p>
 </div>
 
 <div class="card" id="cardForm" style="display:none;">

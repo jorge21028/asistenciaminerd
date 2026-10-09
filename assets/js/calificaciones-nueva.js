@@ -200,7 +200,7 @@ async function inicializarTaller() {
 async function inicializarTecnico() {
     document.getElementById('campoTecnico').style.display = 'block';
     const [ras, periodos] = await Promise.all([
-        apiFetch(`asignatura_unidades.php?asignatura_id=${asignaturaId}`),
+        apiFetch(`asignatura_unidades.php?asignatura_id=${asignaturaId}&curso_id=${cursoId}`), // valor y período propios de este curso
         apiFetch('periodos.php'),
     ]);
 
