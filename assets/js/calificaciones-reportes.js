@@ -138,9 +138,9 @@ function marca(pct, minmax) {
 
 // Asignaturas que trabajan con RA: cada RA se muestra como CRA, R1, R2, R3 y Total RA.
 //   CRA      = lo que obtuvo en el RA (aunque no haya aprobado)
-//   R1-R3    = lo que obtuvo en cada recuperación
+//   RP1-RP3    = lo que obtuvo en cada recuperación
 //   Total RA = CRA si aprobó; si no, la recuperación con la que aprobó
-const SUBCOLUMNAS_RA = ['CRA', 'R1', 'R2', 'R3', 'Total RA'];
+const SUBCOLUMNAS_RA = ['CRA', 'RP1', 'RP2', 'RP3', 'Total RA'];
 
 function thSubcolumnasRA() {
     return SUBCOLUMNAS_RA.map(s => `<th class="num">${s}</th>`).join('');
