@@ -1452,3 +1452,81 @@ table.horario-grid td.celda-dia {
     overflow-y: auto;
     max-height: 70vh;
 }
+
+
+
+/* REPORTE MENSUAL: mostrar todos los días sin scroll horizontal */
+.tabla-mensual-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+    overflow-y: visible;
+}
+
+.tabla-mensual-wrap #tablaMensual {
+    width: 100%;
+    min-width: 0 !important;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: clamp(9px, 0.75vw, 12px);
+}
+
+/* Matrícula */
+.tabla-mensual-wrap #tablaMensual th:first-child,
+.tabla-mensual-wrap #tablaMensual td:first-child {
+    width: 68px;
+    padding: 4px 2px;
+    white-space: nowrap;
+}
+
+/* Nombre del estudiante */
+.tabla-mensual-wrap #tablaMensual th:nth-child(2) {
+    width: 150px;
+    padding: 4px;
+}
+
+.tabla-mensual-wrap #tablaMensual td:nth-child(2) {
+    width: 150px;
+    padding: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Columnas de los días de asistencia */
+.tabla-mensual-wrap #tablaMensual th:nth-child(n+3):not(:nth-last-child(-n+2)),
+.tabla-mensual-wrap #tablaMensual td:nth-child(n+3):not(:nth-last-child(-n+2)) {
+    padding: 3px 0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Reducir el tamaño de las marcas P, A, T, E y R */
+.tabla-mensual-wrap #tablaMensual .sello-estado {
+    width: 18px;
+    height: 18px;
+    min-width: 0;
+    font-size: 10px;
+    margin: 0 auto;
+}
+
+/* Total de asistencia y porcentaje */
+.tabla-mensual-wrap #tablaMensual th:nth-last-child(2),
+.tabla-mensual-wrap #tablaMensual td:nth-last-child(2) {
+    width: 58px;
+    padding: 3px 1px;
+    white-space: nowrap;
+}
+
+.tabla-mensual-wrap #tablaMensual th:last-child,
+.tabla-mensual-wrap #tablaMensual td:last-child {
+    width: 42px;
+    padding: 3px 1px;
+    white-space: nowrap;
+}
+
+/* Compactar la altura de las filas */
+.tabla-mensual-wrap #tablaMensual th,
+.tabla-mensual-wrap #tablaMensual td {
+    line-height: 1.15;
+}
