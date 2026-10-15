@@ -1530,3 +1530,66 @@ table.horario-grid td.celda-dia {
 .tabla-mensual-wrap #tablaMensual td {
     line-height: 1.15;
 }
+
+
+
+/* =========================================================
+   REPORTE MENSUAL: encabezado fijo con fondo opaco
+   ========================================================= */
+
+/* Permitir que la tabla mensual se muestre sin scroll propio */
+.tabla-mensual-wrap {
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    max-height: none !important;
+    background: #FFFFFF;
+}
+
+/* Fondo sólido para toda la fila del encabezado */
+.tabla-mensual-wrap #tablaMensual thead {
+    position: relative;
+    z-index: 20;
+    background: #E8EDF3 !important;
+}
+
+/* Matrícula, Estudiante y números de los días */
+.tabla-mensual-wrap #tablaMensual thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 21 !important;
+
+    background: #E8EDF3 !important;
+    background-color: #E8EDF3 !important;
+    opacity: 1 !important;
+
+    color: #142438 !important;
+    background-clip: padding-box !important;
+
+    border-bottom: 2px solid #B8C5D4 !important;
+    box-shadow: 0 2px 4px rgba(20, 36, 56, 0.12);
+}
+
+/* Encabezados de Matrícula y Estudiante por encima de los demás */
+.tabla-mensual-wrap #tablaMensual thead th:first-child,
+.tabla-mensual-wrap #tablaMensual thead th:nth-child(2) {
+    z-index: 22 !important;
+    background: #E8EDF3 !important;
+}
+
+/* Fondo uniforme para las filas de estudiantes */
+.tabla-mensual-wrap #tablaMensual tbody {
+    position: relative;
+    background: #FFFFFF;
+}
+
+/* Evitar que las filas tapen visualmente el encabezado */
+.tabla-mensual-wrap #tablaMensual tbody td {
+    position: relative;
+    z-index: 1;
+    background-color: #FFFFFF;
+}
+
+/* Conservar el efecto hover de las filas */
+.tabla-mensual-wrap #tablaMensual tbody tr:hover td {
+    background-color: #FAFBF8;
+}
