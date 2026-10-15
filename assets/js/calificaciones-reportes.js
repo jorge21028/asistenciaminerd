@@ -249,7 +249,9 @@ function renderUnidad(data) {
         <div class="card">
             <h3>${escaparHtml(data.encabezado.unidad)} <span style="font-weight:400; color:var(--color-ink-soft);">(valor total: ${data.valor_total})</span></h3>
             <div class="tabla-wrap">
-                <table id="tablaReporte">
+                <table id="tablaReporte"
+       data-modo="${esRA ? 'ra' : 'competencia'}"
+       data-valor-ra="${esRA ? data.valor_total : ''}">
                     <tbody>${filasEncabezado(data.encabezado)}${filaMinMax(data.minmax)}</tbody>
                     <thead><tr><th class="num">Matrícula</th><th>Estudiante</th>${thActs}${esRA ? thSubcolumnasRA() : '<th class="num">Total</th>'}<th class="num">Valor</th><th class="num">%</th><th class="num">Estado</th></tr></thead>
                     <tbody>${filas}</tbody>
@@ -417,5 +419,149 @@ function exportarExcel() {
         `Calificaciones_${tipo}_${fecha}.xlsx`
     );
 }
+function exportarExcel() {
+    const tabla = document.getElementById('tablaReporte');
+
+    if (!tabla) {
+        mostrarAlerta(
+            'alertaReportesCalif',
+            'Genera un reporte primero.'
+        );
+        return;
+    }
+
+    const tipo = document.getElementById('tipoReporte').value;
+    const esReporteRA = tipo === 'unidad' && tabla.dataset.modo === 'ra';
+    const fecha = new Date().toISOString().slice(0, 10).replace(/-/g, '_');
+
+    // Clonar la tabla para conservar intacto el reporte en pantalla.
+    const tablaClon = tabla.cloneNode(true);
+
+    if (esReporteRA) {
+        const valorRA = Number(tabla.dataset.valorRa);
+
+        if (!Number.isFinite(valorRA) || valorRA < 0) {
+            mostrarAlerta(
+                'alertaReportesCalif',
+                'No se pudo identificar el valor total del RA.'
+            );
+            return;
+        }
+
+        // El mínimo para aprobar es el 70 % del valor del RA.
+        const calificacionAprobar =
+            Math.round(valorRA * 0.70 * 100) / 100;
+
+        // Localizar las filas informativas del encabezado.
+        const cuerpos = tablaClon.querySelectorAll('tbody');
+        const cuerpoInformativo = cuerpos[0];
+
+        // Eliminar la fila "Nota mínima" exclusivamente en Excel.
+        Array.from(cuerpoInformativo.rows).forEach(fila => {
+            if (fila.textContent.includes('Nota mínima')) {
+                fila.remove();
+            }
+        });
+
+        // Sustituir la información de calificaciones mínima y máxima.
+        let filaCalificaciones = Array.from(cuerpoInformativo.rows)
+            .find(fila =>
+                fila.textContent.includes('Calificación mínima del grupo')
+            );
+
+        if (!filaCalificaciones) {
+            // Crear la fila si no existe porque no hay calificaciones.
+            filaCalificaciones = document.createElement('tr');
+
+            const filaVacia = Array.from(cuerpoInformativo.rows)
+                .find(fila => !fila.textContent.trim());
+
+            if (filaVacia) {
+                cuerpoInformativo.insertBefore(
+                    filaCalificaciones,
+                    filaVacia
+                );
+            } else {
+                cuerpoInformativo.appendChild(filaCalificaciones);
+            }
+
+            for (let i = 0; i < 4; i++) {
+                filaCalificaciones.appendChild(
+                    document.createElement('td')
+                );
+            }
+        }
+
+        filaCalificaciones.innerHTML = `
+            <td><strong>Calificación del RA:</strong></td>
+            <td>${valorRA} puntos</td>
+            <td><strong>Calificación para aprobar:</strong></td>
+            <td>${calificacionAprobar} puntos</td>
+        `;
+
+        // Eliminar las columnas "Valor" y "%" de la tabla exportada.
+        const encabezado = tablaClon.querySelector('thead tr');
+
+        if (encabezado) {
+            const indicesEliminar = Array.from(encabezado.cells)
+                .map((celda, indice) => ({
+                    indice,
+                    texto: celda.textContent.trim()
+                }))
+                .filter(celda =>
+                    celda.texto.toLowerCase() === 'valor' ||
+                    celda.texto === '%'
+                )
+                .map(celda => celda.indice)
+                .sort((a, b) => b - a);
+
+            const cuerpoDatos = Array.from(
+                tablaClon.querySelectorAll('tbody')
+            ).at(-1);
+
+            indicesEliminar.forEach(indice => {
+                encabezado.rows[0]?.deleteCell(indice);
+
+                if (cuerpoDatos) {
+                    Array.from(cuerpoDatos.rows).forEach(fila => {
+                        if (fila.cells[indice]) {
+                            fila.deleteCell(indice);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    // Limpiar las celdas y conservar solamente el número de valores
+    // expresados como "obtenida/máxima", por ejemplo "8/10" -> "8".
+    tablaClon.querySelectorAll('td').forEach(td => {
+        let valor = td.textContent.trim();
+
+        const match = valor.match(
+            /^(\d+(?:\.\d+)?)\s*\/\s*\d+(?:\.\d+)?$/
+        );
+
+        if (match) {
+            valor = match[1];
+        }
+
+        if (valor === '—') {
+            valor = '';
+        }
+
+        td.textContent = valor;
+    });
+
+    const wb = XLSX.utils.table_to_book(tablaClon, {
+        sheet: 'Calificaciones'
+    });
+
+    XLSX.writeFile(
+        wb,
+        `Calificaciones_${tipo}_${fecha}.xlsx`
+    );
+}
+
 
 inicializar();
