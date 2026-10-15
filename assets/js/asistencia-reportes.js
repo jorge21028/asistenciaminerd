@@ -197,7 +197,7 @@ function renderMensual(data, cont) {
                     <svg class="icon icon-sm"><use href="#icon-lista"></use></svg> Copiar % de asistencia (solo números)
                 </button>
             </div>
-            <div class="tabla-wrap">
+            <div class="tabla-wrap tabla-mensual-wrap"">
                 <table id="tablaMensual">
                     <thead>
                         <tr>
