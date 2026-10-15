@@ -420,17 +420,11 @@ function exportarReporteExcel() {
         XLSX.utils.book_append_sheet(libro, hoja, nombre);
     }
 
-    function estadoTexto(codigo) {
-        const equivalencias = {
-            P: 'Presente',
-            A: 'Ausente',
-            T: 'Tardanza',
-            E: 'Excusa',
-            R: 'Retirado'
-        };
+  
+function estadoTexto(codigo) {
+    return codigo || '';
+}
 
-        return equivalencias[codigo] || '';
-    }
 
     function porcentaje(valor) {
         return valor === null || valor === undefined
