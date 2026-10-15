@@ -520,7 +520,7 @@ function exportarExcel() {
             ).at(-1);
 
             indicesEliminar.forEach(indice => {
-                encabezado.rows[0]?.deleteCell(indice);
+                encabezado.deleteCell(indice);
 
                 if (cuerpoDatos) {
                     Array.from(cuerpoDatos.rows).forEach(fila => {
