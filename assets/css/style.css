@@ -1538,12 +1538,34 @@ table.horario-grid td.celda-dia {
    ========================================================= */
 
 /* Permitir que la tabla mensual se muestre sin scroll propio */
+
 .tabla-mensual-wrap {
+    width: 100%;
+    max-width: 100%;
     overflow-x: hidden !important;
-    overflow-y: visible !important;
-    max-height: none !important;
+    overflow-y: auto !important;
+    max-height: 70vh !important;
     background: #FFFFFF;
 }
+
+/* Encabezado fijo y opaco */
+.tabla-mensual-wrap #tablaMensual thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 21 !important;
+    background-color: #E8EDF3 !important;
+    background-clip: padding-box !important;
+    color: #142438 !important;
+    border-bottom: 2px solid #B8C5D4 !important;
+    box-shadow: 0 2px 4px rgba(20, 36, 56, 0.12);
+}
+
+/* Mantener visibles las primeras dos columnas */
+.tabla-mensual-wrap #tablaMensual thead th:first-child,
+.tabla-mensual-wrap #tablaMensual thead th:nth-child(2) {
+    z-index: 22 !important;
+}
+
 
 /* Fondo sólido para toda la fila del encabezado */
 .tabla-mensual-wrap #tablaMensual thead {
