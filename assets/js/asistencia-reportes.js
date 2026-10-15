@@ -2,6 +2,7 @@ let combosReporte = [];
 const NOMBRES_MES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const CLASE_ESTADO = { P: 'presente', A: 'ausente', T: 'tardanza', E: 'excusa', R: 'retirado' };
 const NOMBRE_ESTADO = { P: 'Presente', A: 'Ausente', T: 'Tardanza', E: 'Excusa', R: 'Retirado' };
+let ultimoReporte = null;
 
 async function inicializarReportes() {
     // Selector de mes
@@ -79,11 +80,42 @@ async function generarReporte() {
     cont.innerHTML = `<div class="card"><p>Cargando reporte…</p></div>`;
 
     try {
-        const data = await apiFetch(`reportes.php?${params}`);
-        if (tipo === 'diario') renderDiario(data, cont);
-        if (tipo === 'semanal') renderSemanal(data, cont);
-        if (tipo === 'mensual') renderMensual(data, cont);
-        if (tipo === 'anual') renderAnual(data, cont);
+        
+const data = await apiFetch(`reportes.php?${params}`);
+
+const opcion = document.getElementById('cursoAsignatura')
+    .selectedOptions[0];
+
+ultimoReporte = {
+    data,
+    tipo,
+    cursoAsignatura: opcion ? opcion.textContent.trim() : '',
+    fechaGeneracion: new Date().toLocaleString('es-DO')
+};
+
+if (tipo === 'diario') renderDiario(data, cont);
+if (tipo === 'semanal') renderSemanal(data, cont);
+if (tipo === 'mensual') renderMensual(data, cont);
+if (tipo === 'anual') renderAnual(data, cont);
+
+// Agregar el botón de Excel sin modificar las tablas del reporte.
+const zonaExcel = document.createElement('div');
+zonaExcel.className = 'fila-form no-imprimir';
+zonaExcel.style.cssText =
+    'display:flex;justify-content:flex-end;margin:0 0 12px;';
+
+zonaExcel.innerHTML = `
+    <button type="button" class="btn secundario"
+            id="btnExportarExcel">
+        Exportar a Excel (.xlsx)
+    </button>
+`;
+
+cont.prepend(zonaExcel);
+
+document.getElementById('btnExportarExcel')
+    .addEventListener('click', exportarReporteExcel);
+
     } catch (err) {
         cont.innerHTML = '';
         mostrarAlerta('alertaReportes', err.message);
@@ -197,7 +229,7 @@ function renderMensual(data, cont) {
                     <svg class="icon icon-sm"><use href="#icon-lista"></use></svg> Copiar % de asistencia (solo números)
                 </button>
             </div>
-            <div class="tabla-wrap tabla-mensual-wrap"">
+            <div class="tabla-wrap tabla-mensual-wrap">
                 <table id="tablaMensual">
                     <thead>
                         <tr>
@@ -345,3 +377,250 @@ function activarEncabezadosFijos() {
     }
 }
 inicializarReportes();
+
+
+function exportarReporteExcel() {
+    if (!ultimoReporte) {
+        mostrarAlerta('alertaReportes', 'Primero genera un reporte.');
+        return;
+    }
+
+    if (typeof XLSX === 'undefined') {
+        mostrarAlerta(
+            'alertaReportes',
+            'No se ha cargado la librería de Excel.'
+        );
+        return;
+    }
+
+    const { data, tipo, cursoAsignatura } = ultimoReporte;
+    const libro = XLSX.utils.book_new();
+
+    // Convierte una matriz de filas en una hoja de Excel.
+    function agregarHoja(nombre, filas, anchos = []) {
+        const hoja = XLSX.utils.aoa_to_sheet(filas);
+
+        if (anchos.length) {
+            hoja['!cols'] = anchos.map(w => ({ wch: w }));
+        }
+
+        hoja['!autofilter'] = {
+            ref: XLSX.utils.encode_range({
+                s: { r: 0, c: 0 },
+                e: {
+                    r: Math.max(filas.length - 1, 0),
+                    c: Math.max(
+                        ...filas.map(f => f.length),
+                        1
+                    ) - 1
+                }
+            })
+        };
+
+        XLSX.utils.book_append_sheet(libro, hoja, nombre);
+    }
+
+    function estadoTexto(codigo) {
+        const equivalencias = {
+            P: 'Presente',
+            A: 'Ausente',
+            T: 'Tardanza',
+            E: 'Excusa',
+            R: 'Retirado'
+        };
+
+        return equivalencias[codigo] || '';
+    }
+
+    function porcentaje(valor) {
+        return valor === null || valor === undefined
+            ? '—'
+            : `${valor}%`;
+    }
+
+    const encabezado = [
+        ['REPORTE DE ASISTENCIA'],
+        ['Curso y asignatura', cursoAsignatura],
+        ['Fecha de generación', ultimoReporte.fechaGeneracion],
+        []
+    ];
+
+    // REPORTE DIARIO
+    if (tipo === 'diario') {
+        const filas = [
+            ...encabezado,
+            ['Fecha', data.fecha],
+            ['Porcentaje general de asistencia',
+                porcentaje(data.porcentaje_presentes)],
+            ['Total de estudiantes', data.total_estudiantes],
+            ['Estudiantes retirados', data.total_retirados || 0],
+            [],
+            ['Resumen de asistencia', 'Cantidad'],
+            ['Presentes', data.conteo.presente],
+            ['Excusas', data.conteo.excusa],
+            ['Ausentes', data.conteo.ausente],
+            ['Varones presentes', data.varones_presentes],
+            ['Hembras presentes', data.hembras_presentes],
+            [
+                'Total presentes',
+                data.varones_presentes + data.hembras_presentes
+            ],
+            [],
+            ['Matrícula', 'Estudiante', 'Estado', 'Observación'],
+            ...data.estudiantes.map(e => [
+                e.matricula || '—',
+                e.nombre,
+                estadoTexto({
+                    presente: 'P',
+                    ausente: 'A',
+                    tardanza: 'T',
+                    excusa: 'E',
+                    retirado: 'R'
+                }[e.estado]),
+                e.observacion || ''
+            ])
+        ];
+
+        agregarHoja('Reporte diario', filas, [18, 32, 18, 45]);
+    }
+
+    // REPORTE SEMANAL
+    if (tipo === 'semanal') {
+        const dias = data.dias_trabajados || [];
+
+        const filas = [
+            ...encabezado,
+            ['Desde', data.fecha_inicio],
+            ['Hasta', data.fecha_fin],
+            ['Total de días trabajados', data.total_dias_trabajados],
+            [],
+            [
+                'Matrícula',
+                'Estudiante',
+                ...dias.map(f => formatoFechaCorta(f)),
+                'Total asistencia',
+                'Días trabajados',
+                'Porcentaje'
+            ],
+            ...data.estudiantes.map(e => [
+                e.matricula || '—',
+                e.nombre,
+                ...dias.map(f => estadoTexto(e.dias[f])),
+                e.total_asistencia,
+                e.dias_trabajados,
+                porcentaje(e.porcentaje)
+            ])
+        ];
+
+        agregarHoja('Reporte semanal', filas, [
+            18, 32, ...dias.map(() => 14), 18, 18, 15
+        ]);
+    }
+
+    // REPORTE MENSUAL
+    if (tipo === 'mensual') {
+        const dias = data.dias_trabajados || [];
+
+        const filas = [
+            ...encabezado,
+            ['Mes', `${data.mes_nombre} ${data.anio}`],
+            ['Total de días trabajados', data.total_dias_trabajados],
+            [],
+            [
+                'Matrícula',
+                'Estudiante',
+                ...dias,
+                'Total asistencia',
+                'Porcentaje'
+            ],
+            ...data.estudiantes.map(e => [
+                e.matricula || '—',
+                e.nombre,
+                ...dias.map(d => estadoTexto(e.dias[d])),
+                e.total_asistencia,
+                porcentaje(e.porcentaje)
+            ]),
+            [],
+            ['LEYENDA DE ESTADOS'],
+            ['P', 'Presente'],
+            ['A', 'Ausente'],
+            ['T', 'Tardanza'],
+            ['E', 'Excusa'],
+            ['R', 'Retirado'],
+            [],
+            [
+                'Equivalencia de incidencias',
+                '2 excusas, 2 tardanzas o 1 excusa + 1 tardanza = 1 inasistencia'
+            ]
+        ];
+
+        agregarHoja('Reporte mensual', filas, [
+            18, 32, ...dias.map(() => 5), 18, 14
+        ]);
+    }
+
+    // REPORTE ANUAL: resumen por mes y totales por estudiante.
+    if (tipo === 'anual') {
+        const filasMes = [
+            ...encabezado,
+            ['Año', data.anio],
+            ['Total de días trabajados en el año',
+                data.total_dias_trabajados],
+            [],
+            ['Mes', 'Días trabajados', '% promedio del curso'],
+            ...(data.resumen_por_mes || []).map(m => [
+                m.mes_nombre,
+                m.dias_trabajados,
+                porcentaje(m.porcentaje_promedio_curso)
+            ])
+        ];
+
+        agregarHoja('Resumen mensual', filasMes, [24, 22, 25]);
+
+        const filasEstudiantes = [
+            ...encabezado,
+            ['Año', data.anio],
+            [],
+            [
+                'Matrícula',
+                'Estudiante',
+                'Días trabajados',
+                'Total asistencia',
+                'Ausentes',
+                'Tardanzas',
+                'Excusas',
+                'Días retirado',
+                'Porcentaje'
+            ],
+            ...(data.estudiantes || []).map(e => [
+                e.matricula || '—',
+                e.nombre,
+                e.dias_trabajados,
+                e.total_asistencia,
+                e.ausentes,
+                e.tardanzas,
+                e.excusas,
+                e.retirados || 0,
+                porcentaje(e.porcentaje)
+            ])
+        ];
+
+        agregarHoja('Totales por estudiante', filasEstudiantes, [
+            18, 32, 18, 18, 14, 14, 14, 16, 14
+        ]);
+    }
+
+    const fechaArchivo = new Date().toISOString().slice(0, 10);
+    const tipoNombre = {
+        diario: 'Diario',
+        semanal: 'Semanal',
+        mensual: 'Mensual',
+        anual: 'Anual'
+    }[tipo] || 'Reporte';
+
+    const nombreArchivo =
+        `Asistencia_${tipoNombre}_${fechaArchivo}.xlsx`;
+
+    XLSX.writeFile(libro, nombreArchivo);
+}
+
