@@ -10,6 +10,10 @@ let modoEdicion = false;
 let actividadIdEdicion = null;
 let actividadExistente = null;
 
+// Puntos del RA (técnico): { valor_ra, usado, disponible } para el RA y nivel (regular/R1-R3)
+// elegidos. null si la asignatura no trabaja con RA o el RA no tiene valor.
+let topeRA = null;
+
 // Textos de ayuda de la rúbrica, según el tipo de asignatura (cada
 // componente tiene su propia lógica de evaluación, como pidió el docente).
 const TEXTO_RUBRICA = {
@@ -216,6 +220,7 @@ async function inicializarTecnico() {
     selectRecup.addEventListener('change', () => {
         actualizarInfoRecuperacion();
         sugerirValorRecuperacion();
+        cargarDisponibleRA();
     });
     if (modoEdicion) {
         // El nivel (regular / R1-R3) no se cambia al editar: las calificaciones ya dependen de él
@@ -231,12 +236,58 @@ async function inicializarTecnico() {
         const periodo = periodos.find(p => String(p.id) === String(opt.dataset.periodo));
         document.getElementById('infoRA').textContent =
             `Valor total del RA: ${opt.dataset.valor || '—'} puntos · Período: ${periodo ? periodo.nombre : 'sin asignar'} — el valor de esta actividad (suma de sus criterios) debe ser parte de ese total.`;
+        cargarDisponibleRA();
     }
     selectRA.addEventListener('change', () => { actualizarInfoRA(); sugerirValorRecuperacion(); });
     if (modoEdicion && actividadExistente.unidad_id) selectRA.value = actividadExistente.unidad_id;
     actualizarInfoRA();
 
     await cargarSelectorTipoActividad('tipoActividadTecnico', []);
+    await cargarDisponibleRA();
+}
+
+// Formatea puntos sin ceros sobrantes (20 -> "20", 12.5 -> "12.5")
+function fmtPuntos(n) {
+    return String(Math.round((Number(n) || 0) * 100) / 100);
+}
+
+// Consulta cuántos puntos le quedan al RA (y nivel regular/R1-R3) elegido y los muestra.
+async function cargarDisponibleRA() {
+    topeRA = null;
+    const aviso = document.getElementById('avisoPuntosRA');
+    if (!asignatura || asignatura.tipo !== 'tecnico') { if (aviso) aviso.style.display = 'none'; return; }
+
+    const raId = document.getElementById('ra').value;
+    const recup = parseInt(document.getElementById('tipoRecuperacion').value) || 0;
+    if (!raId) { if (aviso) aviso.style.display = 'none'; recalcularTotal(); return; }
+
+    try {
+        let url = `calif_actividades.php?disponible=1&unidad_id=${raId}&curso_id=${cursoId}&recuperacion=${recup}`;
+        if (modoEdicion) url += `&excluir_id=${actividadIdEdicion}`;
+        const info = await apiFetch(url);
+        if (info && info.valor_ra !== null && info.valor_ra !== undefined) topeRA = info;
+    } catch (err) {
+        topeRA = null; // si falla la consulta, el servidor igual valida al guardar
+    }
+
+    if (aviso) {
+        if (topeRA) {
+            const nivel = recup > 0 ? `en R${recup}` : 'en actividades regulares';
+            aviso.style.display = 'block';
+            aviso.innerHTML = `Puntos disponibles del RA ${nivel}: <strong>${fmtPuntos(topeRA.disponible)}</strong> de ${fmtPuntos(topeRA.valor_ra)} ` +
+                `(ya asignados: ${fmtPuntos(topeRA.usado)}).`;
+        } else {
+            aviso.style.display = 'none';
+        }
+    }
+
+    // Nueva actividad: si el valor por defecto no cabe, arranca con lo que queda disponible
+    const valorInput = document.getElementById('valorActividad');
+    if (topeRA && !modoEdicion && valorInput.dataset.tocado !== '1' && valorObjetivo() > topeRA.disponible && topeRA.disponible > 0) {
+        valorInput.value = fmtPuntos(topeRA.disponible);
+        distribuirIgualEntreAuto();
+    }
+    recalcularTotal();
 }
 
 // Valor del RA seleccionado si la actividad es una recuperación (R1-R3); si no, null.
@@ -412,8 +463,20 @@ function recalcularTotal() {
 
     const cuadra = Math.abs(total - objetivo) < 0.01;
     document.getElementById('avisoDescuadre').style.display = cuadra ? 'none' : 'inline';
+
+    // Tope del RA: la actividad no puede pasar de los puntos que le quedan al RA
+    const excede = !!topeRA && objetivo - topeRA.disponible > 0.009;
+    const avisoExceso = document.getElementById('avisoExcedeRA');
+    if (avisoExceso) {
+        avisoExceso.style.display = excede ? 'block' : 'none';
+        if (excede) {
+            avisoExceso.textContent = `El valor (${fmtPuntos(objetivo)}) supera los puntos disponibles del RA (${fmtPuntos(topeRA.disponible)}). ` +
+                `Baja el valor, o edita otra actividad de este RA para liberar puntos.`;
+        }
+    }
+
     const btnGuardar = document.getElementById('btnGuardarActividad');
-    if (btnGuardar) btnGuardar.disabled = !cuadra || objetivo <= 0;
+    if (btnGuardar) btnGuardar.disabled = !cuadra || objetivo <= 0 || excede;
 }
 
 document.getElementById('btnAgregarCriterio').addEventListener('click', () => {
@@ -442,6 +505,11 @@ document.getElementById('btnGuardarActividad').addEventListener('click', async (
 
     const valorActividad = valorObjetivo();
     if (valorActividad <= 0) { mostrarAlerta('alertaNuevaActividad', 'Indica el valor de la actividad (mayor que cero).'); return; }
+
+    if (topeRA && valorActividad - topeRA.disponible > 0.009) {
+        mostrarAlerta('alertaNuevaActividad', `El valor de la actividad (${fmtPuntos(valorActividad)}) supera los puntos disponibles del RA (${fmtPuntos(topeRA.disponible)}).`);
+        return;
+    }
 
     const body = {
         curso_id: cursoId,

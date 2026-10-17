@@ -13,6 +13,9 @@ async function inicializarReportes() {
     document.getElementById('anio').value = hoy.getFullYear();
     document.getElementById('semanaInicio').value = lunesDeEstaSemana();
 
+    // El selector arranca en "Mensual": se muestran sus filtros (mes y año) desde el inicio
+    actualizarCamposVisibles();
+
     try {
         combosReporte = await apiFetch('asignaciones.php');
         const select = document.getElementById('cursoAsignatura');
