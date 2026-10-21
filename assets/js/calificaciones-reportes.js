@@ -450,7 +450,7 @@ function exportarExcel() {
 
         // El mínimo para aprobar es el 70 % del valor del RA.
         const calificacionAprobar =
-            Math.round(valorRA * 0.69 * 100) / 100;
+            Math.round(valorRA * 0.70 * 100) / 100;
 
         // Localizar las filas informativas del encabezado.
         const cuerpos = tablaClon.querySelectorAll('tbody');
