@@ -224,7 +224,7 @@ function renderMensual(data, cont) {
                 <span><span class="sello-estado tardanza" style="width:20px;height:20px;font-size:0.65rem;">T</span> Tardanza</span>
                 <span><span class="sello-estado excusa" style="width:20px;height:20px;font-size:0.65rem;">E</span> Excusa</span>
                 <span><span class="sello-estado retirado" style="width:20px;height:20px;font-size:0.65rem;">R</span> Retirado</span>
-                <span style="margin-left:auto;">2 excusas, 2 tardanzas, o 1 excusa + 1 tardanza = 1 inasistencia</span>
+                <span style="margin-left:auto;">3 excusas, 3 tardanzas= 1 inasistencia</span>
             </div>
             ${!dias.length ? '<div class="vacio-estado">No se ha registrado asistencia este mes.</div>' : `
             <div class="fila-form no-imprimir" style="margin:10px 0 0; justify-content:flex-end;">
@@ -547,7 +547,7 @@ function estadoTexto(codigo) {
             [],
             [
                 'Equivalencia de incidencias',
-                '2 excusas, 2 tardanzas o 1 excusa + 1 tardanza = 1 inasistencia'
+                '3 excusas, 3 tardanzas = 1 inasistencia'
             ]
         ];
 
