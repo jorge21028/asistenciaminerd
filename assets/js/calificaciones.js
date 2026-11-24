@@ -37,6 +37,7 @@ async function cargarActividades() {
     const infoTipo = document.getElementById('infoTipo');
 
     if (!combo) {
+        document.getElementById('btnImportarCsv').style.display = 'none';
         infoTipo.style.display = 'none';
         document.getElementById('tablaActividades').innerHTML = '';
         document.getElementById('estadoVacio').style.display = 'none';
@@ -47,6 +48,8 @@ async function cargarActividades() {
     document.getElementById('textoInfoTipo').textContent = TEXTO_TIPO[combo.asignatura.tipo] || '';
 
     document.getElementById('btnNuevaActividad').href = `${rutaBase('calificaciones-nueva.html')}?curso_id=${combo.cursoId}&asignatura_id=${combo.asignaturaId}`;
+    // La importación por RA solo aplica a asignaturas técnico-profesionales
+    document.getElementById('btnImportarCsv').style.display = combo.asignatura.tipo === 'tecnico' ? '' : 'none';
     document.getElementById('btnVerReportes').href = `${rutaBase('calificaciones-reportes.html')}?curso_id=${combo.cursoId}&asignatura_id=${combo.asignaturaId}`;
 
     try {
@@ -94,5 +97,205 @@ async function eliminarActividad(id) {
 window.eliminarActividad = eliminarActividad;
 
 document.getElementById('cursoAsignatura').addEventListener('change', cargarActividades);
+
+// =====================================================================
+// Importar actividades desde CSV a un RA
+// =====================================================================
+let importFilas = [];      // filas parseadas del CSV (se envían al servidor)
+let importRAs = [];        // RA de la asignatura con sus valores para este curso
+let importListo = false;   // true cuando la vista previa no tiene errores
+
+function importAlerta(msg, tipo = 'error') { mostrarAlerta('alertaImportar', msg, tipo); }
+function fmtPts(n) { return (Math.round((parseFloat(n) || 0) * 100) / 100).toLocaleString('es-DO', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
+
+// Parser CSV (comillas, comas/; /tab, saltos de línea dentro de comillas, BOM)
+function parsearCsv(texto) {
+    texto = texto.replace(/^\uFEFF/, '');
+    const primera = texto.split(/\r?\n/, 1)[0] || '';
+    const cuenta = c => (primera.match(new RegExp(c === '\t' ? '\t' : '\\' + c, 'g')) || []).length;
+    const delim = [';', ',', '\t'].sort((a, b) => cuenta(b) - cuenta(a))[0];
+
+    const filas = []; let fila = [], campo = '', enComillas = false;
+    for (let i = 0; i < texto.length; i++) {
+        const ch = texto[i];
+        if (enComillas) {
+            if (ch === '"') { if (texto[i + 1] === '"') { campo += '"'; i++; } else enComillas = false; }
+            else campo += ch;
+        } else if (ch === '"') enComillas = true;
+        else if (ch === delim) { fila.push(campo); campo = ''; }
+        else if (ch === '\n' || ch === '\r') {
+            if (ch === '\r' && texto[i + 1] === '\n') i++;
+            fila.push(campo); campo = '';
+            if (fila.some(c => c.trim() !== '')) filas.push(fila);
+            fila = [];
+        } else campo += ch;
+    }
+    fila.push(campo);
+    if (fila.some(c => c.trim() !== '')) filas.push(fila);
+    return filas;
+}
+
+function filasDesdeCsv(matriz) {
+    if (!matriz.length) return [];
+    // Si la primera fila es encabezado (la columna "Valor" no es numérica), se omite
+    const v = (matriz[0][2] || '').trim().replace(',', '.');
+    const lineaInicial = (v === '' || isNaN(Number(v))) ? 1 : 0;
+    return matriz.slice(lineaInicial).map((c, i) => ({
+        linea: i + 1 + lineaInicial,
+        nombre: (c[0] || '').trim(),
+        descripcion: (c[1] || '').trim(),
+        valor: (c[2] || '').trim(),
+        tipo: (c[3] || '').trim(),
+        fecha: (c[4] || '').trim(),
+    }));
+}
+
+async function leerArchivoTexto(archivo) {
+    const buf = await archivo.arrayBuffer();
+    let texto = new TextDecoder('utf-8').decode(buf);
+    if (texto.includes('\uFFFD')) texto = new TextDecoder('windows-1252').decode(buf); // CSV de Excel en español
+    return texto;
+}
+
+async function abrirModalImportar() {
+    const combo = comboActual();
+    if (!combo) return;
+    importFilas = []; importListo = false;
+    document.getElementById('alertaImportar').innerHTML = '';
+    document.getElementById('importArchivo').value = '';
+    document.getElementById('importVistaPrevia').style.display = 'none';
+    document.getElementById('btnConfirmarImportar').disabled = true;
+    document.getElementById('importInfoRA').textContent = '';
+    document.getElementById('modalImportar').style.display = 'flex';
+
+    const sel = document.getElementById('importRA');
+    sel.innerHTML = '<option value="">Cargando…</option>';
+    try {
+        importRAs = await apiFetch(`asignatura_unidades.php?asignatura_id=${combo.asignaturaId}&curso_id=${combo.cursoId}`);
+        importRAs = (importRAs || []).filter(r => parseInt(r.activo ?? 1) === 1);
+        sel.innerHTML = '<option value="">Selecciona el RA…</option>' + importRAs.map(r =>
+            `<option value="${r.id}">${escaparHtml(r.codigo || 'RA')} — ${escaparHtml((r.titulo || '').slice(0, 80))}${r.valor != null ? ' (' + fmtPts(r.valor) + ' pts)' : ''}</option>`).join('');
+    } catch (err) {
+        sel.innerHTML = '<option value="">—</option>';
+        importAlerta(err.message);
+    }
+}
+
+function cerrarModalImportar() { document.getElementById('modalImportar').style.display = 'none'; }
+
+function cuerpoImportacion(simular) {
+    const combo = comboActual();
+    return {
+        curso_id: combo.cursoId,
+        asignatura_id: combo.asignaturaId,
+        unidad_id: document.getElementById('importRA').value,
+        recuperacion: parseInt(document.getElementById('importNivel').value) || 0,
+        simular,
+        filas: importFilas,
+    };
+}
+
+async function actualizarVistaPrevia() {
+    importListo = false;
+    document.getElementById('btnConfirmarImportar').disabled = true;
+    document.getElementById('alertaImportar').innerHTML = '';
+    if (!importFilas.length) return;
+    if (!document.getElementById('importRA').value) {
+        document.getElementById('importVistaPrevia').style.display = 'none';
+        importAlerta('Selecciona el RA donde se importarán las actividades.', 'info');
+        return;
+    }
+    try {
+        const r = await apiFetch('calif_actividades_importar.php', { method: 'POST', body: cuerpoImportacion(true) });
+        pintarVistaPrevia(r);
+    } catch (err) { importAlerta(err.message); }
+}
+
+function pintarVistaPrevia({ filas, resumen }) {
+    document.getElementById('importVistaPrevia').style.display = 'block';
+    const nivel = parseInt(document.getElementById('importNivel').value) || 0;
+    document.getElementById('importInfoRA').textContent = resumen.valor_ra != null
+        ? `${resumen.ra_codigo || 'RA'} vale ${fmtPts(resumen.valor_ra)} pts · ya asignados${nivel ? ' en R' + nivel : ''}: ${fmtPts(resumen.usado)} pts · disponibles: ${fmtPts(resumen.disponible)} pts.`
+        : `${resumen.ra_codigo || 'RA'} no tiene valor definido: los valores se importan tal como vienen en el CSV.`;
+
+    let html = `<strong>${resumen.a_importar}</strong> actividad(es) a importar`;
+    if (resumen.duplicadas) html += ` · <span style="color:var(--color-tardanza);">${resumen.duplicadas} omitida(s) por duplicadas</span>`;
+    if (resumen.con_error) html += ` · <span style="color:var(--color-absent);">${resumen.con_error} con error</span>`;
+    html += `<br>Suma en el CSV: <strong>${fmtPts(resumen.suma_original)}</strong> pts → suma a importar: <strong>${fmtPts(resumen.suma_final)}</strong> pts`;
+    if (resumen.ajustado) html += `<br><span style="color:var(--color-tardanza); font-weight:600;">⚠ Los valores superaban lo disponible del RA y se ajustaron proporcionalmente para igualarlo.</span>`;
+    if (resumen.error_tope) html += `<br><span style="color:var(--color-absent); font-weight:600;">${escaparHtml(resumen.error_tope)}</span>`;
+    document.getElementById('importResumen').innerHTML = html;
+
+    const etiqueta = { ok: ['OK', 'var(--color-present)'], duplicada: ['Omitida', 'var(--color-tardanza)'], error: ['Error', 'var(--color-absent)'] };
+    document.getElementById('importTabla').innerHTML = filas.map(f => {
+        const [txt, color] = etiqueta[f.estado];
+        const cambio = f.estado === 'ok' && f.valor_original != null && Math.abs(f.valor_original - f.valor_final) > 0.001;
+        return `<tr>
+            <td>${f.linea}</td>
+            <td><strong>${escaparHtml(f.nombre || '—')}</strong>${f.descripcion ? `<br><span style="color:var(--color-ink-soft); font-size:0.85em;">${escaparHtml(f.descripcion.slice(0, 90))}${f.descripcion.length > 90 ? '…' : ''}</span>` : ''}</td>
+            <td>${escaparHtml(f.tipo_resuelto || f.tipo_texto || '—')}</td>
+            <td>${f.fecha ? new Date(f.fecha + 'T12:00:00').toLocaleDateString('es-DO') : 'Hoy'}</td>
+            <td class="num">${f.valor_original != null ? fmtPts(f.valor_original) : '—'}</td>
+            <td class="num" style="${cambio ? 'font-weight:700; color:var(--color-tardanza);' : ''}">${f.estado === 'ok' ? fmtPts(f.valor_final) : '—'}</td>
+            <td style="color:${color};">${txt}${f.mensaje ? `<br><span style="font-size:0.8em;">${escaparHtml(f.mensaje)}</span>` : ''}</td>
+        </tr>`;
+    }).join('');
+
+    importListo = resumen.a_importar > 0 && resumen.con_error === 0 && !resumen.error_tope;
+    document.getElementById('btnConfirmarImportar').disabled = !importListo;
+}
+
+async function alElegirArchivo() {
+    const archivo = document.getElementById('importArchivo').files[0];
+    importFilas = [];
+    document.getElementById('importVistaPrevia').style.display = 'none';
+    document.getElementById('btnConfirmarImportar').disabled = true;
+    if (!archivo) return;
+    try {
+        importFilas = filasDesdeCsv(parsearCsv(await leerArchivoTexto(archivo)));
+        if (!importFilas.length) { importAlerta('El archivo está vacío o no tiene el formato esperado.'); return; }
+        if (importFilas.length > 200) { importAlerta('El archivo tiene más de 200 filas. Divídelo en varios archivos.'); importFilas = []; return; }
+        await actualizarVistaPrevia();
+    } catch (err) { importAlerta('No se pudo leer el archivo: ' + err.message); }
+}
+
+async function confirmarImportacion() {
+    if (!importListo) return;
+    const btn = document.getElementById('btnConfirmarImportar');
+    btn.disabled = true; btn.textContent = 'Importando…';
+    try {
+        const r = await apiFetch('calif_actividades_importar.php', { method: 'POST', body: cuerpoImportacion(false) });
+        cerrarModalImportar();
+        mostrarAlerta('alertaCalificaciones',
+            `Se importaron ${r.importadas} actividad(es)` + (r.omitidas ? ` (${r.omitidas} omitida(s) por duplicadas)` : '') +
+            (r.resumen.ajustado ? '. Los valores se ajustaron para igualar el valor del RA.' : '.'), 'exito');
+        cargarActividades();
+    } catch (err) {
+        importAlerta(err.message);
+        btn.disabled = false;
+    } finally { btn.textContent = 'Importar actividades'; }
+}
+
+function descargarPlantillaCsv() {
+    const lineas = [
+        'Nombre actividad;Descripción;Valor;Tipo de actividad;Fecha',
+        'Infografía de gestores de BD;Realizar una infografía sobre un gestor de base de datos;5;Actividad grupal;15/09/2026',
+        'Quiz de repaso;Quiz hecho en Kahoot;3;Otros;2026-09-20',
+    ];
+    const blob = new Blob(['\uFEFF' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'plantilla_actividades.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+}
+
+document.getElementById('btnImportarCsv').addEventListener('click', abrirModalImportar);
+document.getElementById('btnCerrarImportar').addEventListener('click', cerrarModalImportar);
+document.getElementById('btnCancelarImportar').addEventListener('click', cerrarModalImportar);
+document.getElementById('importArchivo').addEventListener('change', alElegirArchivo);
+document.getElementById('importRA').addEventListener('change', actualizarVistaPrevia);
+document.getElementById('importNivel').addEventListener('change', actualizarVistaPrevia);
+document.getElementById('btnConfirmarImportar').addEventListener('click', confirmarImportacion);
+document.getElementById('btnPlantillaCsv').addEventListener('click', descargarPlantillaCsv);
 
 inicializar();

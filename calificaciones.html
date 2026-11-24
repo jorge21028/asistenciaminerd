@@ -20,6 +20,7 @@ titulo: Calificaciones
             <select id="cursoAsignatura"></select>
         </div>
         <a class="btn" id="btnNuevaActividad" href="#">+ Nueva actividad</a>
+        <button type="button" class="btn secundario" id="btnImportarCsv" style="display:none;">⬆ Importar actividades (CSV)</button>
         <a class="btn secundario" id="btnVerReportes" href="#">📈 Ver reportes</a>
     </div>
     <div class="card" id="infoTipo" style="display:none; margin-top:14px; background:var(--color-surface-alt);">
@@ -36,6 +37,57 @@ titulo: Calificaciones
         </table>
     </div>
     <div id="estadoVacio" class="vacio-estado" style="display:none;">Todavía no hay actividades para esta asignatura. Crea la primera con "+ Nueva actividad".</div>
+</div>
+
+<!-- Modal: importar actividades desde CSV a un RA -->
+<div class="planif-modal-overlay" id="modalImportar" style="display:none;">
+    <div class="card planif-modal planif-modal-ancho" style="max-width:920px;">
+        <div class="planif-modal-header">
+            <h3 style="margin:0;">⬆ Importar actividades desde CSV</h3>
+            <button type="button" class="btn secundario chico" id="btnCerrarImportar">✕</button>
+        </div>
+        <p class="subtitulo">Formato de columnas: <strong>Nombre actividad, Descripción, Valor, Tipo de actividad, Fecha</strong>. Cada fila crea una actividad en el RA que elijas.</p>
+        <div id="alertaImportar"></div>
+
+        <div class="fila-form">
+            <div class="campo" style="flex:2;">
+                <label for="importRA">RA donde se importarán</label>
+                <select id="importRA"></select>
+            </div>
+            <div class="campo">
+                <label for="importNivel">Nivel</label>
+                <select id="importNivel">
+                    <option value="0">Actividades del RA (CRA)</option>
+                    <option value="1">Recuperación 1 (R1)</option>
+                    <option value="2">Recuperación 2 (R2)</option>
+                    <option value="3">Recuperación 3 (R3)</option>
+                </select>
+            </div>
+        </div>
+        <div class="fila-form" style="margin-top:12px; align-items:flex-end;">
+            <div class="campo" style="flex:2;">
+                <label for="importArchivo">Archivo CSV</label>
+                <input type="file" id="importArchivo" accept=".csv,text/csv,text/plain">
+            </div>
+            <button type="button" class="btn secundario" id="btnPlantillaCsv">Descargar plantilla</button>
+        </div>
+        <p class="horario-info-sub" id="importInfoRA" style="color:var(--color-ink-soft);"></p>
+
+        <div id="importVistaPrevia" style="display:none;">
+            <div id="importResumen" style="margin:10px 0;"></div>
+            <div class="tabla-wrap" style="max-height:340px; overflow:auto;">
+                <table>
+                    <thead><tr><th>#</th><th>Actividad</th><th>Tipo</th><th>Fecha</th><th class="num">Valor CSV</th><th class="num">Valor final</th><th>Estado</th></tr></thead>
+                    <tbody id="importTabla"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end;">
+            <button type="button" class="btn secundario" id="btnCancelarImportar">Cancelar</button>
+            <button type="button" class="btn" id="btnConfirmarImportar" disabled>Importar actividades</button>
+        </div>
+    </div>
 </div>
 
 <script src="{{ '/assets/js/calificaciones.js' | relative_url }}"></script>
