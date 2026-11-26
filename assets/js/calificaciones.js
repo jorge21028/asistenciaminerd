@@ -102,6 +102,7 @@ document.getElementById('cursoAsignatura').addEventListener('change', cargarActi
 // Importar actividades desde CSV a un RA
 // =====================================================================
 let importFilas = [];      // filas parseadas del CSV (se envían al servidor)
+let importTipos = [];      // tipos de actividad del sistema
 let importRAs = [];        // RA de la asignatura con sus valores para este curso
 let importListo = false;   // true cuando la vista previa no tiene errores
 
@@ -171,6 +172,9 @@ async function abrirModalImportar() {
     const sel = document.getElementById('importRA');
     sel.innerHTML = '<option value="">Cargando…</option>';
     try {
+        if (!importTipos.length) importTipos = (await apiFetch('calif_tipos_actividad.php')).tipos || [];
+        document.getElementById('importTipoTodas').innerHTML = '<option value="">— Elegir —</option>' + opcionesTipo('');
+        document.getElementById('importFechaTodas').value = '';
         importRAs = await apiFetch(`asignatura_unidades.php?asignatura_id=${combo.asignaturaId}&curso_id=${combo.cursoId}`);
         importRAs = (importRAs || []).filter(r => parseInt(r.activo ?? 1) === 1);
         sel.innerHTML = '<option value="">Selecciona el RA…</option>' + importRAs.map(r =>
@@ -179,6 +183,10 @@ async function abrirModalImportar() {
         sel.innerHTML = '<option value="">—</option>';
         importAlerta(err.message);
     }
+}
+
+function opcionesTipo(sel) {
+    return importTipos.map(t => `<option value="${t.id}" ${String(t.id) === String(sel) ? 'selected' : ''}>${escaparHtml(t.nombre)}</option>`).join('');
 }
 
 function cerrarModalImportar() { document.getElementById('modalImportar').style.display = 'none'; }
@@ -227,14 +235,27 @@ function pintarVistaPrevia({ filas, resumen }) {
     document.getElementById('importResumen').innerHTML = html;
 
     const etiqueta = { ok: ['OK', 'var(--color-present)'], duplicada: ['Omitida', 'var(--color-tardanza)'], error: ['Error', 'var(--color-absent)'] };
-    document.getElementById('importTabla').innerHTML = filas.map(f => {
+    const origenTxt = {
+        no_reconocido: f => `No reconocido: «${f.tipo_texto}». Elige el tipo correcto.`,
+        vacio: () => 'Sin tipo en el CSV. Elige uno.',
+    };
+    document.getElementById('importTabla').innerHTML = filas.map((f, i) => {
         const [txt, color] = etiqueta[f.estado];
         const cambio = f.estado === 'ok' && f.valor_original != null && Math.abs(f.valor_original - f.valor_final) > 0.001;
+        const aviso = f.tipo_origen !== 'manual' && origenTxt[f.tipo_origen] ? origenTxt[f.tipo_origen](f) : '';
+        const estiloAviso = aviso ? 'border-color:var(--color-tardanza);' : '';
         return `<tr>
             <td>${f.linea}</td>
             <td><strong>${escaparHtml(f.nombre || '—')}</strong>${f.descripcion ? `<br><span style="color:var(--color-ink-soft); font-size:0.85em;">${escaparHtml(f.descripcion.slice(0, 90))}${f.descripcion.length > 90 ? '…' : ''}</span>` : ''}</td>
-            <td>${escaparHtml(f.tipo_resuelto || f.tipo_texto || '—')}</td>
-            <td>${f.fecha ? new Date(f.fecha + 'T12:00:00').toLocaleDateString('es-DO') : 'Hoy'}</td>
+            <td style="min-width:170px;">
+                <select data-i="${i}" data-campo="tipo" style="width:100%; ${estiloAviso}"><option value="">—</option>${opcionesTipo(f.tipo_id)}</select>
+                ${f.valor_directo ? `<input type="text" data-i="${i}" data-campo="tipo_personalizado" maxlength="100" value="${escaparHtml(f.tipo_personalizado || '')}" placeholder="¿Qué tipo es?" style="width:100%; margin-top:4px;">` : ''}
+                ${aviso ? `<span style="display:block; font-size:0.75em; color:var(--color-tardanza); margin-top:2px;">${escaparHtml(aviso)}</span>` : ''}
+            </td>
+            <td style="min-width:140px;">
+                <input type="date" data-i="${i}" data-campo="fecha" value="${f.fecha || ''}" style="width:100%;">
+                ${f.fecha_por_defecto ? '<span style="display:block; font-size:0.75em; color:var(--color-ink-soft); margin-top:2px;">Hoy (sin fecha en el CSV)</span>' : ''}
+            </td>
             <td class="num">${f.valor_original != null ? fmtPts(f.valor_original) : '—'}</td>
             <td class="num" style="${cambio ? 'font-weight:700; color:var(--color-tardanza);' : ''}">${f.estado === 'ok' ? fmtPts(f.valor_final) : '—'}</td>
             <td style="color:${color};">${txt}${f.mensaje ? `<br><span style="font-size:0.8em;">${escaparHtml(f.mensaje)}</span>` : ''}</td>
@@ -296,6 +317,26 @@ document.getElementById('importArchivo').addEventListener('change', alElegirArch
 document.getElementById('importRA').addEventListener('change', actualizarVistaPrevia);
 document.getElementById('importNivel').addEventListener('change', actualizarVistaPrevia);
 document.getElementById('btnConfirmarImportar').addEventListener('click', confirmarImportacion);
+document.getElementById('importTabla').addEventListener('change', e => {
+    const el = e.target, i = parseInt(el.dataset.i);
+    if (isNaN(i) || !importFilas[i]) return;
+    if (el.dataset.campo === 'tipo') { importFilas[i].tipo_id = el.value; importFilas[i].tipo_personalizado = ''; }
+    else if (el.dataset.campo === 'tipo_personalizado') importFilas[i].tipo_personalizado = el.value;
+    else if (el.dataset.campo === 'fecha') importFilas[i].fecha = el.value;
+    actualizarVistaPrevia();
+});
+document.getElementById('btnTipoTodas').addEventListener('click', () => {
+    const v = document.getElementById('importTipoTodas').value;
+    if (!v) return importAlerta('Elige primero el tipo de actividad.', 'info');
+    importFilas.forEach(f => { f.tipo_id = v; f.tipo_personalizado = ''; });
+    actualizarVistaPrevia();
+});
+document.getElementById('btnFechaTodas').addEventListener('click', () => {
+    const v = document.getElementById('importFechaTodas').value;
+    if (!v) return importAlerta('Elige primero la fecha.', 'info');
+    importFilas.forEach(f => { f.fecha = v; });
+    actualizarVistaPrevia();
+});
 document.getElementById('btnPlantillaCsv').addEventListener('click', descargarPlantillaCsv);
 
 inicializar();

@@ -75,6 +75,19 @@ titulo: Calificaciones
 
         <div id="importVistaPrevia" style="display:none;">
             <div id="importResumen" style="margin:10px 0;"></div>
+            <div class="fila-form" style="margin-bottom:12px; align-items:flex-end;">
+                <div class="campo">
+                    <label for="importTipoTodas">Tipo para todas</label>
+                    <select id="importTipoTodas"></select>
+                </div>
+                <button type="button" class="btn secundario chico" id="btnTipoTodas">Aplicar tipo</button>
+                <div class="campo" style="max-width:170px;">
+                    <label for="importFechaTodas">Fecha para todas</label>
+                    <input type="date" id="importFechaTodas">
+                </div>
+                <button type="button" class="btn secundario chico" id="btnFechaTodas">Aplicar fecha</button>
+            </div>
+            <p class="horario-info-sub" style="color:var(--color-ink-soft); margin:0 0 8px;">Puedes cambiar el tipo y la fecha de cada actividad directamente en la tabla. Si el CSV no trae fecha, se usa la de hoy.</p>
             <div class="tabla-wrap" style="max-height:340px; overflow:auto;">
                 <table>
                     <thead><tr><th>#</th><th>Actividad</th><th>Tipo</th><th>Fecha</th><th class="num">Valor CSV</th><th class="num">Valor final</th><th>Estado</th></tr></thead>
