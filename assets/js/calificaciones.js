@@ -229,7 +229,7 @@ function pintarVistaPrevia({ filas, resumen }) {
     let html = `<strong>${resumen.a_importar}</strong> actividad(es) a importar`;
     if (resumen.duplicadas) html += ` · <span style="color:var(--color-tardanza);">${resumen.duplicadas} omitida(s) por duplicadas</span>`;
     if (resumen.con_error) html += ` · <span style="color:var(--color-absent);">${resumen.con_error} con error</span>`;
-    html += `<br>Suma en el CSV: <strong>${fmtPts(resumen.suma_original)}</strong> pts → suma a importar: <strong>${fmtPts(resumen.suma_final)}</strong> pts`;
+    html += `<br>Suma de los valores: <strong>${fmtPts(resumen.suma_original)}</strong> pts → suma a importar: <strong>${fmtPts(resumen.suma_final)}</strong> pts`;
     if (resumen.ajustado) html += `<br><span style="color:var(--color-tardanza); font-weight:600;">⚠ Los valores superaban lo disponible del RA y se ajustaron proporcionalmente para igualarlo.</span>`;
     if (resumen.error_tope) html += `<br><span style="color:var(--color-absent); font-weight:600;">${escaparHtml(resumen.error_tope)}</span>`;
     document.getElementById('importResumen').innerHTML = html;
@@ -256,7 +256,7 @@ function pintarVistaPrevia({ filas, resumen }) {
                 <input type="date" data-i="${i}" data-campo="fecha" value="${f.fecha || ''}" style="width:100%;">
                 ${f.fecha_por_defecto ? '<span style="display:block; font-size:0.75em; color:var(--color-ink-soft); margin-top:2px;">Hoy (sin fecha en el CSV)</span>' : ''}
             </td>
-            <td class="num">${f.valor_original != null ? fmtPts(f.valor_original) : '—'}</td>
+            <td class="num" style="min-width:90px;"><input type="number" data-i="${i}" data-campo="valor" min="0.01" step="0.01" value="${f.valor_original != null ? f.valor_original : ''}" style="width:80px; text-align:right;"></td>
             <td class="num" style="${cambio ? 'font-weight:700; color:var(--color-tardanza);' : ''}">${f.estado === 'ok' ? fmtPts(f.valor_final) : '—'}</td>
             <td style="color:${color};">${txt}${f.mensaje ? `<br><span style="font-size:0.8em;">${escaparHtml(f.mensaje)}</span>` : ''}</td>
         </tr>`;
@@ -323,6 +323,7 @@ document.getElementById('importTabla').addEventListener('change', e => {
     if (el.dataset.campo === 'tipo') { importFilas[i].tipo_id = el.value; importFilas[i].tipo_personalizado = ''; }
     else if (el.dataset.campo === 'tipo_personalizado') importFilas[i].tipo_personalizado = el.value;
     else if (el.dataset.campo === 'fecha') importFilas[i].fecha = el.value;
+    else if (el.dataset.campo === 'valor') importFilas[i].valor = el.value;
     actualizarVistaPrevia();
 });
 document.getElementById('btnTipoTodas').addEventListener('click', () => {
